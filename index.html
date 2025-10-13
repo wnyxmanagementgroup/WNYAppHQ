@@ -77,7 +77,7 @@
                 <button id="logout-button" class="btn btn-danger">ออกจากระบบ</button>
             </header>
 
-            <div id="navigation" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+            <div id="navigation" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
                 <button data-target="dashboard-page" id="user-nav-dashboard" class="nav-button p-4 text-center bg-white rounded-lg shadow hover:bg-indigo-50 transition active">
                     <h3 class="font-bold text-indigo-700">แดชบอร์ด</h3>
                     <p class="text-xs text-gray-500">ภาพรวมของคุณ</p>
@@ -86,17 +86,9 @@
                     <h3 class="font-bold text-indigo-700">ร่างคำขอไปราชการ</h3>
                     <p class="text-xs text-gray-500">สร้างบันทึกข้อความ</p>
                 </button>
-                <button data-target="memo-page" id="user-nav-memo" class="nav-button p-4 text-center bg-white rounded-lg shadow hover:bg-indigo-50 transition">
-                    <h3 class="font-bold text-indigo-700">ส่งบันทึกข้อความ</h3>
-                    <p class="text-xs text-gray-500">อัพโหลดไฟล์</p>
-                </button>
                  <button data-target="command-generation-page" id="admin-nav-command" class="nav-button p-4 text-center bg-white rounded-lg shadow hover:bg-indigo-50 transition hidden">
-                    <h3 class="font-bold text-purple-700">จัดการคำสั่ง</h3>
-                    <p class="text-xs text-gray-500">อนุมัติคำสั่งราชการ</p>
-                </button>
-                <button data-target="admin-memos-page" id="admin-nav-management" class="nav-button p-4 text-center bg-white rounded-lg shadow hover:bg-indigo-50 transition hidden">
-                    <h3 class="font-bold text-red-700">จัดการบันทึกข้อความ</h3>
-                    <p class="text-xs text-gray-500">รายการที่ส่งแล้ว</p>
+                    <h3 class="font-bold text-purple-700">จัดการบันทึกและคำสั่ง</h3>
+                    <p class="text-xs text-gray-500">สำหรับผู้ดูแลระบบ</p>
                 </button>
                  <button data-target="stats-page" id="nav-stats" class="nav-button p-4 text-center bg-white rounded-lg shadow hover:bg-indigo-50 transition">
                     <h3 class="font-bold text-green-700">สถิติข้อมูล</h3>
@@ -157,6 +149,7 @@
                               </div>
                              <div id="partial-expense-options" class="pl-6 mt-3 hidden space-y-2">
                                   <label class="block"><input type="checkbox" name="expense_item" value="ค่าเบี้ยเลี้ยง" data-item-name="ค่าเบี้ยเลี้ยง" class="rounded"> ค่าเบี้ยเลี้ยง</label>
+                                  <label class="block"><input type="checkbox" name="expense_item" value="ค่าอาหาร" data-item-name="ค่าอาหาร" class="rounded"> ค่าอาหาร</label>
                                   <label class="block"><input type="checkbox" name="expense_item" value="ค่าที่พัก" data-item-name="ค่าที่พัก" class="rounded"> ค่าที่พัก</label>
                                   <label class="block"><input type="checkbox" name="expense_item" value="ค่าพาหนะ" data-item-name="ค่าพาหนะ" class="rounded"> ค่าพาหนะ</label>
                                   <label class="block"><input type="checkbox" name="expense_item" value="ค่าน้ำมัน" data-item-name="ค่าน้ำมัน" class="rounded"> ค่าน้ำมัน</label>
@@ -193,38 +186,6 @@
                                 <a id="form-result-link" href="#" target="_blank" class="btn btn-success">เปิดไฟล์ PDF</a>
                              </div>
                       </div>
-                </div>
-
-                <div id="memo-page" class="page-view hidden">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div>
-                            <h2 class="text-2xl font-bold mb-4">ส่งบันทึกข้อความใหม่</h2>
-                            <form id="memo-form">
-                                <fieldset class="border p-4 rounded-lg bg-white">
-                                    <legend>อัพโหลดไฟล์และกรอกข้อมูล</legend>
-                                     <div class="mb-4">
-                                        <label class="form-label">ประเภทการส่ง</label>
-                                        <div class="flex gap-4 mt-2">
-                                            <div><input type="radio" id="memo-type-no-reimburse" name="memo_type" value="no_reimburse" checked><label for="memo-type-no-reimburse" class="ml-2">ไม่เบิก (แนบไฟล์)</label></div>
-                                            <div><input type="radio" id="memo-type-reimburse" name="memo_type" value="reimburse"><label for="memo-type-reimburse" class="ml-2">เบิก (ไม่ต้องแนบไฟล์)</label></div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="memo-ref-number" class="form-label">เลือกร่างคำขอ (เลขที่อ้างอิง)</label>
-                                        <select id="memo-ref-number" class="form-input" required></select>
-                                    </div>
-                                     <div id="memo-file-container" class="mb-6"><label for="memo-file" class="form-label">ไฟล์บันทึกข้อความ (PDF เท่านั้น)</label><input type="file" id="memo-file" class="form-input" accept="application/pdf" required><span id="memo-filename" class="text-sm text-gray-500 mt-1 block"></span></div>
-                                    <button type="submit" id="submit-memo-button" class="btn btn-primary w-full"><div id="memo-submit-loader" class="loader hidden"></div><span id="memo-submit-button-text">ส่งบันทึกข้อความ</span></button>
-                                </fieldset>
-                            </form>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold mb-4">รายการที่ส่งแล้ว</h2>
-                            <div id="memos-loader" class="text-center p-8"><div class="loader mx-auto"></div><p class="mt-4">กำลังโหลดข้อมูล...</p></div>
-                            <div id="memos-list" class="hidden space-y-3"></div>
-                            <p id="no-memos-message" class="text-center text-gray-500 p-8 hidden">ยังไม่มีรายการที่ส่ง</p>
-                        </div>
-                    </div>
                 </div>
 
                 <div id="profile-page" class="page-view hidden">
@@ -772,11 +733,6 @@
                 document.getElementById('admin-requests-view').classList.add('hidden');
                 fetchAllMemos();
             });
-
-
-            // Request Status Modal Logic (Deprecated, but kept for reference)
-            document.getElementById('set-status-approve').addEventListener('click', () => updateRequestStatusCommandFromModal('Approved'));
-            document.getElementById('set-status-reject').addEventListener('click', () => updateRequestStatusCommandFromModal('นำกลับไปแก้ไข'));
         }
         
         // --- AUTHENTICATION HANDLERS ---
@@ -912,7 +868,7 @@
                             </div>
                             <div class="text-right text-xs space-y-1">
                                 <p>สถานะคำขอ: <span class="font-bold px-2 py-1 rounded-full bg-blue-100 text-blue-800">${translateStatus(req.commandStatus)}</span></p>
-                                <p>สถานะบันทึก: <span class="font-bold px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">${memo ? translateStatus(memo.status) : 'ยังไม่ส่ง'}</span></p>
+                                ${memo ? `<p>สถานะบันทึก: <span class="font-bold px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">${translateStatus(memo.status)}</span></p>` : ''}
                             </div>
                         </div>
 
@@ -1300,7 +1256,7 @@
             };
 
             try {
-                const result = await apiCall('POST', 'updateUser', payload);
+                const result = await apiCall('POST', 'updateUserProfile', payload); // FIX: Changed to updateUserProfile
                 // Update session storage
                 const user = getCurrentUser();
                 const updatedUser = {...user, ...payload};
@@ -1461,7 +1417,7 @@
                 role: document.getElementById('modal-role').value,
             };
             try {
-                const action = isUpdate ? 'updateUser' : 'addUser';
+                const action = isUpdate ? 'updateUserProfile' : 'addUser'; // FIX: Changed to updateUserProfile
                 if(isUpdate && !payload.password) delete payload.password; // Don't update password if blank
                 await apiCall('POST', action, payload);
                 showAlert('สำเร็จ', `ผู้ใช้ถูก${isUpdate ? 'อัปเดต' : 'เพิ่ม'}เรียบร้อยแล้ว`);
@@ -1628,7 +1584,6 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID คำขอ</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ผู้ขอ</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">วัตถุประสงค์</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">สถานะ</th>
                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">การดำเนินการ</th>
                     </tr>
                 </thead>
@@ -1641,10 +1596,13 @@
                     <td class="px-4 py-4 whitespace-nowrap">${req.id}</td>
                     <td class="px-4 py-4 whitespace-nowrap">${req.requesterName}</td>
                     <td class="px-4 py-4 whitespace-nowrap">${req.purpose}</td>
-                    <td class="px-4 py-4 whitespace-nowrap">${translateStatus(req.commandStatus)}</td>
                     <td class="px-4 py-4 whitespace-nowrap text-right space-x-2">
+                        ${req.dispatchBookPdfUrl ? `<a href="${req.dispatchBookPdfUrl}" target="_blank" class="btn btn-sm bg-gray-500 text-white">ดูหนังสือส่ง</a>` : ''}
                         <button class="btn btn-sm bg-purple-600 text-white" data-action="create-dispatch" data-request-id="${req.id}">ออกหนังสือส่ง</button>
+                        
+                        ${req.commandPdfUrl ? `<a href="${req.commandPdfUrl}" target="_blank" class="btn btn-sm bg-gray-500 text-white">ดูคำสั่ง</a>` : ''}
                         <button class="btn btn-sm btn-success" data-action="issue-command" data-id="${req.id}">ออกคำสั่ง</button>
+
                         <button class="btn btn-sm bg-yellow-400 text-yellow-900" data-action="admin-edit-request" data-id="${req.id}">แก้ไข</button>
                         <button class="btn btn-sm btn-danger" data-action="admin-reject-request" data-id="${req.id}">ปฏิเสธ</button>
                     </td>
@@ -1763,7 +1721,7 @@
                 showAlert('สำเร็จ', `สร้างหนังสือส่งสำเร็จ!`);
                 window.open(result.url, '_blank');
                 // Optionally refresh memo list to show updated data if URL is stored there
-                await fetchAllMemos();
+                await fetchAllRequestsForCommand();
             } catch (error) {
                 showAlert('ผิดพลาด', 'ไม่สามารถสร้างหนังสือส่งได้: ' + error.message);
             }
@@ -1892,3 +1850,4 @@
 
 </body>
 </html>
+
