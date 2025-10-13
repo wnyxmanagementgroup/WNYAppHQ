@@ -867,8 +867,7 @@
                                 <p class="text-xs text-gray-400 mt-1"><strong>ID:</strong> ${req.id}</p>
                             </div>
                             <div class="text-right text-xs space-y-1">
-                                <p>สถานะคำขอ: <span class="font-bold px-2 py-1 rounded-full bg-blue-100 text-blue-800">${translateStatus(req.commandStatus)}</span></p>
-                                ${memo ? `<p>สถานะบันทึก: <span class="font-bold px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">${translateStatus(memo.status)}</span></p>` : ''}
+                                <p>สถานะ: <span class="font-bold px-2 py-1 rounded-full bg-blue-100 text-blue-800">${memo ? translateStatus(memo.status) : 'ยังไม่ส่ง'}</span></p>
                             </div>
                         </div>
 
@@ -1188,7 +1187,7 @@
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Attendees");
-            XLSX.writeFile(wb, "attendee_template.xlsx");
+            XLSX.writeFile(wb, "แม่แบบการนำเข้ารายชื่อแนบ.xlsx");
         }
         
         function togglePasswordVisibility() {
@@ -1287,7 +1286,7 @@
                 return;
             }
             if (newPassword.length < 6) {
-                errorP.textContent = 'รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร';
+                errorP.textContent = 'รหัสผ่านใหม่ต้องมีอน่างน้อย 6 ตัว ***ตัวอักษรภาษาอังกฤษ และ ตัวเลข***';
                 errorP.classList.remove('hidden');
                 return;
             }
@@ -1602,9 +1601,6 @@
                         
                         ${req.commandPdfUrl ? `<a href="${req.commandPdfUrl}" target="_blank" class="btn btn-sm bg-gray-500 text-white">ดูคำสั่ง</a>` : ''}
                         <button class="btn btn-sm btn-success" data-action="issue-command" data-id="${req.id}">ออกคำสั่ง</button>
-
-                        <button class="btn btn-sm bg-yellow-400 text-yellow-900" data-action="admin-edit-request" data-id="${req.id}">แก้ไข</button>
-                        <button class="btn btn-sm btn-danger" data-action="admin-reject-request" data-id="${req.id}">ปฏิเสธ</button>
                     </td>
                 `;
             });
@@ -1639,12 +1635,6 @@
                     document.getElementById('dispatch-month').value = thaiMonths[now.getMonth()];
                     document.getElementById('dispatch-year').value = thaiYear;
                     document.getElementById('dispatch-modal').style.display = 'flex';
-                } else if (action === 'admin-edit-request') {
-                    await editRequest(requestId);
-                } else if (action === 'admin-reject-request') {
-                    if (await showConfirm('ยืนยันการปฏิเสธ', 'คุณต้องการส่งคำขอนี้กลับไปแก้ไขใช่หรือไม่?')) {
-                        await updateRequestStatusCommand(requestId, 'นำกลับไปแก้ไข');
-                    }
                 }
             })
         }
