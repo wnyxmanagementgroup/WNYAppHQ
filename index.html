@@ -1647,7 +1647,7 @@
 
             try {
                 await apiCall('POST', 'approveCommand', payload);
-                showAlert('สำเร็จ', 'ออกคำสั่งเรียบร้อยแล้ว และสถานะถูกเปลี่ยนเป็น "เสร็จสิ้นรอออกคำสั่งไปราชการ"');
+                showAlert('สำเร็จ', 'ออกคำสั่งเรียบร้อยแล้ว และสถานะถูกเปลี่ยนเป็น "รอการอนุมัติและออกคำสั่งฯ"');
                 document.getElementById('command-approval-modal').style.display = 'none';
                 await fetchAllRequestsForCommand();
             } catch (error) {
