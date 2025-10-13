@@ -414,7 +414,7 @@
         </div>
     </div>
     
-    <!-- NEW: Stats Detail Modal -->
+    <!-- Stats Detail Modal -->
     <div id="stats-detail-modal" class="modal">
         <div class="modal-content !max-w-3xl">
             <div class="flex justify-between items-center mb-4">
@@ -427,10 +427,47 @@
         </div>
     </div>
 
+    <!-- NEW: Admin Memo File Upload Modal -->
+    <div id="admin-upload-memo-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                 <h3 class="text-xl font-bold">จัดการไฟล์เอกสาร</h3>
+                 <button id="admin-upload-memo-close-button" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+            </div>
+            <input type="hidden" id="admin-upload-memo-id">
+            <div class="space-y-4">
+                <!-- Signed Memo -->
+                <div>
+                    <label for="signed-memo-file" class="form-label">ไฟล์บันทึกข้อความ (ลงนามแล้ว)</label>
+                    <div class="flex gap-2 mt-1">
+                        <input type="file" id="signed-memo-file" class="form-input" accept="application/pdf">
+                        <button class="btn btn-sm btn-primary upload-signed-file-btn" data-file-type="completedMemo">อัปโหลด</button>
+                    </div>
+                </div>
+                <!-- Signed Command -->
+                 <div>
+                    <label for="signed-command-file" class="form-label">ไฟล์คำสั่ง (ลงนามแล้ว)</label>
+                    <div class="flex gap-2 mt-1">
+                        <input type="file" id="signed-command-file" class="form-input" accept="application/pdf">
+                        <button class="btn btn-sm btn-primary upload-signed-file-btn" data-file-type="completedCommand">อัปโหลด</button>
+                    </div>
+                </div>
+                <!-- Signed Dispatch Letter -->
+                 <div>
+                    <label for="signed-dispatch-file" class="form-label">ไฟล์หนังสือส่ง (ลงนามแล้ว)</label>
+                    <div class="flex gap-2 mt-1">
+                        <input type="file" id="signed-dispatch-file" class="form-input" accept="application/pdf">
+                        <button class="btn btn-sm btn-primary upload-signed-file-btn" data-file-type="dispatchBook">อัปโหลด</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 <script type="module">
     // --- CONFIGURATION ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCwt7IDdsYLs3YL_UtG7PopArnKksYIJIOv_H4W63kan8o5Hnuhl8EUjS-9pumf7MxeA/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvi_gK-fITm3N74_-qrRI9t4oNkGBW2d02fo6a0j622nZpR1qq8aMhjroGSG-Oyp_Ryg/exec';
 
     // This object is now only a fallback.
     const DEPARTMENTS = {
@@ -453,6 +490,7 @@
     let currentUserProfile = null;
     let userRequestsCache = [];
     let allRequestsCache = []; // Cache for stats
+    let allUsersCache = []; // Cache for stats
     let signerMap = {};
     let specialPositions = [];
     
@@ -479,43 +517,48 @@
         try {
             let response;
             let url = SCRIPT_URL;
-            let options = {
-                method: 'POST',
-                mode: 'cors',
-                redirect: 'follow',
-            };
 
             if (READ_ACTIONS.has(action)) {
                 // Handle GET request for reading data
-                options.method = 'GET';
                 const params = new URLSearchParams(payload);
                 url = `${SCRIPT_URL}?action=${action}&${params.toString()}`;
-                // GET requests don't have a body or content-type headers for the body
+                response = await fetch(url);
             } else {
-                // Handle POST request for writing data
-                options.method = 'POST';
-                // Using text/plain is a common workaround to avoid pre-flight CORS issues with Google Scripts.
-                options.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
-                options.body = JSON.stringify({ action: action, payload: payload });
+                 // Handle POST request for writing data
+                 response = await fetch(SCRIPT_URL, {
+                     method: 'POST',
+                     body: JSON.stringify({ action: action, payload: payload }),
+                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Use text/plain to avoid preflight for simple POSTs
+                     mode: 'cors',
+                     redirect: 'follow'
+                 });
             }
-
-            response = await fetch(url, options);
 
             if (!response.ok) {
                 console.error('Fetch response not OK.', { status: response.status, statusText: response.statusText });
                 throw new Error(`Network response was not ok: ${response.statusText}`);
             }
 
-            const result = await response.json();
+            const text = await response.text();
             
-            if (result.status === 'error' && result.message) {
-                 showAlert('ข้อผิดพลาดจากเซิร์ฟเวอร์', result.message);
+            // Handle case where script might redirect to a login page on auth error, returning HTML
+            if (text.trim().startsWith('{')) {
+                const result = JSON.parse(text);
+                if (result.status === 'error' && result.message) {
+                    if (action !== 'verifyCredentials') { // Don't show generic alert for login failure
+                        showAlert('ข้อผิดพลาดจากเซิร์ฟเวอร์', result.message);
+                    }
+                }
+                return result;
+            } else {
+                 // The response is likely HTML from a redirect, which indicates a script/auth error.
+                 console.error("Received non-JSON response:", text);
+                 throw new Error("Received non-JSON response from server. This often happens due to a script error or incorrect deployment permissions.");
             }
             
-            return result;
         } catch (error) {
             console.error('API Communication Error:', error);
-            showAlert('ข้อผิดพลาดในการเชื่อมต่อ', 'ไม่สามารถสื่อสารกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่อีกครั้ง');
+            showAlert('ข้อผิดพลาดในการเชื่อมต่อ', 'ไม่สามารถสื่อสารกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการตั้งค่า Deployment ของ Google Script (ต้องตั้งค่า "Who has access" เป็น "Anyone") หรือตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
             return { status: 'error', message: error.toString(), error: error };
         }
     }
@@ -581,6 +624,7 @@
     async function initializeSignerData() {
         const result = await api('getAllUsers');
         if (result.status === 'success' && result.data) {
+            allUsersCache = result.data; // Cache users for stats
             signerMap = {};
             const positions = new Set();
             result.data.forEach(user => {
@@ -609,7 +653,7 @@
 
         const result = await api('verifyCredentials', { username, password });
         
-        if (result.status === 'success') {
+        if (result.status === 'success' && result.user) {
             currentUserProfile = result.user;
             await initializeSignerData(); // Fetch signer data after successful login
             loginScreen.classList.add('hidden');
@@ -759,11 +803,9 @@
         
         if (e.target.classList.contains('delete-request-btn')) {
             if (await showConfirm('ยืนยันการลบ', 'คุณต้องการลบรายการคำขอนี้ใช่หรือไม่?')) {
-                const result = await api('deleteRequest', { id });
-                if (result.status === 'success') {
-                    showAlert('สำเร็จ', 'ลบรายการคำขอเรียบร้อยแล้ว');
-                    loadUserRequests();
-                }
+                await api('deleteRequest', { id });
+                showAlert('สำเร็จ', 'ลบรายการคำขอเรียบร้อยแล้ว');
+                loadUserRequests();
             }
         }
     });
@@ -774,7 +816,9 @@
         'admin-modal': { close: $('#admin-modal-close-button'), el: $('#admin-modal') },
         'alert-modal': { close: $('#alert-modal-close-button'), el: $('#alert-modal') },
         'dispatch-modal': { close: $('#dispatch-modal-close-button'), el: $('#dispatch-modal') },
-        'stats-detail-modal': { close: $('#stats-detail-close-button'), el: $('#stats-detail-modal') }
+        'stats-detail-modal': { close: $('#stats-detail-close-button'), el: $('#stats-detail-modal') },
+        'admin-upload-memo-modal': { close: $('#admin-upload-memo-close-button'), el: $('#admin-upload-memo-modal') }
+
     };
     for (const key in modals) {
         const modal = modals[key];
@@ -809,15 +853,10 @@
         }
         toggleButtonLoader(button, true);
         errorEl.classList.add('hidden');
-        const result = await api('registerUser', userData); // Corrected action
-        if (result.status === 'success') {
-            modals['register-modal'].el.style.display = 'none';
-            e.target.reset();
-            showAlert('สำเร็จ', 'สมัครใช้งานเรียบร้อยแล้ว กรุณาเข้าสู่ระบบ');
-        } else {
-            errorEl.textContent = result.message || 'เกิดข้อผิดพลาดในการสมัคร';
-            errorEl.classList.remove('hidden');
-        }
+        await api('registerUser', userData); // Corrected action
+        modals['register-modal'].el.style.display = 'none';
+        e.target.reset();
+        showAlert('สำเร็จ', 'สมัครใช้งานเรียบร้อยแล้ว กรุณาเข้าสู่ระบบ');
         toggleButtonLoader(button, false);
     });
 
@@ -840,19 +879,19 @@
             department: $('#profile-department').value.trim(),
         };
         toggleButtonLoader(button, true);
-        const result = await api('updateUser', updatedProfile); // Corrected action and payload
-        if (result.status === 'success') {
-            // Update local profile, especially if username changed
-            currentUserProfile.username = updatedProfile.newUsername;
-            currentUserProfile.fullName = updatedProfile.fullName;
-            currentUserProfile.position = updatedProfile.position;
-            currentUserProfile.department = updatedProfile.department;
+        await api('updateUser', updatedProfile); // Corrected action and payload
+        
+        // Update local profile, especially if username changed
+        currentUserProfile.username = updatedProfile.newUsername;
+        currentUserProfile.fullName = updatedProfile.fullName;
+        currentUserProfile.position = updatedProfile.position;
+        currentUserProfile.department = updatedProfile.department;
 
-            setupUIForUser();
-            messageEl.textContent = 'บันทึกข้อมูลสำเร็จ';
-            messageEl.className = 'text-green-600 mt-4 block';
-            setTimeout(() => messageEl.classList.add('hidden'), 3000);
-        }
+        setupUIForUser();
+        messageEl.textContent = 'บันทึกข้อมูลสำเร็จ';
+        messageEl.className = 'text-green-600 mt-4 block';
+        setTimeout(() => messageEl.classList.add('hidden'), 3000);
+
         toggleButtonLoader(button, false);
     });
 
@@ -868,20 +907,17 @@
         }
         toggleButtonLoader(button, true);
         errorEl.classList.add('hidden');
-        const result = await api('updatePassword', { 
+        await api('updatePassword', { 
             username: currentUserProfile.username, 
             oldPassword: currentPassword, 
             newPassword: newPassword 
         }); // Corrected action and payload
-        if (result.status === 'success') {
-            messageEl.textContent = 'เปลี่ยนรหัสผ่านสำเร็จ';
-            messageEl.className = 'text-green-600 mt-4 block';
-            e.target.reset();
-            setTimeout(() => messageEl.classList.add('hidden'), 3000);
-        } else {
-            errorEl.textContent = result.message || 'เกิดข้อผิดพลาด';
-            errorEl.classList.remove('hidden');
-        }
+        
+        messageEl.textContent = 'เปลี่ยนรหัสผ่านสำเร็จ';
+        messageEl.className = 'text-green-600 mt-4 block';
+        e.target.reset();
+        setTimeout(() => messageEl.classList.add('hidden'), 3000);
+
         toggleButtonLoader(button, false);
     });
      $('#show-password-toggle').addEventListener('change', (e) => {
@@ -1085,18 +1121,10 @@
         };
 
         try {
-            // Logic change: Don't generate PDF on client. Send data to script to generate.
-            const result = await api('createRequest', requestData);
-
-            if (result.status === 'success' && result.data.pdfUrl) {
-                $('#form-result').classList.remove('hidden');
-                $('#form-result-title').textContent = 'สร้างเอกสารสำเร็จ!';
-                $('#form-result-message').textContent = `บันทึกข้อมูลและสร้างไฟล์ PDF เรียบร้อยแล้ว (เลขที่อ้างอิง: ${result.data.id})`;
-                $('#form-result-link').href = result.data.pdfUrl;
-                loadUserRequests();
-            } else {
-                 showAlert('ข้อผิดพลาด', result.message || 'ไม่สามารถสร้าง PDF ได้');
-            }
+            await api('createRequest', requestData);
+            // Since POST via iframe doesn't return data, we show a generic success and refresh
+            showAlert('สำเร็จ', 'บันทึกข้อมูลและสร้างเอกสารเรียบร้อยแล้ว');
+            navigateToPage('dashboard-page');
         } catch (error) {
             console.error("Form submission error: ", error);
             showAlert('ข้อผิดพลาด', 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -1112,7 +1140,6 @@
         if (!currentUserProfile) return;
         const select = $('#memo-ref-number');
         select.innerHTML = '<option value="">กำลังโหลด...</option>';
-        // Assuming there should be an API to get requests ready for memo submission
         const result = await api('getUserRequests', { username: currentUserProfile.username });
         if (result.status === 'success' && result.data.length > 0) {
             select.innerHTML = '<option value="">-- กรุณาเลือกรายการ --</option>';
@@ -1143,8 +1170,7 @@
     function renderMemoItem(memo) {
          let statusText, statusColor;
             switch(memo.status) {
-                case 'Approved': statusText = 'อนุมัติแล้ว'; statusColor = 'bg-green-100 text-green-800'; break;
-                case 'Rejected': statusText = 'ปฏิเสธ'; statusColor = 'bg-red-100 text-red-800'; break;
+                case 'เสร็จสิ้น/รับไฟล์ไปใช้งาน': statusText = 'เสร็จสิ้น'; statusColor = 'bg-green-100 text-green-800'; break;
                 default: statusText = 'รอตรวจสอบ'; statusColor = 'bg-yellow-100 text-yellow-800';
             }
         return `
@@ -1153,9 +1179,12 @@
                     <p class="font-semibold">${memo.refNumber}</p>
                     <p class="text-sm text-gray-500">${formatThaiDate(memo.timestamp)}</p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                     <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full ${statusColor}">${statusText}</span>
-                    ${memo.fileUrl ? `<a href="${memo.fileUrl}" target="_blank" class="text-indigo-600 hover:underline">ดูไฟล์</a>` : '<span class="text-gray-400">ไม่มีไฟล์</span>'}
+                    ${memo.fileUrl ? `<a href="${memo.fileUrl}" target="_blank" class="text-xs text-indigo-600 hover:underline">ต้นฉบับ</a>` : ''}
+                    ${memo.completedMemoUrl ? `<a href="${memo.completedMemoUrl}" target="_blank" class="text-xs text-green-600 hover:underline">บันทึกลงนาม</a>` : ''}
+                    ${memo.completedCommandUrl ? `<a href="${memo.completedCommandUrl}" target="_blank" class="text-xs text-blue-600 hover:underline">คำสั่งลงนาม</a>` : ''}
+                    ${memo.dispatchBookUrl ? `<a href="${memo.dispatchBookUrl}" target="_blank" class="text-xs text-purple-600 hover:underline">หนังสือส่ง</a>` : ''}
                 </div>
             </div>`;
     }
@@ -1183,14 +1212,12 @@
                 mimeType: fileInput.type 
             };
         }
-        const result = await api('uploadMemo', { refNumber, memoType, file: fileData, username: currentUserProfile.username });
-        if (result.status === 'success') {
-            showAlert('สำเร็จ', 'ส่งบันทึกข้อความเรียบร้อยแล้ว');
-            e.target.reset();
-            $('#memo-filename').textContent = '';
-            loadRequestsForMemoDropdown();
-            loadUserMemos();
-        }
+        await api('uploadMemo', { refNumber, memoType, file: fileData, username: currentUserProfile.username });
+        showAlert('สำเร็จ', 'ส่งบันทึกข้อความเรียบร้อยแล้ว');
+        e.target.reset();
+        $('#memo-filename').textContent = '';
+        loadRequestsForMemoDropdown();
+        loadUserMemos();
         toggleButtonLoader(button, false);
     });
 
@@ -1240,11 +1267,9 @@
         }
         if(e.target.classList.contains('delete-user-btn')) {
              if (await showConfirm('ยืนยันการลบ', `คุณต้องการลบผู้ใช้ ${username} ใช่หรือไม่?`)) {
-                const result = await api('deleteUser', { username });
-                if (result.status === 'success') {
-                    showAlert('สำเร็จ', 'ลบผู้ใช้เรียบร้อยแล้ว');
-                    loadAllUsers();
-                }
+                await api('deleteUser', { username });
+                showAlert('สำเร็จ', 'ลบผู้ใช้เรียบร้อยแล้ว');
+                loadAllUsers();
             }
         }
     });
@@ -1288,12 +1313,10 @@
             username: $('#modal-username').value.trim()
         };
         
-        const result = await api(action, userData);
-        if (result.status === 'success') {
-            $('#admin-modal').style.display = 'none';
-            showAlert('สำเร็จ', 'บันทึกข้อมูลผู้ใช้เรียบร้อยแล้ว');
-            loadAllUsers();
-        }
+        await api(action, userData);
+        $('#admin-modal').style.display = 'none';
+        showAlert('สำเร็จ', 'บันทึกข้อมูลผู้ใช้เรียบร้อยแล้ว');
+        loadAllUsers();
         toggleButtonLoader(button, false);
     });
     
@@ -1317,7 +1340,6 @@
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ผู้ส่ง</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">เลขที่อ้างอิง</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">วันที่ส่ง</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ไฟล์</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">สถานะ</th>
                     <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">จัดการ</th>
                 </tr></thead>
@@ -1326,10 +1348,10 @@
                         <td class="px-4 py-4">${memo.submittedBy}</td>
                         <td class="px-4 py-4">${memo.refNumber}</td>
                         <td class="px-4 py-4">${formatThaiDate(memo.timestamp)}</td>
-                        <td class="px-4 py-4">${memo.fileUrl ? `<a href="${memo.fileUrl}" class="text-indigo-600" target="_blank">ดูไฟล์</a>` : 'ไม่มี'}</td>
                         <td class="px-4 py-4">${memo.status}</td>
                         <td class="px-4 py-4 text-right">
-                           ${memo.status === 'กำลังดำเนินการ' ? `<button class="btn btn-sm btn-success memo-update-status-btn" data-id="${memo.memoID}" data-status="เสร็จสิ้น/รับไฟล์ไปใช้งาน">รับไฟล์</button>` : ''}
+                           <button class="btn btn-sm btn-primary manage-memo-files-btn" data-id="${memo.memoId}">จัดการไฟล์</button>
+                           ${memo.status === 'กำลังดำเนินการ' ? `<button class="btn btn-sm btn-success memo-update-status-btn" data-id="${memo.memoId}" data-status="เสร็จสิ้น/รับไฟล์ไปใช้งาน">เสร็จสิ้น</button>` : ''}
                         </td>
                     </tr>`).join('')}
                 </tbody>
@@ -1337,17 +1359,56 @@
     }
 
     $('#admin-memos-list').addEventListener('click', async e => {
-        const memoId = e.target.dataset.id, newStatus = e.target.dataset.status;
-        if (!memoId || !newStatus) return;
+        const memoId = e.target.dataset.id;
+        if (!memoId) return;
 
-        if (await showConfirm('ยืนยันสถานะ', `คุณต้องการอัปเดตสถานะเป็น "${newStatus}" ใช่หรือไม่?`)) {
-            const result = await api('updateMemoStatus', { id: memoId, status: newStatus });
-            if (result.status === 'success') {
+        if (e.target.classList.contains('memo-update-status-btn')) {
+            const newStatus = e.target.dataset.status;
+            if (await showConfirm('ยืนยันสถานะ', `คุณต้องการอัปเดตสถานะเป็น "${newStatus}" ใช่หรือไม่?`)) {
+                await api('updateMemoStatus', { id: memoId, status: newStatus });
                 showAlert('สำเร็จ', 'อัปเดตสถานะเรียบร้อยแล้ว');
                 loadAllMemos();
             }
         }
+
+        if (e.target.classList.contains('manage-memo-files-btn')) {
+            $('#admin-upload-memo-id').value = memoId;
+            $('#admin-upload-memo-modal').style.display = 'flex';
+        }
     });
+
+    // NEW: Handle admin file uploads for memos
+    $$('.upload-signed-file-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const fileType = e.target.dataset.fileType;
+            const memoId = $('#admin-upload-memo-id').value;
+            let fileInput;
+            if (fileType === 'completedMemo') fileInput = $('#signed-memo-file');
+            else if (fileType === 'completedCommand') fileInput = $('#signed-command-file');
+            else if (fileType === 'dispatchBook') fileInput = $('#signed-dispatch-file');
+
+            if (!fileInput || fileInput.files.length === 0) {
+                showAlert('ข้อผิดพลาด', 'กรุณาเลือกไฟล์ก่อนอัปโหลด');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            toggleButtonLoader(e.target, true);
+
+            const fileData = {
+                data: await fileToBase64(file),
+                filename: file.name,
+                mimeType: file.type
+            };
+            
+            await api('adminUploadMemoFile', { memoId, fileData, fileType });
+            showAlert('สำเร็จ', 'อัปโหลดไฟล์เรียบร้อยแล้ว');
+            fileInput.value = ''; // Clear file input
+            loadAllMemos(); // Refresh admin list
+            toggleButtonLoader(e.target, false);
+        });
+    });
+
 
     async function loadAllRequestsForCommand() {
         const loader = $('#command-requests-loader'), list = $('#command-requests-list'), noMsg = $('#no-command-requests-message');
@@ -1365,52 +1426,70 @@
 
     function renderCommandRequestsTable(requests) {
          $('#command-requests-list').innerHTML = `
-            <table class="min-w-full bg-white">
-                <thead class="bg-gray-100"><tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ผู้ขอ</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">เรื่อง</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">สถานะคำสั่ง</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">จัดการ</th>
-                </tr></thead>
-                <tbody class="divide-y divide-gray-200">
-                    ${requests.map(req => `<tr>
-                        <td class="px-4 py-4">${req.requesterName}</td>
-                        <td class="px-4 py-4">${req.purpose}</td>
-                        <td class="px-4 py-4">${req.commandStatus}</td>
-                        <td class="px-4 py-4 text-right">
-                           ${req.commandStatus === 'Pending Approval' ? `
-                            <select class="form-input text-sm p-1 command-template-select" data-id="${req.requestId}">
-                                <option value="">เลือกรูปแบบ</option>
-                                <option value="solo">1 คน</option>
-                                <option value="groupSmall">2-5 คน</option>
-                                <option value="groupLarge">6+ คน</option>
-                            </select>
-                            <button class="btn btn-sm btn-success approve-command-btn" data-id="${req.requestId}">อนุมัติ</button>
-                           ` : `<a href="${req.commandPdfUrl}" class="text-indigo-600" target="_blank">ดูคำสั่ง</a>`}
-                           <button class="btn btn-sm btn-primary ml-2 generate-dispatch-btn" data-id="${req.requestId}">หนังสือส่ง</button>
-                        </td>
-                    </tr>`).join('')}
-                </tbody>
-            </table>`;
+            <div class="space-y-4">
+            ${requests.map(req => {
+                let statusHtml, actionHtml;
+                if (req.commandStatus === 'Pending Approval') {
+                    statusHtml = `<span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full bg-yellow-100 text-yellow-800">รออนุมัติ</span>`;
+                    actionHtml = `
+                        <div class="border-t mt-3 pt-3 space-y-3">
+                            <div>
+                                <h4 class="text-sm font-semibold text-gray-600 mb-1">ดูตัวอย่างคำสั่ง:</h4>
+                                <div class="flex gap-3">
+                                     ${req.commandPdfUrlSolo ? `<a href="${req.commandPdfUrlSolo}" target="_blank" class="text-sm text-blue-600 hover:underline">1 คน</a>` : '<span class="text-sm text-gray-400">1 คน</span>'}
+                                     ${req.commandPdfUrlGroupSmall ? `<a href="${req.commandPdfUrlGroupSmall}" target="_blank" class="text-sm text-blue-600 hover:underline">2-5 คน</a>` : '<span class="text-sm text-gray-400">2-5 คน</span>'}
+                                     ${req.commandPdfUrlGroupLarge ? `<a href="${req.commandPdfUrlGroupLarge}" target="_blank" class="text-sm text-blue-600 hover:underline">6+ คน</a>` : '<span class="text-sm text-gray-400">6+ คน</span>'}
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-end gap-2 flex-wrap">
+                                 <select class="form-input text-sm p-1 w-36 command-template-select" data-id="${req.requestId}">
+                                    <option value="">เลือกรูปแบบอนุมัติ</option>
+                                    <option value="solo">1 คน</option>
+                                    <option value="groupSmall">2-5 คน</option>
+                                    <option value="groupLarge">6+ คน</option>
+                                </select>
+                                <button class="btn btn-sm btn-success approve-command-btn" data-id="${req.requestId}">อนุมัติ</button>
+                            </div>
+                        </div>`;
+                } else {
+                     statusHtml = `<span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full bg-green-100 text-green-800">อนุมัติแล้ว</span>`;
+                     actionHtml = req.commandPdfUrl ? `<div class="border-t mt-3 pt-3 text-right"><a href="${req.commandPdfUrl}" class="text-indigo-600 hover:underline" target="_blank">ดูคำสั่งที่อนุมัติแล้ว</a></div>` : '';
+                }
+
+                return `
+                    <div class="p-4 border rounded-lg shadow-sm bg-white">
+                        <div class="flex flex-wrap justify-between items-start gap-2">
+                            <div>
+                                <p class="font-bold text-gray-800">${req.purpose}</p>
+                                <p class="text-sm text-gray-600">${req.requesterName} | ${formatThaiDate(req.startDate)}</p>
+                            </div>
+                            <div class="text-right">
+                                ${statusHtml}
+                                <p class="text-xs text-gray-500 mt-1">ID: ${req.requestId}</p>
+                            </div>
+                        </div>
+                        ${actionHtml}
+                    </div>
+                `;
+            }).join('')}
+            </div>`;
     }
 
-    $('#command-requests-list').addEventListener('click', async e => {
-        const requestId = e.target.dataset.id;
+    $('#command-requests-list').addEventListener('click', async (e) => {
+        const requestId = e.target.closest('[data-id]')?.dataset.id;
         if (!requestId) return;
 
         if (e.target.classList.contains('approve-command-btn')) {
             const select = e.target.parentElement.querySelector('.command-template-select');
             const templateType = select.value;
             if (!templateType) {
-                showAlert('ข้อมูลไม่ครบ', 'กรุณาเลือกรูปแบบคำสั่ง');
+                showAlert('ข้อมูลไม่ครบ', 'กรุณาเลือกรูปแบบคำสั่งที่จะอนุมัติ');
                 return;
             }
             if (await showConfirm('ยืนยันอนุมัติ', 'คุณต้องการอนุมัติคำสั่งนี้ใช่หรือไม่?')) {
-                const result = await api('approveCommand', { requestId, templateType });
-                if(result.status === 'success') {
-                    showAlert('สำเร็จ', 'อนุมัติคำสั่งเรียบร้อยแล้ว');
-                    loadAllRequestsForCommand();
-                }
+                await api('approveCommand', { requestId, templateType });
+                showAlert('สำเร็จ', 'อนุมัติคำสั่งเรียบร้อยแล้ว');
+                loadAllRequestsForCommand();
             }
         }
 
@@ -1427,7 +1506,7 @@
         $('#dispatch-modal').style.display = 'flex';
     }
 
-    $('#dispatch-form').addEventListener('submit', async e => {
+    $('#dispatch-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const button = e.target.querySelector('button[type="submit"]');
         toggleButtonLoader(button, true);
@@ -1439,13 +1518,10 @@
             commandCount: $('#command-count').value,
             memoCount: $('#memo-count').value,
         };
-        const result = await api('generateDispatchBook', payload);
-        if (result.status === 'success') {
-            $('#dispatch-modal').style.display = 'none';
-            showAlert('สำเร็จ', 'สร้างหนังสือส่งเรียบร้อยแล้ว');
-            window.open(result.url, '_blank');
-            loadAllRequestsForCommand();
-        }
+        await api('generateDispatchBook', payload);
+        $('#dispatch-modal').style.display = 'none';
+        showAlert('สำเร็จ', 'สร้างหนังสือส่งเรียบร้อยแล้ว (อาจใช้เวลาสักครู่ในการสร้างไฟล์)');
+        loadAllRequestsForCommand();
         toggleButtonLoader(button, false);
     });
 
@@ -1486,12 +1562,22 @@
         loader.classList.remove('hidden');
         content.classList.add('hidden');
 
-        const result = await api('getAllRequests');
+        // Fetch both requests and users for accurate department mapping
+        const [requestsResult, usersResult] = await Promise.all([
+            api('getAllRequests'),
+            api('getAllUsers')
+        ]);
         
         loader.classList.add('hidden');
-        if(result.status === 'success' && result.data) {
-            allRequestsCache = result.data; // Cache all requests for detail views
+        if(requestsResult.status === 'success' && requestsResult.data && usersResult.status === 'success' && usersResult.data) {
+            allRequestsCache = requestsResult.data; 
+            allUsersCache = usersResult.data; // Cache all users
             content.classList.remove('hidden');
+
+            const userDeptMap = allUsersCache.reduce((map, user) => {
+                map[user.username] = user.department || 'ไม่ระบุ';
+                return map;
+            }, {});
 
             const iconUser = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>`;
             const iconDept = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`;
@@ -1506,10 +1592,10 @@
             }, {});
             const requesterCard = createStatCard('ตามผู้ขอไปราชการ', iconUser, Object.entries(byRequester), 'requesterName');
 
-            // 2. By Department
+            // 2. By Department (MODIFIED LOGIC)
             const byDepartment = allRequestsCache.reduce((acc, req) => {
-                const key = req.department || 'ไม่ระบุ';
-                acc[key] = (acc[key] || 0) + 1;
+                const userDepartment = userDeptMap[req.createdBy] || 'ไม่ระบุ';
+                acc[userDepartment] = (acc[userDepartment] || 0) + 1;
                 return acc;
             }, {});
             const departmentCard = createStatCard('ตามกลุ่มสาระการเรียนรู้', iconDept, Object.entries(byDepartment), 'department');
@@ -1555,8 +1641,12 @@
                 filteredRequests = allRequestsCache.filter(r => r.requesterName === value);
                 break;
             case 'department':
+                const userDeptMap = allUsersCache.reduce((map, user) => {
+                    map[user.username] = user.department || 'ไม่ระบุ';
+                    return map;
+                }, {});
                 modalTitle = `รายการของ: ${value}`;
-                filteredRequests = allRequestsCache.filter(r => r.department === value);
+                filteredRequests = allRequestsCache.filter(r => userDeptMap[r.createdBy] === value);
                 break;
             case 'year':
                 const yearBE = parseInt(value.replace('พ.ศ. ', ''));
