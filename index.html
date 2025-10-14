@@ -904,7 +904,7 @@
             const action = button.dataset.action;
 
             if (action === 'edit') {
-                await editRequest(RequestId);
+                await editRequest(requestId);
             } else if (action === 'delete') {
                 const confirmed = await showConfirm("ยืนยันการลบ", "คุณแน่ใจหรือไม่ว่าต้องการลบรายการคำขอนี้? การกระทำนี้ไม่สามารถย้อนกลับได้");
                 if (confirmed) {
@@ -922,19 +922,19 @@
             }
         }
         
-        async function editRequest(RequestId) {
-            const requestData = allRequestsCache.find(r => r.id === RequestId);
+        async function editRequest(requestId) {
+            const requestData = allRequestsCache.find(r => r.id === requestId);
             if (!requestData) {
                 showAlert("ผิดพลาด", "ไม่พบข้อมูลคำขอ");
                 return;
             }
             
             try {
-                const attendeesResult = await apiCall('GET', 'getAttendeesForRequest', { RequestId });
+                const attendeesResult = await apiCall('GET', 'getAttendeesForRequest', { requestId });
                 const attendees = attendeesResult.data;
                 
                 await resetRequestForm();
-                document.getElementById('form-request-id').value = RequestId;
+                document.getElementById('form-request-id').value = requestId;
                 if(requestData.docDate) document.getElementById('form-doc-date').value = new Date(requestData.docDate).toISOString().split('T')[0];
                 document.getElementById('form-requester-name').value = requestData.requesterName;
                 document.getElementById('form-requester-position').value = requestData.requesterPosition;
