@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WNY App ไปราชการ</title>
+    <title>WNY App ไปราชการ (Google Sheets)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -460,8 +460,8 @@
 
 
     <script>
-        // Use the Google Apps Script URL provided by the user
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvi_gK-fITm3N74_-qrRI9t4oNkGBW2d02fo6a0j622nZpR1qq8aMhjroGSG-Oyp_Ryg/exec";
+        // !!! สำคัญ: กรุณาแทนที่ URL นี้ด้วย URL ที่ได้จากการ Deploy Google Apps Script ของคุณ !!!
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby58HB-QsINd2zsp5j6ibKJ0c_O7oU-VXPXUSnj5xeeUsRzDdZ_ArzbRqX5jzFAd1XjpA/exec";
 
         // Global State
         let allRequestsCache = [];
@@ -904,7 +904,7 @@
             const action = button.dataset.action;
 
             if (action === 'edit') {
-                await editRequest(requestId);
+                await editRequest(RequestId);
             } else if (action === 'delete') {
                 const confirmed = await showConfirm("ยืนยันการลบ", "คุณแน่ใจหรือไม่ว่าต้องการลบรายการคำขอนี้? การกระทำนี้ไม่สามารถย้อนกลับได้");
                 if (confirmed) {
@@ -922,27 +922,27 @@
             }
         }
         
-        async function editRequest(requestId) {
-            const requestData = allRequestsCache.find(r => r.id === requestId);
+        async function editRequest(RequestId) {
+            const requestData = allRequestsCache.find(r => r.id === RequestId);
             if (!requestData) {
                 showAlert("ผิดพลาด", "ไม่พบข้อมูลคำขอ");
                 return;
             }
             
             try {
-                const attendeesResult = await apiCall('GET', 'getAttendeesForRequest', { requestId });
+                const attendeesResult = await apiCall('GET', 'getAttendeesForRequest', { RequestId });
                 const attendees = attendeesResult.data;
                 
                 await resetRequestForm();
-                document.getElementById('form-request-id').value = requestId;
-                document.getElementById('form-doc-date').value = new Date(requestData.docDate).toISOString().split('T')[0];
+                document.getElementById('form-request-id').value = RequestId;
+                if(requestData.docDate) document.getElementById('form-doc-date').value = new Date(requestData.docDate).toISOString().split('T')[0];
                 document.getElementById('form-requester-name').value = requestData.requesterName;
                 document.getElementById('form-requester-position').value = requestData.requesterPosition;
                 document.getElementById('form-location').value = requestData.location;
                 document.getElementById('form-purpose').value = requestData.purpose;
-                document.getElementById('form-start-date').value = new Date(requestData.startDate).toISOString().split('T')[0];
-                document.getElementById('form-end-date').value = new Date(requestData.endDate).toISOString().split('T')[0];
-                
+                if(requestData.startDate) document.getElementById('form-start-date').value = new Date(requestData.startDate).toISOString().split('T')[0];
+                if(requestData.endDate) document.getElementById('form-end-date').value = new Date(requestData.endDate).toISOString().split('T')[0];
+
                 attendees.forEach(att => addAttendeeField(att.name, att.position));
                 
                 document.querySelector(`input[name="expense_option"][value="${requestData.expenseOption}"]`).checked = true;
@@ -970,7 +970,7 @@
                 departmentSelect.value = requestData.department;
                 departmentSelect.dispatchEvent(new Event('change')); // Trigger change to update head name
 
-                document.getElementById('submit-button-text').textContent = 'อัปเดตและสร้างเอกสารใหม่';
+                document.getElementById('submit-button-text').textContent = 'อัปเดตเอกสารใหม่';
                 switchPage('form-page');
 
             } catch(error) {
@@ -1187,7 +1187,7 @@
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Attendees");
-            XLSX.writeFile(wb, "แม่แบบการนำเข้ารายชื่อแนบ.xlsx");
+            XLSX.writeFile(wb, "attendee_template.xlsx");
         }
         
         function togglePasswordVisibility() {
@@ -1255,7 +1255,7 @@
             };
 
             try {
-                const result = await apiCall('POST', 'updateUserProfile', payload); // FIX: Changed to updateUserProfile
+                const result = await apiCall('POST', 'updateUserProfile', payload); 
                 // Update session storage
                 const user = getCurrentUser();
                 const updatedUser = {...user, ...payload};
@@ -1286,7 +1286,7 @@
                 return;
             }
             if (newPassword.length < 6) {
-                errorP.textContent = 'รหัสผ่านใหม่ต้องมีอน่างน้อย 6 ตัว ***ตัวอักษรภาษาอังกฤษ และ ตัวเลข***';
+                errorP.textContent = 'รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร';
                 errorP.classList.remove('hidden');
                 return;
             }
@@ -1416,7 +1416,7 @@
                 role: document.getElementById('modal-role').value,
             };
             try {
-                const action = isUpdate ? 'updateUserProfile' : 'addUser'; // FIX: Changed to updateUserProfile
+                const action = isUpdate ? 'updateUserProfile' : 'addUser'; 
                 if(isUpdate && !payload.password) delete payload.password; // Don't update password if blank
                 await apiCall('POST', action, payload);
                 showAlert('สำเร็จ', `ผู้ใช้ถูก${isUpdate ? 'อัปเดต' : 'เพิ่ม'}เรียบร้อยแล้ว`);
@@ -1647,7 +1647,7 @@
 
             try {
                 await apiCall('POST', 'approveCommand', payload);
-                showAlert('สำเร็จ', 'ออกคำสั่งเรียบร้อยแล้ว และสถานะถูกเปลี่ยนเป็น "รอการอนุมัติและออกคำสั่งฯ"');
+                showAlert('สำเร็จ', 'ออกคำสั่งเรียบร้อยแล้ว และสถานะถูกเปลี่ยนเป็น "เสร็จสิ้นรอออกคำสั่งไปราชการ"');
                 document.getElementById('command-approval-modal').style.display = 'none';
                 await fetchAllRequestsForCommand();
             } catch (error) {
