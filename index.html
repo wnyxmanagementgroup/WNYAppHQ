@@ -702,7 +702,7 @@
             document.getElementById('admin-memo-action-form').addEventListener('submit', handleAdminMemoActionSubmit);
             document.getElementById('dispatch-form').addEventListener('submit', handleDispatchFormSubmit);
             
-            document.getElementById('form-SpecialPosition').addEventListener('change', (e) => {
+            document.getElementById('form-department').addEventListener('change', (e) => {
                 const selectedPosition = e.target.value;
                 const headNameInput = document.getElementById('form-head-name');
                 headNameInput.value = specialPositionMap[selectedPosition] || '';
@@ -934,7 +934,10 @@
                 const attendees = attendeesResult.data;
                 
                 await resetRequestForm();
+                
+                // --- Step 1: Set the hidden request ID field. This tells the form we are in "edit mode". ---
                 document.getElementById('form-request-id').value = requestId;
+                
                 if(requestData.docDate) document.getElementById('form-doc-date').value = new Date(requestData.docDate).toISOString().split('T')[0];
                 document.getElementById('form-requester-name').value = requestData.requesterName;
                 document.getElementById('form-requester-position').value = requestData.requesterPosition;
@@ -968,8 +971,9 @@
                 
                 const departmentSelect = document.getElementById('form-department');
                 departmentSelect.value = requestData.department;
-                departmentSelect.dispatchEvent(new Event('change')); // Trigger change to update head name
+                departmentSelect.dispatchEvent(new Event('change'));
 
+                // --- Step 2: Change button text to indicate an update action. ---
                 document.getElementById('submit-button-text').textContent = 'อัปเดตเอกสารใหม่';
                 switchPage('form-page');
 
@@ -1063,6 +1067,7 @@
             }
 
             const payload = {
+                // --- When updating, this ID is sent to the backend to identify which row to update. ---
                 id: document.getElementById('form-request-id').value || null,
                 username: getCurrentUser().username,
                 docDate: document.getElementById('form-doc-date').value,
@@ -1096,7 +1101,7 @@
                 const result = await apiCall('POST', 'createRequest', payload);
                 
                 document.getElementById('form-result-title').textContent = 'สร้างเอกสารสำเร็จ!';
-                document.getElementById('form-result-message').textContent = `บันทึกข้อความสำหรับ ID ${result.data.id} ถูกสร้างแล้ว`;
+                document.getElementById('form-result-message').textContent = `บันทึกข้อความสำหรับ ID ${result.data.id} ถูกสร้าง/อัปเดตแล้ว`;
                 document.getElementById('form-result-link').href = result.data.pdfUrl;
                 document.getElementById('form-result').classList.remove('hidden');
                 
@@ -1110,7 +1115,6 @@
 
         async function populateDepartmentDropdownFromUsers() {
             const select = document.getElementById('form-department');
-            // Do not return if already populated, to ensure it's always fresh
             
             try {
                 const result = await apiCall('GET', 'getAllUsers');
@@ -1129,7 +1133,7 @@
                 });
 
                 select.innerHTML = '<option value="">-- กรุณาเลือก --</option>';
-                specialPositions.forEach(pos => {
+                Array.from(specialPositions).sort().forEach(pos => {
                     const option = document.createElement('option');
                     option.value = pos;
                     option.textContent = pos;
@@ -1166,20 +1170,25 @@
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onload = (event) => {
-                const data = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const json = XLSX.utils.sheet_to_json(worksheet);
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet);
 
-                json.forEach(row => {
-                    const name = row['ชื่อ-นามสกุล'] || row['FullName'];
-                    const position = row['ตำแหน่ง'] || row['Position'];
-                    if (name && position) addAttendeeField(name, position);
-                });
-                showAlert("นำเข้าสำเร็จ", `เพิ่มผู้ร่วมเดินทางจำนวน ${json.length} คนเรียบร้อยแล้ว`);
+                    json.forEach(row => {
+                        const name = row['ชื่อ-นามสกุล'] || row['FullName'];
+                        const position = row['ตำแหน่ง'] || row['Position'];
+                        if (name && position) addAttendeeField(name, position);
+                    });
+                    showAlert("นำเข้าสำเร็จ", `เพิ่มผู้ร่วมเดินทางจำนวน ${json.length} คนเรียบร้อยแล้ว`);
+                } catch (error) {
+                    showAlert("ผิดพลาด", "ไม่สามารถอ่านไฟล์ Excel ได้ กรุณาตรวจสอบรูปแบบไฟล์");
+                }
             };
             reader.readAsArrayBuffer(file);
+             e.target.value = ''; // Reset input
         }
         
         function downloadAttendeeTemplate() {
@@ -1442,13 +1451,13 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = async (event) => {
-                const data = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const users = XLSX.utils.sheet_to_json(worksheet);
-                
                 try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const users = XLSX.utils.sheet_to_json(worksheet);
+                    
                     const result = await apiCall('POST', 'importUsers', { users });
                     showAlert('นำเข้าสำเร็จ', result.message);
                     await fetchAllUsers();
@@ -1457,6 +1466,7 @@
                 }
             };
             reader.readAsArrayBuffer(file);
+            e.target.value = ''; // Reset input
         }
 
         async function fetchAllMemos() {
@@ -1710,7 +1720,6 @@
                 document.getElementById('dispatch-modal').style.display = 'none';
                 showAlert('สำเร็จ', `สร้างหนังสือส่งสำเร็จ!`);
                 window.open(result.url, '_blank');
-                // Optionally refresh memo list to show updated data if URL is stored there
                 await fetchAllRequestsForCommand();
             } catch (error) {
                 showAlert('ผิดพลาด', 'ไม่สามารถสร้างหนังสือส่งได้: ' + error.message);
@@ -1724,11 +1733,21 @@
             content.classList.add('hidden');
 
             try {
-                const result = await apiCall('GET', 'getAllRequests');
-                const requests = result.data || [];
-                // assign to global cache for detail view, to avoid re-fetching
-                allRequestsCache = requests; 
+                const [requestsResult, usersResult] = await Promise.all([
+                    apiCall('GET', 'getAllRequests'),
+                    apiCall('GET', 'getAllUsers')
+                ]);
+                const requests = requestsResult.data || [];
+                const users = usersResult.data || [];
                 
+                allRequestsCache = requests; 
+                allUsersCache = users; 
+                
+                const userDepartmentMap = users.reduce((map, user) => {
+                    map[user.username] = user.department || 'ไม่ระบุกลุ่มสาระฯ';
+                    return map;
+                }, {});
+
                 // 1. Stats by User
                 const byUser = requests.reduce((acc, req) => {
                     const user = req.requesterName || 'N/A';
@@ -1739,7 +1758,7 @@
 
                 // 2. Stats by Department
                 const byDept = requests.reduce((acc, req) => {
-                    const dept = req.department || 'ไม่ระบุกลุ่มสาระฯ';
+                    const dept = userDepartmentMap[req.username] || 'ไม่ระบุกลุ่มสาระฯ';
                     acc[dept] = (acc[dept] || 0) + 1;
                     return acc;
                 }, {});
@@ -1755,7 +1774,7 @@
                 
                 // 4. Stats by Expense
                 const byExpense = requests.reduce((acc, req) => {
-                    const type = req.expenseOption === 'no' ? 'ไม่เบิก' : 'เบิก';
+                    const type = req.expenseOption === 'no' ? 'ไม่เบิก' : 'partial';
                     acc[type] = (acc[type] || 0) + 1;
                     return acc;
                 }, {});
@@ -1800,7 +1819,11 @@
             if (type === 'user') {
                 filteredRequests = allRequestsCache.filter(r => (r.requesterName || 'N/A') === key);
             } else if (type === 'department') {
-                 filteredRequests = allRequestsCache.filter(r => (r.department || 'ไม่ระบุกลุ่มสาระฯ') === key);
+                 const userDepartmentMap = allUsersCache.reduce((map, user) => {
+                    map[user.username] = user.department || 'ไม่ระบุกลุ่มสาระฯ';
+                    return map;
+                }, {});
+                 filteredRequests = allRequestsCache.filter(r => (userDepartmentMap[r.username] || 'ไม่ระบุกลุ่มสาระฯ') === key);
             } else if (type === 'year') {
                 filteredRequests = allRequestsCache.filter(r => (new Date(r.docDate).getFullYear() + 543) == key);
             } else if (type === 'expense') {
