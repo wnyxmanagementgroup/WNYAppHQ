@@ -702,7 +702,7 @@
             document.getElementById('admin-memo-action-form').addEventListener('submit', handleAdminMemoActionSubmit);
             document.getElementById('dispatch-form').addEventListener('submit', handleDispatchFormSubmit);
             
-            document.getElementById('form-department').addEventListener('change', (e) => {
+            document.getElementById('form-SpecialPosition').addEventListener('change', (e) => {
                 const selectedPosition = e.target.value;
                 const headNameInput = document.getElementById('form-head-name');
                 headNameInput.value = specialPositionMap[selectedPosition] || '';
