@@ -137,7 +137,10 @@
                                 <div id="form-attendees-list"></div>
                                 <div class="flex flex-wrap gap-2 mt-4">
                                     <button type="button" id="form-add-attendee" class="btn btn-success w-full sm:w-auto"><span>+ เพิ่มผู้ร่วมเดินทาง</span></button>
-                                    <button type="button" id="form-import-excel" class="btn btn-primary w-full sm:w-auto"><span>นำเข้าจาก Excel</span></button>
+                                    <button type="button" id="form-import-excel" class="btn btn-primary w-full sm:w-auto">
+                                        <div class="loader hidden"></div>
+                                        <span>นำเข้าจาก Excel</span>
+                                    </button>
                                     <button type="button" id="form-download-template" class="btn bg-gray-500 text-white hover:bg-gray-600 w-full sm:w-auto"><span>ดาวน์โหลดแม่แบบ</span></button>
                                     <input type="file" id="excel-file-input" class="hidden" accept=".xlsx, .xls">
                                 </div>
@@ -232,7 +235,10 @@
                     <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                         <h2 class="text-2xl font-bold">จัดการผู้ใช้งาน</h2>
                         <div class="flex gap-2">
-                             <button id="import-users-button" class="btn btn-primary">นำเข้าจาก Excel</button>
+                             <button id="import-users-button" class="btn btn-primary">
+                                <div class="loader hidden"></div>
+                                <span>นำเข้าจาก Excel</span>
+                             </button>
                              <button id="download-user-template-button" class="btn bg-gray-500 text-white hover:bg-gray-600">ดาวน์โหลดแม่แบบ</button>
                              <button id="add-user-button" class="btn btn-success">เพิ่มผู้ใช้ใหม่</button>
                              <input type="file" id="user-excel-input" class="hidden" accept=".xlsx, .xls">
@@ -283,7 +289,6 @@
         </footer>
     </div>
 
-    <!-- Modals -->
     <div id="register-modal" class="modal">
         <div class="modal-content">
             <h3 class="text-xl font-bold mb-4">สมัครใช้งานใหม่</h3>
@@ -376,7 +381,10 @@
                 </div>
                  <div class="flex justify-end gap-4 mt-6">
                     <button type="button" class="btn bg-gray-300" id="admin-memo-action-modal-close-button">ยกเลิก</button>
-                    <button type="submit" class="btn btn-success">เสร็จสิ้นและส่งไฟล์</button>
+                    <button type="submit" id="admin-memo-action-submit-button" class="btn btn-success">
+                        <div class="loader hidden"></div>
+                        <span>เสร็จสิ้นและส่งไฟล์</span>
+                    </button>
                 </div>
              </form>
         </div>
@@ -452,7 +460,10 @@
                 </div>
                 <div class="flex justify-end gap-4 mt-6">
                     <button type="button" class="btn bg-gray-300" id="send-memo-modal-close-button">ยกเลิก</button>
-                    <button type="submit" class="btn btn-primary">ส่งบันทึก</button>
+                    <button type="submit" id="send-memo-submit-button" class="btn btn-primary">
+                        <div class="loader hidden"></div>
+                        <span>ส่งบันทึก</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -1168,6 +1179,10 @@
 
         function handleExcelImport(e) {
             const file = e.target.files[0];
+            if (!file) return;
+
+            toggleLoader('form-import-excel', true); // <-- [MODIFIED] Show loader
+            
             const reader = new FileReader();
             reader.onload = (event) => {
                 try {
@@ -1185,7 +1200,13 @@
                     showAlert("นำเข้าสำเร็จ", `เพิ่มผู้ร่วมเดินทางจำนวน ${json.length} คนเรียบร้อยแล้ว`);
                 } catch (error) {
                     showAlert("ผิดพลาด", "ไม่สามารถอ่านไฟล์ Excel ได้ กรุณาตรวจสอบรูปแบบไฟล์");
+                } finally {
+                    toggleLoader('form-import-excel', false); // <-- [MODIFIED] Hide loader
                 }
+            };
+            reader.onerror = () => { // <-- [MODIFIED] Added error handler
+                showAlert("ผิดพลาด", "เกิดข้อผิดพลาดในการอ่านไฟล์");
+                toggleLoader('form-import-excel', false);
             };
             reader.readAsArrayBuffer(file);
              e.target.value = ''; // Reset input
@@ -1219,6 +1240,8 @@
                 showAlert("ข้อมูลไม่ครบ", "กรุณาแนบไฟล์ PDF");
                 return;
             }
+            
+            toggleLoader('send-memo-submit-button', true); // <-- [MODIFIED] Show loader
 
             try {
                 const payload = {
@@ -1239,6 +1262,8 @@
                 await fetchUserRequests(); // Refresh dashboard to update status
             } catch (error) {
                 showAlert('ผิดพลาด', 'ไม่สามารถส่งบันทึกข้อความได้: ' + error.message);
+            } finally {
+                toggleLoader('send-memo-submit-button', false); // <-- [MODIFIED] Hide loader
             }
         }
 
@@ -1449,6 +1474,9 @@
         async function handleUserImport(e) {
             const file = e.target.files[0];
             if (!file) return;
+
+            toggleLoader('import-users-button', true); // <-- [MODIFIED] Show loader
+
             const reader = new FileReader();
             reader.onload = async (event) => {
                 try {
@@ -1463,7 +1491,13 @@
                     await fetchAllUsers();
                 } catch(error) {
                     showAlert('เกิดข้อผิดพลาดในการนำเข้า', error.message);
+                } finally {
+                    toggleLoader('import-users-button', false); // <-- [MODIFIED] Hide loader
                 }
+            };
+            reader.onerror = () => { // <-- [MODIFIED] Added error handler
+                showAlert("ผิดพลาด", "เกิดข้อผิดพลาดในการอ่านไฟล์");
+                toggleLoader('import-users-button', false);
             };
             reader.readAsArrayBuffer(file);
             e.target.value = ''; // Reset input
@@ -1678,6 +1712,8 @@
 
         async function handleAdminMemoActionSubmit(e) {
             e.preventDefault();
+            toggleLoader('admin-memo-action-submit-button', true); // <-- [MODIFIED] Show loader
+
             const payload = {
                 id: document.getElementById('action-memo-id').value,
                 status: 'เสร็จสิ้น/รับไฟล์ไปใช้งาน',
@@ -1703,6 +1739,8 @@
 
             } catch (error) {
                 showAlert('ผิดพลาด', 'ไม่สามารถดำเนินการได้: ' + error.message);
+            } finally {
+                toggleLoader('admin-memo-action-submit-button', false); // <-- [MODIFIED] Hide loader
             }
         }
         
@@ -1850,7 +1888,7 @@
                 row.innerHTML = `
                     <td class="px-4 py-2 whitespace-nowrap text-sm">${req.id}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm">${req.purpose}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-sm">${new Date(req.docDate).toLocaleDateString('th-TH')}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm">${new Date(req.docDate).toLocaleString('th-TH')}</td>
                 `;
             });
 
@@ -1863,4 +1901,3 @@
 
 </body>
 </html>
-
