@@ -839,7 +839,7 @@
                 filteredRequests = requests.filter(req => 
                     req.purpose?.toLowerCase().includes(lowerCaseSearch) ||
                     req.location?.toLowerCase().includes(lowerCaseSearch) ||
-                    req.requestId?.toLowerCase().includes(lowerCaseSearch)
+                    req.id?.toLowerCase().includes(lowerCaseSearch)
                 );
             }
             
