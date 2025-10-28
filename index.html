@@ -765,7 +765,8 @@
         showAlert('สำเร็จ', result.message);
         document.getElementById('command-approval-modal').style.display = 'none';
         
-       async function handleConfirmCommandApproval() {
+       // แก้ไขฟังก์ชันนี้ในไฟล์ HTML ให้สมบูรณ์
+async function handleConfirmCommandApproval() {
     const requestId = document.getElementById('approval-request-id').value;
     const button = document.getElementById('confirm-command-approval');
     
@@ -810,24 +811,29 @@
         // --- AUTHENTICATION HANDLERS ---
         
         async function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            const errorP = document.getElementById('login-error');
-            errorP.classList.add('hidden');
-            toggleLoader('login-button', true);
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const errorP = document.getElementById('login-error');
+    errorP.classList.add('hidden');
+    toggleLoader('login-button', true);
 
-            try {
-                const result = await apiCall('POST', 'verifyCredentials', { username, password });
-                sessionStorage.setItem('currentUser', JSON.stringify(result.user));
-                initializeUserSession(result.user);
-            } catch (error) {
-                errorP.textContent = error.message;
-                errorP.classList.remove('hidden');
-            } finally {
-                toggleLoader('login-button', false);
-            }
-        }
+    try {
+        console.log('Attempting login for user:', username);
+        const result = await apiCall('POST', 'verifyCredentials', { username, password });
+        console.log('Login successful:', result);
+        
+        sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+        initializeUserSession(result.user);
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        errorP.textContent = error.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+        errorP.classList.remove('hidden');
+    } finally {
+        toggleLoader('login-button', false);
+    }
+}
 
         async function handleRegister(e) {
             e.preventDefault();
