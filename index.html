@@ -1887,7 +1887,7 @@
                 // 3. Stats by Year
                 // 3. Stats by Year
                 const byYear = requests.reduce((acc, req) => {
-                    const year = new Date(req.docDate).getFullYear();
+                    const buddhistYear = docDate.getFullYear() + 543;
                     acc[year] = (acc[year] || 0) + 1;
                     return acc;
                 }, {});
