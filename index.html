@@ -1885,16 +1885,11 @@
                 renderStatsCard('stats-by-department', 'สรุปตามกลุ่มสาระฯ', byDept, 'department');
 
                 // 3. Stats by Year
-                // 3. Stats by Year (แบบปรับปรุง)
+                // 3. Stats by Year
                 const byYear = requests.reduce((acc, req) => {
-                    if (req.docDate) {
-                    const date = new Date(req.docDate);
-                    if (!isNaN(date.getTime())) { // ตรวจสอบว่าเป็นวันที่ที่ valid
-                    const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+                    const year = new Date(req.docDate).getFullYear();
                     acc[year] = (acc[year] || 0) + 1;
-                }
-                }
-                return acc;
+                    return acc;
                 }, {});
                 renderStatsCard('stats-by-year', 'สรุปตามปี', byYear, 'year');
                 
