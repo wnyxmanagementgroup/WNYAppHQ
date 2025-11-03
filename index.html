@@ -814,20 +814,22 @@
         let allMemosCache = [];
         let userMemosCache = [];
         let allUsersCache = [];
-        const specialPositionMap = {
-    'กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี': 'นางสาวปิยราช พันธุ์กมลศิลป์',
-    'กลุ่มสาระการเรียนรู้คณิตศาสตร์': 'นายสมฤทธิ์ ชาญสมร',
-    'กลุ่มสาระการเรียนรู้ภาษาไทย': 'นายอานนท์ วรวงค์',
-    'กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ': 'นางธรรมรักษ์ วัฒนพลาชัยกูร',
-    'กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม': 'นางเกศริน ทองโพธิกุล',
-    'กลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา': 'นางสาวเกษร เขจรลาภ',
-    'กลุ่มสาระการเรียนรู้ศิลปะ': 'นางสาวปิยลักษณ์ ขันทา',
-    'กลุ่มสาระการเรียนรู้การงานอาชีพ': 'นายสุชาติ สินทร',
-    'งานบริหารวิชาการ': 'นายมงคล เกตมณี',
-    'งานบริหารงบประมาณ': 'นางจันทิมา นกอยู่',
-    'งานบริหารบุคคล': 'นางปณิชา ภัสสิรากุล',
-    'งานบริหารทั่วไป': 'นางวชิรินทรา พัฒนกุลเดช'
-};
+        let specialPositionMap = {
+            'รองผู้อำนวยการกลุ่มบริหารงานทั่วไป':'นางวชิรินทรา พัฒนกุลเดช',
+            'รองผู้อำนวยการกลุ่มบริหารงานบุคคล':'นางปณิชา ภัสสิรากุล',
+            'รองผู้อำนวยการกลุ่มบริหารงานงบประมาณ':'นางจันทิมา นกอยู่',
+            'หัวหน้ากลุ่มบริหารวิชาการ': 'นายมงคล เกตมณี',
+            'หัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี': 'นางสาวปิยราช พันธุ์กมลศิลป์',
+            'รองหัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี':'นายอำนาจ ทัศนา',
+            'หัวหน้ากลุ่มสาระการเรียนรู้คณิตศาสตร์': 'นายสมฤทธิ์ ชาญสมร',
+            'หัวหน้ากลุ่มสาระการเรียนรู้ภาษาไทย': 'นายอานนท์ วรวงค์',
+            'หัวหน้ากลุ่มสาระการเรียนรู้ภาษาต่างประเทศ': 'นางธรรมรักษ์ วัฒนพลาชัยกูร',
+            'หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษาฯ': 'นางเกศริน ทองโพธิกุล',
+            'หัวหน้ากลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา': 'นางสาวเกษร เขจรลาภ',
+            'หัวหน้ากลุ่มสาระการเรียนรู้ศิลปะ': 'นางสาวปิยลักษณ์ ขันทา',
+            'หัวหน้ากลุ่มสาระการเรียนรู้การงานอาชีพ': 'นายสุชาติ สินทร',
+            'หัวหน้างานแนะแนว':'นายเริงศักดิ์ จันทร์นวล',
+        };
 
        const statusTranslations = {
     'Pending': 'กำลังดำเนินการ',
@@ -1006,24 +1008,7 @@ function translateStatus(status) {
                 document.getElementById('admin-view-requests-tab').click();
             }
         }
-function autoFillUserData() {
-    const user = getCurrentUser();
-    if (!user) return;
-    
-    // เติมข้อมูลในฟอร์มหลัก
-    const requesterName = document.getElementById('form-requester-name');
-    const requesterPosition = document.getElementById('form-requester-position');
-    
-    if (requesterName) requesterName.value = user.fullName || '';
-    if (requesterPosition) requesterPosition.value = user.position || '';
-    
-    // เติมข้อมูลในฟอร์มแก้ไข (ถ้ามี)
-    const editRequesterName = document.getElementById('edit-requester-name');
-    const editRequesterPosition = document.getElementById('edit-requester-position');
-    
-    if (editRequesterName) editRequesterName.value = user.fullName || '';
-    if (editRequesterPosition) editRequesterPosition.value = user.position || '';
-}
+
         // --- AUTH FUNCTIONS ---
 
         async function handleLogin(e) {
@@ -1154,19 +1139,6 @@ function autoFillUserData() {
             document.getElementById('logout-button').addEventListener('click', showLoginScreen);
             document.getElementById('show-register-modal-button').addEventListener('click', () => document.getElementById('register-modal').style.display = 'flex');
             document.getElementById('register-form').addEventListener('submit', handleRegister);
-            // เพิ่ม event listener สำหรับการเลือกแผนกในฟอร์มหลัก
-            document.getElementById('form-department').addEventListener('change', (e) => {
-                const selectedPosition = e.target.value;
-                const headNameInput = document.getElementById('form-head-name');
-                headNameInput.value = specialPositionMap[selectedPosition] || '';
-        });
-    
-            // เพิ่ม event listener สำหรับการเลือกแผนกในฟอร์มแก้ไข
-            document.getElementById('edit-department').addEventListener('change', (e) => {
-                const selectedPosition = e.target.value;
-                const headNameInput = document.getElementById('edit-head-name');
-                headNameInput.value = specialPositionMap[selectedPosition] || '';
-        });
             // Stats page events
             document.getElementById('refresh-stats').addEventListener('click', async () => {
             await loadStatsData();
@@ -1336,85 +1308,79 @@ function autoFillUserData() {
 
         // เติมข้อมูลในฟอร์มแก้ไข
         async function populateEditForm(requestData) {
-    // รอให้ special positions โหลดเสร็จ
-    await loadSpecialPositions();
-    
-    // ล้าง attendees ก่อน
-    document.getElementById('edit-attendees-list').innerHTML = '';
-    
-    // เติมข้อมูลพื้นฐาน
-    document.getElementById('edit-draft-id').value = requestData.draftId || '';
-    document.getElementById('edit-request-id').value = requestData.requestId || '';
-    
-    if(requestData.docDate) {
-        document.getElementById('edit-doc-date').value = new Date(requestData.docDate).toISOString().split('T')[0];
-    }
-    document.getElementById('edit-requester-name').value = requestData.requesterName || '';
-    document.getElementById('edit-requester-position').value = requestData.requesterPosition || '';
-    document.getElementById('edit-location').value = requestData.location || '';
-    document.getElementById('edit-purpose').value = requestData.purpose || '';
-    
-    if(requestData.startDate) {
-        document.getElementById('edit-start-date').value = new Date(requestData.startDate).toISOString().split('T')[0];
-    }
-    if(requestData.endDate) {
-        document.getElementById('edit-end-date').value = new Date(requestData.endDate).toISOString().split('T')[0];
-    }
-    
-    // เติมข้อมูล attendees
-    if (requestData.attendees && requestData.attendees.length > 0) {
-        requestData.attendees.forEach(att => {
-            addEditAttendeeField(att.name, att.position);
-        });
-    }
-    
-    // เติมข้อมูลค่าใช้จ่าย
-    const expenseRadio = document.querySelector(`input[name="edit-expense_option"][value="${requestData.expenseOption}"]`);
-    if (expenseRadio) {
-        expenseRadio.checked = true;
-    }
-    toggleEditExpenseOptions();
-    
-    if(requestData.expenseOption === 'partial') {
-        const expenseItems = JSON.parse(requestData.expenseItems || '[]');
-        expenseItems.forEach(item => {
-            const chk = document.querySelector(`input[name="edit-expense_item"][data-item-name="${item.name}"]`);
-            if(chk) {
-                chk.checked = true;
-                if(item.name === 'ค่าใช้จ่ายอื่นๆ') {
-                   document.getElementById('edit-expense_other_text').value = item.detail || '';
-                }
+            // รอให้ special positions โหลดเสร็จ
+            await loadSpecialPositions();
+            
+            // ล้าง attendees ก่อน
+            document.getElementById('edit-attendees-list').innerHTML = '';
+            
+            // เติมข้อมูลพื้นฐาน
+            document.getElementById('edit-draft-id').value = requestData.draftId || '';
+            document.getElementById('edit-request-id').value = requestData.requestId || '';
+            
+            if(requestData.docDate) {
+                document.getElementById('edit-doc-date').value = new Date(requestData.docDate).toISOString().split('T')[0];
             }
-        });
-        document.getElementById('edit-total-expense').value = requestData.totalExpense || 0;
-    }
-    
-    // เติมข้อมูลยานพาหนะ
-    const vehicleRadio = document.querySelector(`input[name="edit-vehicle_option"][value="${requestData.vehicleOption}"]`);
-    if (vehicleRadio) {
-        vehicleRadio.checked = true;
-    }
-    toggleEditVehicleOptions();
-    
-    if (requestData.vehicleOption === 'private') {
-        document.getElementById('edit-license-plate').value = requestData.licensePlate || '';
-    }
-    
-    // เติมข้อมูลแผนก - ใช้ข้อมูลจาก specialPositionMap
-    const departmentSelect = document.getElementById('edit-department');
-    const headNameInput = document.getElementById('edit-head-name');
-    
-    departmentSelect.value = requestData.department || '';
-    
-    // ตั้งค่าชื่อหัวหน้าแผนกจาก specialPositionMap
-    headNameInput.value = specialPositionMap[requestData.department] || requestData.headName || '';
-    
-    // ตั้งค่า event listener สำหรับการเปลี่ยนแปลงแผนก
-    departmentSelect.addEventListener('change', (e) => {
-        const selectedDept = e.target.value;
-        headNameInput.value = specialPositionMap[selectedDept] || '';
-    });
-}
+            document.getElementById('edit-requester-name').value = requestData.requesterName || '';
+            document.getElementById('edit-requester-position').value = requestData.requesterPosition || '';
+            document.getElementById('edit-location').value = requestData.location || '';
+            document.getElementById('edit-purpose').value = requestData.purpose || '';
+            
+            if(requestData.startDate) {
+                document.getElementById('edit-start-date').value = new Date(requestData.startDate).toISOString().split('T')[0];
+            }
+            if(requestData.endDate) {
+                document.getElementById('edit-end-date').value = new Date(requestData.endDate).toISOString().split('T')[0];
+            }
+            
+            // เติมข้อมูล attendees
+            if (requestData.attendees && requestData.attendees.length > 0) {
+                requestData.attendees.forEach(att => {
+                    addEditAttendeeField(att.name, att.position);
+                });
+            }
+            
+            // เติมข้อมูลค่าใช้จ่าย
+            const expenseRadio = document.querySelector(`input[name="edit-expense_option"][value="${requestData.expenseOption}"]`);
+            if (expenseRadio) {
+                expenseRadio.checked = true;
+            }
+            toggleEditExpenseOptions();
+            
+            if(requestData.expenseOption === 'partial') {
+                const expenseItems = JSON.parse(requestData.expenseItems || '[]');
+                expenseItems.forEach(item => {
+                    const chk = document.querySelector(`input[name="edit-expense_item"][data-item-name="${item.name}"]`);
+                    if(chk) {
+                        chk.checked = true;
+                        if(item.name === 'ค่าใช้จ่ายอื่นๆ') {
+                           document.getElementById('edit-expense_other_text').value = item.detail || '';
+                        }
+                    }
+                });
+                document.getElementById('edit-total-expense').value = requestData.totalExpense || 0;
+            }
+            
+            // เติมข้อมูลยานพาหนะ
+            const vehicleRadio = document.querySelector(`input[name="edit-vehicle_option"][value="${requestData.vehicleOption}"]`);
+            if (vehicleRadio) {
+                vehicleRadio.checked = true;
+            }
+            toggleEditVehicleOptions();
+            
+            if (requestData.vehicleOption === 'private') {
+                document.getElementById('edit-license-plate').value = requestData.licensePlate || '';
+            }
+            
+            // เติมข้อมูลแผนก - ใช้ข้อมูลจาก specialPositionMap
+            const departmentSelect = document.getElementById('edit-department');
+            departmentSelect.value = requestData.department || '';
+            
+            // ตั้งค่าชื่อหัวหน้าแผนก
+            const headNameInput = document.getElementById('edit-head-name');
+            headNameInput.value = specialPositionMap[requestData.department] || requestData.headName || '';
+        }
+
         // ฟังก์ชันบันทึกข้อมูลคำขอ (ไม่สร้างเอกสาร)
         async function saveDraft() {
             const formData = getEditFormData();
@@ -1926,38 +1892,23 @@ async function handleRequestAction(e) {
         // --- BASIC FORM FUNCTIONS ---
 
         async function resetRequestForm() {
-    document.getElementById('request-form').reset();
-    document.getElementById('form-request-id').value = '';
-    document.getElementById('form-attendees-list').innerHTML = '';
-    document.getElementById('form-result').classList.add('hidden');
-    
-    // ตั้งค่าวันเริ่มต้นเป็นวันนี้
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('form-doc-date').value = today;
-    document.getElementById('form-start-date').value = today;
-    document.getElementById('form-end-date').value = today;
-    
-    // เติมชื่อผู้ขอและตำแหน่งอัตโนมัติจากข้อมูลผู้ใช้ปัจจุบัน
-    const user = getCurrentUser();
-    if (user) {
-        document.getElementById('form-requester-name').value = user.fullName || '';
-        document.getElementById('form-requester-position').value = user.position || '';
-    }
-    
-    // ตั้งค่า department และ head name เริ่มต้น
-    const departmentSelect = document.getElementById('form-department');
-    const headNameInput = document.getElementById('form-head-name');
-    
-    // รีเซ็ตค่า
-    departmentSelect.value = '';
-    headNameInput.value = '';
-    
-    // ตั้งค่า event listener ใหม่
-    departmentSelect.addEventListener('change', (e) => {
-        const selectedDept = e.target.value;
-        headNameInput.value = specialPositionMap[selectedDept] || '';
-    });
-}
+            document.getElementById('request-form').reset();
+            document.getElementById('form-request-id').value = '';
+            document.getElementById('form-attendees-list').innerHTML = '';
+            document.getElementById('form-result').classList.add('hidden');
+            
+            // ตั้งค่าวันเริ่มต้นเป็นวันนี้
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('form-doc-date').value = today;
+            document.getElementById('form-start-date').value = today;
+            document.getElementById('form-end-date').value = today;
+            
+            // ตั้งค่า department change handler
+            document.getElementById('form-department').addEventListener('change', (e) => {
+                const selectedDept = e.target.value;
+                document.getElementById('form-head-name').value = specialPositionMap[selectedDept] || '';
+            });
+        }
 
         function addAttendeeField() {
             const list = document.getElementById('form-attendees-list');
@@ -2957,3 +2908,4 @@ async function exportStatsReport() {
 
 </body>
 </html>
+
