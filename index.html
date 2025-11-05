@@ -853,38 +853,61 @@ function translateStatus(status) {
 
         // --- API HELPER FUNCTIONS ---
         
-        async function apiCall(method, action, payload = {}) {
-            let url = SCRIPT_URL;
-            const options = {
-                method: method,
-                redirect: 'follow',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8', },
+      async function apiCall(method, action, payload = {}) {
+    let url = SCRIPT_URL;
+    
+    // สำหรับ GET requests ใช้ JSONP
+    if (method === 'GET') {
+        return new Promise((resolve, reject) => {
+            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+            const params = new URLSearchParams({ 
+                action, 
+                ...payload, 
+                callback: callbackName 
+            });
+            
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                resolve(data);
             };
 
-            if (method === 'GET') {
-                const params = new URLSearchParams({ action, ...payload, cacheBust: new Date().getTime() }); 
-                url += `?${params}`;
-            } else {
-                options.body = JSON.stringify({ action, payload });
-            }
+            const script = document.createElement('script');
+            script.src = url + `?${params}`;
+            script.onerror = () => {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                reject(new Error('JSONP request failed'));
+            };
+            document.body.appendChild(script);
+        });
+    }
+    
+    // สำหรับ POST requests ใช้ fetch ธรรมดา
+    const options = {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, payload })
+    };
 
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const result = await response.json();
-                if (result.status === 'error') throw new Error(result.message);
-                return result;
-            } catch (error) {
-                console.error('API Call Error:', error);
-                
-                if (error.message.includes('Failed to fetch')) {
-                    showAlert('การเชื่อมต่อล้มเหลว', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
-                } else {
-                    showAlert('เกิดข้อผิดพลาด', `Server error: ${error.message}`);
-                }
-                throw error;
-            }
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const result = await response.json();
+        if (result.status === 'error') throw new Error(result.message);
+        return result;
+    } catch (error) {
+        console.error('API Call Error:', error);
+        
+        if (error.message.includes('Failed to fetch')) {
+            showAlert('การเชื่อมต่อล้มเหลว', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+        } else {
+            showAlert('เกิดข้อผิดพลาด', `Server error: ${error.message}`);
         }
+        throw error;
+    }
+}
         
         // --- UTILITY FUNCTIONS ---
         
