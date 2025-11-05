@@ -809,7 +809,7 @@
 
     <script>
         // ใช้ URL ของ Google Apps Script
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUWXyCKKrgVANaPXbxdf3jxYVrqr8X0vn1NIVIV4Ab_Ws3dSxCJLxzAi_-p73NTPpxJg/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxq8fkHgDOyYjpZgy4dngT8n-Z3zSBjfJ0R7lomuUxoI63vqpdOP-7nlodlV-BsXnksaA/exec";
 
         // Global State
         let allRequestsCache = [];
@@ -853,50 +853,67 @@ function translateStatus(status) {
 
         // --- API HELPER FUNCTIONS ---
         
-      async function apiCall(method, action, payload = {}) {
+     async function apiCall(method, action, payload = {}) {
     let url = SCRIPT_URL;
-    
-    // สำหรับ GET requests ใช้ JSONP
-    if (method === 'GET') {
-        return new Promise((resolve, reject) => {
-            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-            const params = new URLSearchParams({ 
-                action, 
-                ...payload, 
-                callback: callbackName 
-            });
-            
-            window[callbackName] = function(data) {
-                delete window[callbackName];
-                document.body.removeChild(script);
-                resolve(data);
-            };
-
-            const script = document.createElement('script');
-            script.src = url + `?${params}`;
-            script.onerror = () => {
-                delete window[callbackName];
-                document.body.removeChild(script);
-                reject(new Error('JSONP request failed'));
-            };
-            document.body.appendChild(script);
-        });
-    }
-    
-    // สำหรับ POST requests ใช้ fetch ธรรมดา
     const options = {
-        method: 'POST',
+        method: method,
+        mode: 'no-cors', // ใช้ no-cors mode
         redirect: 'follow',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action, payload })
     };
+
+    if (method === 'GET') {
+        const params = new URLSearchParams({ action, ...payload, cacheBust: new Date().getTime() }); 
+        url += `?${params}`;
+    } else {
+        options.body = JSON.stringify({ action, payload });
+    }
 
     try {
         const response = await fetch(url, options);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const result = await response.json();
-        if (result.status === 'error') throw new Error(result.message);
-        return result;
+        
+        // ใน no-cors mode เราจะไม่สามารถอ่าน response ได้โดยตรง
+        // ให้ใช้วิธีอื่นเช่น redirect หรือสร้าง iframe
+        
+        // สำหรับ GET requests ให้ใช้ redirect ไปยัง URL ที่มีข้อมูล
+        if (method === 'GET') {
+            // สร้าง iframe ชั่วคราวเพื่อโหลดข้อมูล
+            return new Promise((resolve, reject) => {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = url;
+                
+                iframe.onload = function() {
+                    try {
+                        // พยายามอ่านข้อมูลจาก iframe
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        const bodyText = iframeDoc.body.textContent;
+                        const result = JSON.parse(bodyText);
+                        document.body.removeChild(iframe);
+                        resolve(result);
+                    } catch (e) {
+                        document.body.removeChild(iframe);
+                        reject(new Error('Failed to parse response'));
+                    }
+                };
+                
+                iframe.onerror = function() {
+                    document.body.removeChild(iframe);
+                    reject(new Error('Failed to load'));
+                };
+                
+                document.body.appendChild(iframe);
+            });
+        } else {
+            // สำหรับ POST ใช้วิธีเดิม
+            const result = await response.text();
+            // พยายาม parse JSON จาก text
+            try {
+                return JSON.parse(result);
+            } catch (e) {
+                throw new Error('Invalid response format');
+            }
+        }
     } catch (error) {
         console.error('API Call Error:', error);
         
@@ -908,7 +925,6 @@ function translateStatus(status) {
         throw error;
     }
 }
-        
         // --- UTILITY FUNCTIONS ---
         
         function showAlert(title, message) {
