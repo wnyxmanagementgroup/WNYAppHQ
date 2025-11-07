@@ -3538,7 +3538,38 @@ function tryAutoFillRequester(retry = 0) {
     if (retry < 5) setTimeout(() => tryAutoFillRequester(retry + 1), 1000);
   }
 }
+// ✅ ซ่อนแท็บแก้ไขเมื่อกลับสู่แดชบอร์ด
+const backToDashboardBtn = document.getElementById("back-to-dashboard");
+if (backToDashboardBtn) {
+backToDashboardBtn.addEventListener("click", () => {
+showPage("dashboard-page");
+const editNav = document.getElementById("nav-edit");
+if (editNav) editNav.classList.add("hidden");
+});
+}
 
+
+// ✅ ซ่อนแท็บแก้ไขเมื่อผู้ใช้ออกจากระบบ
+const logoutBtn = document.getElementById("logout-button");
+if (logoutBtn) {
+logoutBtn.addEventListener("click", () => {
+// เรียกโค้ดออกจากระบบเดิมที่มีอยู่
+// เช่น clearSession(), resetUI(), หรืออื่น ๆ ถ้ามีอยู่แล้ว
+
+
+// จากนั้นซ่อนแท็บแก้ไข
+const editNav = document.getElementById("nav-edit");
+if (editNav) editNav.classList.add("hidden");
+});
+}
+
+
+// ✅ ฟังก์ชันแสดงหน้า (ตัวอย่าง ถ้ามีฟังก์ชันนี้อยู่แล้วไม่ต้องเพิ่มซ้ำ)
+function showPage(pageId) {
+const pages = document.querySelectorAll('.page-view');
+pages.forEach(p => p.classList.add('hidden'));
+document.getElementById(pageId).classList.remove('hidden');
+}
 
 </script>
 
