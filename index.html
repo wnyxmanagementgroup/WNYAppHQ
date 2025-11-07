@@ -1605,100 +1605,49 @@ function toggleEditVehicleOptions() {
     }
 }
 // ฟังก์ชันเปิดหน้าแก้ไข
+// ในฟังก์ชัน openEditPage
 async function openEditPage(requestId) {
   try {
-    console.log("🔓 Opening edit page for request:", requestId);
-
-    if (!requestId || requestId === 'undefined' || requestId === 'null') {
-      showAlert("ผิดพลาด", "ไม่พบรหัสคำขอ");
+    const user = getCurrentUser();
+    if (!user) {
+      showAlert("ผิดพลาด", "กรุณาเข้าสู่ระบบใหม่");
       return;
     }
 
-    // แสดง loading state
-    document.getElementById('edit-result').classList.add('hidden');
-    document.getElementById('edit-attendees-list').innerHTML = `
-      <div class="text-center p-4">
-        <div class="loader mx-auto"></div>
-        <p class="mt-2">กำลังโหลดข้อมูล...</p>
-      </div>`;
-
-    // ✅ ส่ง username ไปด้วย
-    const user = getCurrentUser();
-    const username = user ? user.username : '';
-    
-    console.log("📡 Calling API with:", { requestId, username });
     const result = await apiCall('GET', 'getDraftRequest', { 
       requestId: requestId, 
-      username: username 
+      username: user.username // ✅ ส่ง username ไปด้วย
     });
-
-    console.log("🔥 Raw API Response:", result);
-
-    // ✅ FIX: ดึงข้อมูลจาก result.data.data แทน result.data
-    let data = result.data;
-    if (result.status === 'success') {
-      // ถ้ามี nesting ให้ดึงข้อมูลจาก data.data
-      if (result.data && result.data.data) {
-        data = result.data.data;
-        console.log("🔄 Found nested data structure, using result.data.data");
-      }
-      
-      console.log("✅ Data received successfully from server");
-      console.log("🔍 Processed data:", data);
-
-      // 🔍 ตรวจสอบข้อมูลที่ได้จาก server
-      console.log("🔍 Key data check:");
-      console.log("- Requester Name:", data.requesterName);
-      console.log("- Requester Position:", data.requesterPosition);
-      console.log("- Location:", data.location);
-      console.log("- Purpose:", data.purpose);
-      console.log("- Attendees count:", data.attendees ? data.attendees.length : 0);
-      console.log("- Department:", data.department);
-      console.log("- Head Name:", data.headName);
-      console.log("- Dates - Doc:", data.docDate, "Start:", data.startDate, "End:", data.endDate);
-
-      // ✅ ป้องกัน attendees undefined
-      data.attendees = Array.isArray(data.attendees) ? data.attendees : [];
-
-      // ✅ กรณี backend ยังไม่มี requesterName/Position — เติมจาก currentUser
-      if ((!data.requesterName || data.requesterName.trim() === '') && user?.fullName) {
-        data.requesterName = user.fullName;
-        console.log("👤 Filled requesterName from user profile:", data.requesterName);
-      }
-      if ((!data.requesterPosition || data.requesterPosition.trim() === '') && user?.position) {
-        data.requesterPosition = user.position;
-        console.log("👤 Filled requesterPosition from user profile:", data.requesterPosition);
-      }
-
-      // 🔥 เก็บ requestId ชั่วคราว
-      sessionStorage.setItem('currentEditRequestId', requestId);
-
-      // ✅ เติมข้อมูลลงฟอร์ม
-      await populateEditForm(data);
-
-      // ✅ อัปเดตค่าในช่อง requesterName / requesterPosition อีกชั้น
-      const inputRequesterName = document.getElementById('edit-requester-name');
-      const inputRequesterPosition = document.getElementById('edit-requester-position');
-      if (inputRequesterName && data.requesterName) inputRequesterName.value = data.requesterName;
-      if (inputRequesterPosition && data.requesterPosition) inputRequesterPosition.value = data.requesterPosition;
-
-      // ✅ แสดงหน้าแก้ไข
-      switchPage('edit-page');
-      const navEdit = document.getElementById('nav-edit');
-      if (navEdit) navEdit.classList.remove('hidden');
-
-      console.log("✅ Edit page opened successfully with requestId:", requestId);
-    } else {
-      console.warn("❌ No data received from server or invalid response");
-      showAlert("ผิดพลาด", result.message || "ไม่พบข้อมูลคำขอหรือไม่สามารถโหลดข้อมูลได้");
-    }
-
+    // ... โค้ดเดิม ...
   } catch (error) {
-    console.error("❌ Error loading edit data:", error);
-    showAlert("ผิดพลาด", "ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้: " + error.message);
+    // ... error handling ...
   }
 }
-// ฟังก์ชันสร้างเอกสารจากข้อมูลที่แก้ไข
+
+// ในฟังก์ชัน handleRequestAction สำหรับการลบ
+async function handleRequestAction(e) {
+  const button = e.target.closest('button[data-action]');
+  if (!button) return;
+
+  const requestId = button.dataset.id;
+  const action = button.dataset.action;
+  const user = getCurrentUser();
+
+  if (action === 'delete') {
+    const confirmed = await showConfirm("ยืนยันการลบ", "คุณแน่ใจหรือไม่ว่าต้องการลบรายการคำขอนี้?");
+    if (confirmed) {
+      try {
+        await apiCall('POST', 'deleteRequest', { 
+          id: requestId, 
+          username: user.username // ✅ ส่ง username ไปด้วย
+        });
+        // ... โค้ดเดิม ...
+      } catch(error) {
+        // ... error handling ...
+      }
+    }
+  }
+}
 // ฟังก์ชันสร้างเอกสารจากข้อมูลที่แก้ไข
 async function generateDocumentFromDraft() {
     console.log("=== generateDocumentFromDraft START ===");
