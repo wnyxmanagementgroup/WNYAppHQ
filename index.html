@@ -25,6 +25,8 @@
         .btn-primary { background-color: #4f46e5; color: white; }
         .btn-danger { background-color: #ef4444; color: white; }
         .btn-success { background-color: #10b981; color: white; }
+        .btn-warning { background-color: #f59e0b; color: white; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; }
         .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 800px; border-radius: 0.75rem; }
         .nav-button.active { background-color: #e0e7ff; border: 2px solid #4f46e5; }
@@ -41,6 +43,8 @@
         .info-section ul { list-style-type: disc; margin-left: 1.5rem; }
         .info-section li { margin-bottom: 0.5rem; }
         .info-note { background-color: #fef3cd; border-left: 4px solid #f59e0b; padding: 0.75rem; margin-top: 1rem; border-radius: 0.375rem; }
+        .page-view { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="p-4 sm:p-8">
@@ -119,6 +123,8 @@
                 </div>
             </div>
         </div>
+        
+        <!-- ส่วนแอปพลิเคชันหลัก -->
         <div id="main-app" class="hidden">
             <header class="p-4 bg-white rounded-xl shadow-lg mb-6 flex flex-wrap justify-between items-center gap-4">
                 <div>
@@ -128,6 +134,7 @@
                 <button id="logout-button" class="btn btn-danger">ออกจากระบบ</button>
             </header>
 
+            <!-- เมนูนำทาง -->
             <div id="navigation" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
                 <button data-target="dashboard-page" id="user-nav-dashboard" class="nav-button p-4 text-center bg-white rounded-lg shadow hover:bg-indigo-50 transition active">
                     <h3 class="font-bold text-indigo-700">แดชบอร์ด</h3>
@@ -159,6 +166,7 @@
                 </button>
             </div>
 
+            <!-- เนื้อหาหลัก -->
             <main id="page-content" class="p-6 sm:p-8 bg-white rounded-2xl shadow-lg">
                 <!-- หน้าแดชบอร์ด -->
                 <div id="dashboard-page" class="page-view">
@@ -231,7 +239,7 @@
                                     <select id="form-department" class="form-input" required>
                                         <option value="">-- เลือกกลุ่มสาระ/งาน --</option>
                                         <option value="หัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี">กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
-                                        <option value="รองหัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี">รองหัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
+                                        <option value="รองหัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี">(รอง)กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
                                         <option value="หัวหน้ากลุ่มสาระการเรียนรู้คณิตศาสตร์">กลุ่มสาระการเรียนรู้คณิตศาสตร์</option>
                                         <option value="หัวหน้ากลุ่มสาระการเรียนรู้ภาษาไทย">กลุ่มสาระการเรียนรู้ภาษาไทย</option>
                                         <option value="หัวหน้ากลุ่มสาระการเรียนรู้ภาษาต่างประเทศ">กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</option>
@@ -264,7 +272,7 @@
                 </div>
 
                 <!-- หน้าแก้ไขคำขอ -->
-                <div id="edit-page" class="page-view hidden">
+                <div id="edit-page" class="page-view">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold">แก้ไขคำขอไปราชการ</h2>
                         <button id="back-to-dashboard" class="btn bg-gray-500 text-white">← กลับสู่แดชบอร์ด</button>
@@ -351,26 +359,25 @@
                             </div>
                         </fieldset>
                         
-                        <!-- แก้ไข: เปลี่ยน ID ให้ไม่ซ้ำกับฟอร์มหลัก -->
                         <fieldset class="border p-4 rounded-lg mb-6">
                             <legend>5. ข้อมูลผู้ลงนาม</legend>
                             <div class="mb-4">
                                 <label for="edit-department" class="form-label">กลุ่มสาระฯ / งาน</label>
                                 <select id="edit-department" class="form-input" required>
                                     <option value="">-- เลือกกลุ่มสาระ/งาน --</option>
-                                        <option value="หัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี">กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
-                                        <option value="รองหัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี">รองหัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
-                                        <option value="หัวหน้ากลุ่มสาระการเรียนรู้คณิตศาสตร์">กลุ่มสาระการเรียนรู้คณิตศาสตร์</option>
-                                        <option value="หัวหน้ากลุ่มสาระการเรียนรู้ภาษาไทย">กลุ่มสาระการเรียนรู้ภาษาไทย</option>
-                                        <option value="หัวหน้ากลุ่มสาระการเรียนรู้ภาษาต่างประเทศ">กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</option>
-                                        <option value="หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม">กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม</option>
-                                        <option value="หัวหน้ากลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา">กลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา</option>
-                                        <option value="หัวหน้ากลุ่มสาระการเรียนรู้ศิลปะ">กลุ่มสาระการเรียนรู้ศิลปะ</option>
-                                        <option value="หัวหน้ากลุ่มสาระการเรียนรู้การงานอาชีพ">กลุ่มสาระการเรียนรู้การงานอาชีพ</option>
-                                        <option value="หัวหน้ากลุ่มบริหารวิชาการ">กลุ่มบริหารวิชาการ</option>
-                                        <option value="รองผู้อำนวยการกลุ่มบริหารงบประมาณ">กลุ่มบริหารงบประมาณ</option>
-                                        <option value="รองผู้อำนวยการกลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
-                                        <option value="รองผู้อำนวยการกลุ่มบริหารทั่วไป">กลุ่มบริหารทั่วไป</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี">กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
+                                    <option value="รองหัวหน้ากลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี">(รอง)กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้คณิตศาสตร์">กลุ่มสาระการเรียนรู้คณิตศาสตร์</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้ภาษาไทย">กลุ่มสาระการเรียนรู้ภาษาไทย</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้ภาษาต่างประเทศ">กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษาศาสนา และวัฒนธรรม">กลุ่มสาระการเรียนรู้สังคมศึกษาศาสนา และวัฒนธรรม</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา">กลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้ศิลปะ">กลุ่มสาระการเรียนรู้ศิลปะ</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้การงานอาชีพ">กลุ่มสาระการเรียนรู้การงานอาชีพ</option>
+                                    <option value="หัวหน้ากลุ่มบริหารวิชาการ">กลุ่มบริหารวิชาการ</option>
+                                    <option value="รองผู้อำนวยการกลุ่มบริหารงบประมาณ">กลุ่มบริหารงบประมาณ</option>
+                                    <option value="รองผู้อำนวยการกลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
+                                    <option value="รองผู้อำนวยการกลุ่มบริหารทั่วไป">กลุ่มบริหารทั่วไป</option>
                                 </select>
                             </div>
                             <div>
@@ -395,7 +402,7 @@
                         <h3 id="edit-result-title" class="font-bold text-lg"></h3>
                         <p id="edit-result-message" class="mt-2 text-gray-700"></p>
                         <div class="flex justify-center flex-wrap gap-4 mt-4">
-                            <a id="edit-result-link" href="#" target="_blank" class="btn btn-success">เปิดไฟล์ PDF</a>
+                            <a id="edit-result-link" href="#" target="_blank" class="btn btn-success">เปิดไฟล์ PDF ที่แก้ไข</a>
                         </div>
                     </div>
                 </div>
@@ -518,298 +525,303 @@
                 </div>
                 
                 <!-- หน้าสถิติ -->
-<div id="stats-page" class="page-view hidden">
-    <h2 class="text-2xl font-bold mb-6">สถิติข้อมูล</h2>
-    
-    <div class="mb-6 flex flex-wrap gap-4">
-        <button id="refresh-stats" class="btn btn-primary">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-            </svg>
-            รีเฟรชข้อมูล
-        </button>
-        <button id="export-stats" class="btn bg-green-500 text-white">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-            ส่งออกรายงาน
-        </button>
-    </div>
-
-    <div id="stats-overview" class="space-y-6">
-        <div class="text-center p-8">
-            <div class="loader mx-auto"></div>
-            <p class="mt-4">กำลังโหลดสถิติ...</p>
-        </div>
-    </div>
-
-    <!-- กราฟสถิติ (สามารถเพิ่มในอนาคต) -->
-    <div id="stats-charts" class="mt-8 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">กราฟสถิติคำขอ</h3>
-                <canvas id="requests-chart" width="400" height="200"></canvas>
-            </div>
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">กราฟสถานะคำขอ</h3>
-                <canvas id="status-chart" width="400" height="200"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-        <footer class="text-center text-sm text-gray-500 mt-8 pb-4">
-            <p>จัดทำโดยกลุ่มบริหารงานบุคคล โรงเรียนวังน้ำเย็นวิทยาคม </p>
-            <p>พัฒนาระบบโดย ครูกีรติ ประสพพรรังสี </p>
-        </footer>
-    </div>
-
-    <!-- Modal ลงทะเบียน -->
-    <div id="register-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">ลงทะเบียนผู้ใช้ใหม่</h3>
-                <button id="register-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <form id="register-form">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label for="register-username" class="form-label">ชื่อผู้ใช้</label>
-                        <input type="text" id="register-username" class="form-input" required>
+                <div id="stats-page" class="page-view hidden">
+                    <h2 class="text-2xl font-bold mb-6">สถิติข้อมูล</h2>
+                    
+                    <div class="mb-6 flex flex-wrap gap-4">
+                        <button id="refresh-stats" class="btn btn-primary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            รีเฟรชข้อมูล
+                        </button>
+                        <button id="export-stats" class="btn bg-green-500 text-white">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            ส่งออกรายงาน
+                        </button>
                     </div>
-                    <div>
-                        <label for="register-password" class="form-label">รหัสผ่าน</label>
-                        <input type="password" id="register-password" class="form-input" required>
+
+                    <div id="stats-overview" class="space-y-6">
+                        <div class="text-center p-8">
+                            <div class="loader mx-auto"></div>
+                            <p class="mt-4">กำลังโหลดสถิติ...</p>
+                        </div>
+                    </div>
+
+                    <!-- กราฟสถิติ -->
+                    <div id="stats-charts" class="mt-8 hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="text-lg font-bold mb-4 text-gray-800">กราฟสถิติคำขอ</h3>
+                                <canvas id="requests-chart" width="400" height="200"></canvas>
+                            </div>
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="text-lg font-bold mb-4 text-gray-800">กราฟสถานะคำขอ</h3>
+                                <canvas id="status-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="mb-4">
-                    <label for="register-fullname" class="form-label">ชื่อ-นามสกุล</label>
-                    <input type="text" id="register-fullname" class="form-input" required>
+            </main>
+            
+            <!-- Footer -->
+            <footer class="text-center text-sm text-gray-500 mt-8 pb-4">
+                <p>จัดทำโดยกลุ่มบริหารงานบุคคล โรงเรียนวังน้ำเย็นวิทยาคม </p>
+                <p>พัฒนาระบบโดย ครูกีรติ ประสพพรรังสี </p>
+            </footer>
+        </div>
+
+        <!-- Modal ต่างๆ -->
+        <!-- Modal ลงทะเบียน -->
+        <div id="register-modal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">ลงทะเบียนผู้ใช้ใหม่</h3>
+                    <button id="register-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
                 </div>
-                <div class="mb-4">
-                    <label for="register-position" class="form-label">ตำแหน่ง</label>
-                    <input type="text" id="register-position" class="form-input" required>
+                <form id="register-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="register-username" class="form-label">ชื่อผู้ใช้</label>
+                            <input type="text" id="register-username" class="form-input" required>
+                        </div>
+                        <div>
+                            <label for="register-password" class="form-label">รหัสผ่าน</label>
+                            <input type="password" id="register-password" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="register-fullname" class="form-label">ชื่อ-นามสกุล</label>
+                        <input type="text" id="register-fullname" class="form-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="register-position" class="form-label">ตำแหน่ง</label>
+                        <input type="text" id="register-position" class="form-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="register-department" class="form-label">กลุ่มสาระ/งาน</label>
+                        <input type="text" id="register-department" class="form-input" required>
+                    </div>
+                    <div class="flex justify-end gap-4">
+                        <button type="button" id="register-modal-close-button2" class="btn bg-gray-500 text-white">ยกเลิก</button>
+                        <button type="submit" id="register-submit-button" class="btn btn-primary">
+                            <div id="register-loader" class="loader hidden"></div>
+                            <span>ลงทะเบียน</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal แจ้งเตือน -->
+        <div id="alert-modal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="alert-modal-title" class="text-xl font-bold">แจ้งเตือน</h3>
+                    <button id="alert-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
                 </div>
-                <div class="mb-4">
-                    <label for="register-department" class="form-label">กลุ่มสาระ/งาน</label>
-                    <input type="text" id="register-department" class="form-input" required>
+                <p id="alert-modal-message" class="mb-6"></p>
+                <div class="flex justify-end">
+                    <button id="alert-modal-ok-button" class="btn btn-primary">ตกลง</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Modal ยืนยัน -->
+        <div id="confirm-modal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="confirm-modal-title" class="text-xl font-bold">ยืนยันการดำเนินการ</h3>
+                    <button id="confirm-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <p id="confirm-modal-message" class="mb-6"></p>
                 <div class="flex justify-end gap-4">
-                    <button type="button" id="register-modal-close-button2" class="btn bg-gray-500 text-white">ยกเลิก</button>
-                    <button type="submit" id="register-submit-button" class="btn btn-primary">
-                        <div id="register-loader" class="loader hidden"></div>
-                        <span>ลงทะเบียน</span>
-                    </button>
+                    <button id="confirm-modal-no-button" class="btn bg-gray-500 text-white">ไม่</button>
+                    <button id="confirm-modal-yes-button" class="btn btn-primary">ใช่</button>
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal แจ้งเตือน -->
-    <div id="alert-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="alert-modal-title" class="text-xl font-bold">แจ้งเตือน</h3>
-                <button id="alert-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <p id="alert-modal-message" class="mb-6"></p>
-            <div class="flex justify-end">
-                <button id="alert-modal-ok-button" class="btn btn-primary">ตกลง</button>
             </div>
         </div>
-    </div>
 
-    <!-- Modal ยืนยัน -->
-    <div id="confirm-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="confirm-modal-title" class="text-xl font-bold">ยืนยันการดำเนินการ</h3>
-                <button id="confirm-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <p id="confirm-modal-message" class="mb-6"></p>
-            <div class="flex justify-end gap-4">
-                <button id="confirm-modal-no-button" class="btn bg-gray-500 text-white">ไม่</button>
-                <button id="confirm-modal-yes-button" class="btn btn-primary">ใช่</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal ส่งบันทึกข้อความ -->
-    <div id="send-memo-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">ส่งบันทึกข้อความ</h3>
-                <button id="send-memo-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <form id="send-memo-form">
-                <input type="hidden" id="memo-modal-request-id">
-                <div class="mb-4">
-                    <label class="form-label">ประเภทบันทึกข้อความ</label>
-                    <div class="space-y-2">
-                        <div>
-                            <input type="radio" id="memo_type_reimburse" name="modal_memo_type" value="reimburse" class="h-4 w-4">
-                            <label for="memo_type_reimburse" class="ml-2">เบิกค่าใช้จ่าย</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="memo_type_non_reimburse" name="modal_memo_type" value="non_reimburse" class="h-4 w-4" checked>
-                            <label for="memo_type_non_reimburse" class="ml-2">ไม่เบิกค่าใช้จ่าย</label>
+        <!-- Modal ส่งบันทึกข้อความ -->
+        <div id="send-memo-modal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">ส่งบันทึกข้อความ</h3>
+                    <button id="send-memo-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <form id="send-memo-form">
+                    <input type="hidden" id="memo-modal-request-id">
+                    <div class="mb-4">
+                        <label class="form-label">ประเภทบันทึกข้อความ</label>
+                        <div class="space-y-2">
+                            <div>
+                                <input type="radio" id="memo_type_reimburse" name="modal_memo_type" value="reimburse" class="h-4 w-4">
+                                <label for="memo_type_reimburse" class="ml-2">เบิกค่าใช้จ่าย</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="memo_type_non_reimburse" name="modal_memo_type" value="non_reimburse" class="h-4 w-4" checked>
+                                <label for="memo_type_non_reimburse" class="ml-2">ไม่เบิกค่าใช้จ่าย</label>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div id="modal-memo-file-container" class="mb-4">
-                    <label for="modal-memo-file" class="form-label">ไฟล์บันทึกข้อความ</label>
-                    <input type="file" id="modal-memo-file" class="form-input" accept=".pdf,.doc,.docx">
-                </div>
-                <div class="flex justify-end gap-4">
-                    <button type="button" id="send-memo-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
-                    <button type="submit" id="send-memo-submit-button" class="btn btn-primary">
-                        <div id="send-memo-loader" class="loader hidden"></div>
-                        <span>ส่งบันทึกข้อความ</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal อนุมัติคำสั่ง -->
-    <div id="command-approval-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">อนุมัติคำสั่งไปราชการ</h3>
-                <button id="command-approval-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
+                    <div id="modal-memo-file-container" class="mb-4">
+                        <label for="modal-memo-file" class="form-label">ไฟล์บันทึกข้อความ</label>
+                        <input type="file" id="modal-memo-file" class="form-input" accept=".pdf,.doc,.docx">
+                    </div>
+                    <div class="flex justify-end gap-4">
+                        <button type="button" id="send-memo-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
+                        <button type="submit" id="send-memo-submit-button" class="btn btn-primary">
+                            <div id="send-memo-loader" class="loader hidden"></div>
+                            <span>ส่งบันทึกข้อความ</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-            <form id="command-approval-form">
-                <input type="hidden" id="command-request-id">
-                <div class="mb-4">
-                    <label class="form-label">เลือกรูปแบบคำสั่ง</label>
-                    <div class="space-y-2">
-                        <div>
-                            <input type="radio" id="command_type_solo" name="command_type" value="solo" class="h-4 w-4">
-                            <label for="command_type_solo" class="ml-2">คำสั่งเดี่ยว (1 คน)</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="command_type_group_small" name="command_type" value="groupSmall" class="h-4 w-4">
-                            <label for="command_type_group_small" class="ml-2">คำสั่งกลุ่มเล็ก (2-5 คน)</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="command_type_group_large" name="command_type" value="groupLarge" class="h-4 w-4">
-                            <label for="command_type_group_large" class="ml-2">คำสั่งกลุ่มใหญ่ (6 คนขึ้นไป)</label>
+        </div>
+
+        <!-- Modal อนุมัติคำสั่ง -->
+        <div id="command-approval-modal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">อนุมัติคำสั่งไปราชการ</h3>
+                    <button id="command-approval-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <form id="command-approval-form">
+                    <input type="hidden" id="command-request-id">
+                    <div class="mb-4">
+                        <label class="form-label">เลือกรูปแบบคำสั่ง</label>
+                        <div class="space-y-2">
+                            <div>
+                                <input type="radio" id="command_type_solo" name="command_type" value="solo" class="h-4 w-4">
+                                <label for="command_type_solo" class="ml-2">คำสั่งเดี่ยว (1 คน)</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="command_type_group_small" name="command_type" value="groupSmall" class="h-4 w-4">
+                                <label for="command_type_group_small" class="ml-2">คำสั่งกลุ่มเล็ก (2-5 คน)</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="command_type_group_large" name="command_type" value="groupLarge" class="h-4 w-4">
+                                <label for="command_type_group_large" class="ml-2">คำสั่งกลุ่มใหญ่ (6 คนขึ้นไป)</label>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="flex justify-end gap-4">
-                    <button type="button" id="command-approval-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
-                    <button type="submit" id="command-approval-submit-button" class="btn btn-primary">
-                        <div id="command-approval-loader" class="loader hidden"></div>
-                        <span>อนุมัติคำสั่ง</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal ส่งหนังสือส่ง -->
-    <div id="dispatch-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">สร้างหนังสือส่ง</h3>
-                <button id="dispatch-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
+                    <div class="flex justify-end gap-4">
+                        <button type="button" id="command-approval-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
+                        <button type="submit" id="command-approval-submit-button" class="btn btn-primary">
+                            <div id="command-approval-loader" class="loader hidden"></div>
+                            <span>อนุมัติคำสั่ง</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-            <form id="dispatch-form">
-                <input type="hidden" id="dispatch-request-id">
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label for="dispatch-month" class="form-label">เดือน</label>
-                        <select id="dispatch-month" class="form-input" required>
-                            <option value="">-- เลือกเดือน --</option>
-                            <option value="มกราคม">มกราคม</option>
-                            <option value="กุมภาพันธ์">กุมภาพันธ์</option>
-                            <option value="มีนาคม">มีนาคม</option>
-                            <option value="เมษายน">เมษายน</option>
-                            <option value="พฤษภาคม">พฤษภาคม</option>
-                            <option value="มิถุนายน">มิถุนายน</option>
-                            <option value="กรกฎาคม">กรกฎาคม</option>
-                            <option value="สิงหาคม">สิงหาคม</option>
-                            <option value="กันยายน">กันยายน</option>
-                            <option value="ตุลาคม">ตุลาคม</option>
-                            <option value="พฤศจิกายน">พฤศจิกายน</option>
-                            <option value="ธันวาคม">ธันวาคม</option>
+        </div>
+
+        <!-- Modal ส่งหนังสือส่ง -->
+        <div id="dispatch-modal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">สร้างหนังสือส่ง</h3>
+                    <button id="dispatch-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <form id="dispatch-form">
+                    <input type="hidden" id="dispatch-request-id">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="dispatch-month" class="form-label">เดือน</label>
+                            <select id="dispatch-month" class="form-input" required>
+                                <option value="">-- เลือกเดือน --</option>
+                                <option value="มกราคม">มกราคม</option>
+                                <option value="กุมภาพันธ์">กุมภาพันธ์</option>
+                                <option value="มีนาคม">มีนาคม</option>
+                                <option value="เมษายน">เมษายน</option>
+                                <option value="พฤษภาคม">พฤษภาคม</option>
+                                <option value="มิถุนายน">มิถุนายน</option>
+                                <option value="กรกฎาคม">กรกฎาคม</option>
+                                <option value="สิงหาคม">สิงหาคม</option>
+                                <option value="กันยายน">กันยายน</option>
+                                <option value="ตุลาคม">ตุลาคม</option>
+                                <option value="พฤศจิกายน">พฤศจิกายน</option>
+                                <option value="ธันวาคม">ธันวาคม</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="dispatch-year" class="form-label">ปี พ.ศ.</label>
+                            <input type="number" id="dispatch-year" class="form-input" min="2560" max="2580" required>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="command-count" class="form-label">จำนวนคำสั่ง</label>
+                            <input type="number" id="command-count" class="form-input" min="0" required>
+                        </div>
+                        <div>
+                            <label for="memo-count" class="form-label">จำนวนบันทึก</label>
+                            <input type="number" id="memo-count" class="form-input" min="0" required>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-4">
+                        <button type="button" id="dispatch-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
+                        <button type="submit" id="dispatch-submit-button" class="btn btn-primary">
+                            <div id="dispatch-loader" class="loader hidden"></div>
+                            <span>สร้างหนังสือส่ง</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal อัพโหลดไฟล์ให้ผู้ใช้ -->
+        <div id="admin-memo-action-modal" class="modal">
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">จัดการบันทึกข้อความ</h3>
+                    <button id="admin-memo-action-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <form id="admin-memo-action-form">
+                    <input type="hidden" id="admin-memo-id">
+                    <div class="mb-4">
+                        <label for="admin-memo-status" class="form-label">สถานะ</label>
+                        <select id="admin-memo-status" class="form-input" required>
+                            <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+                            <option value="รอเอกสาร (เบิก)">รอเอกสาร (เบิก)</option>
+                            <option value="เสร็จสิ้นรอออกคำสั่งไปราชการ">เสร็จสิ้นรอออกคำสั่งไปราชการ</option>
+                            <option value="นำกลับไปแก้ไข">นำกลับไปแก้ไข</option>
+                            <option value="เสร็จสิ้น/รับไฟล์ไปใช้งาน">เสร็จสิ้น/รับไฟล์ไปใช้งาน</option>
                         </select>
                     </div>
-                    <div>
-                        <label for="dispatch-year" class="form-label">ปี พ.ศ.</label>
-                        <input type="number" id="dispatch-year" class="form-input" min="2560" max="2580" required>
+                    
+                    <div id="admin-file-uploads" class="space-y-4 hidden">
+                        <div>
+                            <label class="form-label">ไฟล์บันทึกข้อความที่สมบูรณ์</label>
+                            <input type="file" id="admin-completed-memo-file" class="form-input" accept=".pdf,.doc,.docx">
+                        </div>
+                        <div>
+                            <label class="form-label">ไฟล์คำสั่งที่สมบูรณ์</label>
+                            <input type="file" id="admin-completed-command-file" class="form-input" accept=".pdf,.doc,.docx">
+                        </div>
+                        <div>
+                            <label class="form-label">ไฟล์หนังสือส่ง</label>
+                            <input type="file" id="admin-dispatch-book-file" class="form-input" accept=".pdf,.doc,.docx">
+                        </div>
                     </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label for="command-count" class="form-label">จำนวนคำสั่ง</label>
-                        <input type="number" id="command-count" class="form-input" min="0" required>
+                    
+                    <div class="flex justify-end gap-4">
+                        <button type="button" id="admin-memo-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
+                        <button type="submit" id="admin-memo-submit-button" class="btn btn-primary">
+                            <div id="admin-memo-loader" class="loader hidden"></div>
+                            <span>อัพเดทสถานะ</span>
+                        </button>
                     </div>
-                    <div>
-                        <label for="memo-count" class="form-label">จำนวนบันทึก</label>
-                        <input type="number" id="memo-count" class="form-input" min="0" required>
-                    </div>
-                </div>
-                <div class="flex justify-end gap-4">
-                    <button type="button" id="dispatch-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
-                    <button type="submit" id="dispatch-submit-button" class="btn btn-primary">
-                        <div id="dispatch-loader" class="loader hidden"></div>
-                        <span>สร้างหนังสือส่ง</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal อัพโหลดไฟล์ให้ผู้ใช้ -->
-    <div id="admin-memo-action-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">จัดการบันทึกข้อความ</h3>
-                <button id="admin-memo-action-modal-close-button" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </form>
             </div>
-            <form id="admin-memo-action-form">
-                <input type="hidden" id="admin-memo-id">
-                <div class="mb-4">
-                    <label for="admin-memo-status" class="form-label">สถานะ</label>
-                    <select id="admin-memo-status" class="form-input" required>
-                        <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
-                        <option value="รอเอกสาร (เบิก)">รอเอกสาร (เบิก)</option>
-                        <option value="เสร็จสิ้นรอออกคำสั่งไปราชการ">เสร็จสิ้นรอออกคำสั่งไปราชการ</option>
-                        <option value="นำกลับไปแก้ไข">นำกลับไปแก้ไข</option>
-                        <option value="เสร็จสิ้น/รับไฟล์ไปใช้งาน">เสร็จสิ้น/รับไฟล์ไปใช้งาน</option>
-                    </select>
-                </div>
-                
-                <div id="admin-file-uploads" class="space-y-4 hidden">
-                    <div>
-                        <label class="form-label">ไฟล์บันทึกข้อความที่สมบูรณ์</label>
-                        <input type="file" id="admin-completed-memo-file" class="form-input" accept=".pdf,.doc,.docx">
-                    </div>
-                    <div>
-                        <label class="form-label">ไฟล์คำสั่งที่สมบูรณ์</label>
-                        <input type="file" id="admin-completed-command-file" class="form-input" accept=".pdf,.doc,.docx">
-                    </div>
-                    <div>
-                        <label class="form-label">ไฟล์หนังสือส่ง</label>
-                        <input type="file" id="admin-dispatch-book-file" class="form-input" accept=".pdf,.doc,.docx">
-                    </div>
-                </div>
-                
-                <div class="flex justify-end gap-4">
-                    <button type="button" id="admin-memo-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
-                    <button type="submit" id="admin-memo-submit-button" class="btn btn-primary">
-                        <div id="admin-memo-loader" class="loader hidden"></div>
-                        <span>อัพเดทสถานะ</span>
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 
     <script>
         // ใช้ URL ของ Google Apps Script
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxq8fkHgDOyYjpZgy4dngT8n-Z3zSBjfJ0R7lomuUxoI63vqpdOP-7nlodlV-BsXnksaA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzP-HCQGbA3Xi2Ms4DXTGy8k17Bv72pFohnJ0txAePjjXybe6pK42mSaYOfTQ5V9Q6mDA/exec";
 
         // Global State
         let allRequestsCache = [];
@@ -826,105 +838,66 @@
             'หัวหน้ากลุ่มสาระการเรียนรู้คณิตศาสตร์': 'นายสมฤทธิ์ ชาญสมร',
             'หัวหน้ากลุ่มสาระการเรียนรู้ภาษาไทย': 'นายอานนท์ วรวงค์',
             'หัวหน้ากลุ่มสาระการเรียนรู้ภาษาต่างประเทศ': 'นางธรรมรักษ์ วัฒนพลาชัยกูร',
-            'หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษาฯ': 'นางเกศริน ทองโพธิกุล',
+            'หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษาศาสนา และวัฒนธรรม': 'นางเกศริน ทองโพธิกุล',
             'หัวหน้ากลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา': 'นางสาวเกษร เขจรลาภ',
             'หัวหน้ากลุ่มสาระการเรียนรู้ศิลปะ': 'นางสาวปิยลักษณ์ ขันทา',
             'หัวหน้ากลุ่มสาระการเรียนรู้การงานอาชีพ': 'นายสุชาติ สินทร',
             'หัวหน้างานแนะแนว':'นายเริงศักดิ์ จันทร์นวล',
         };
 
-       const statusTranslations = {
-    'Pending': 'กำลังดำเนินการ',
-    'Submitted': 'รอการตรวจสอบ',
-    'Approved': 'เสร็จสิ้น',
-    'Pending Approval': 'รอการตรวจสอบ',
-    'เสร็จสิ้น/รับไฟล์ไปใช้งาน': 'เสร็จสิ้น',
-    'เสร็จสิ้น': 'เสร็จสิ้น',
-    'รอเอกสาร (เบิก)': 'รอเอกสาร (เบิก)',
-    'นำกลับไปแก้ไข': 'นำกลับไปแก้ไข',
-    'เสร็จสิ้นรอออกคำสั่งไปราชการ': 'เสร็จสิ้นรอออกคำสั่ง',
-    'รอตรวจสอบและออกคำสั่งไปราชการ': 'รอตรวจสอบและออกคำสั่ง',
-    'กำลังดำเนินการ': 'กำลังดำเนินการ'
-};
+        const statusTranslations = {
+            'Pending': 'กำลังดำเนินการ',
+            'Submitted': 'รอการตรวจสอบ',
+            'Approved': 'เสร็จสิ้น',
+            'Pending Approval': 'รอการตรวจสอบ',
+            'เสร็จสิ้น/รับไฟล์ไปใช้งาน': 'เสร็จสิ้น',
+            'เสร็จสิ้น': 'เสร็จสิ้น',
+            'รอเอกสาร (เบิก)': 'รอเอกสาร (เบิก)',
+            'นำกลับไปแก้ไข': 'นำกลับไปแก้ไข',
+            'เสร็จสิ้นรอออกคำสั่งไปราชการ': 'เสร็จสิ้นรอออกคำสั่ง',
+            'รอตรวจสอบและออกคำสั่งไปราชการ': 'รอตรวจสอบและออกคำสั่ง',
+            'กำลังดำเนินการ': 'กำลังดำเนินการ'
+        };
 
-function translateStatus(status) {
-    return statusTranslations[status] || status;
-}
+        function translateStatus(status) {
+            return statusTranslations[status] || status;
+        }
 
         // --- API HELPER FUNCTIONS ---
         
-     async function apiCall(method, action, payload = {}) {
-    let url = SCRIPT_URL;
-    const options = {
-        method: method,
-        mode: 'no-cors', // ใช้ no-cors mode
-        redirect: 'follow',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    };
+        async function apiCall(method, action, payload = {}) {
+            let url = SCRIPT_URL;
+            const options = {
+                method: method,
+                redirect: 'follow',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8', },
+            };
 
-    if (method === 'GET') {
-        const params = new URLSearchParams({ action, ...payload, cacheBust: new Date().getTime() }); 
-        url += `?${params}`;
-    } else {
-        options.body = JSON.stringify({ action, payload });
-    }
+            if (method === 'GET') {
+                const params = new URLSearchParams({ action, ...payload, cacheBust: new Date().getTime() }); 
+                url += `?${params}`;
+            } else {
+                options.body = JSON.stringify({ action, payload });
+            }
 
-    try {
-        const response = await fetch(url, options);
-        
-        // ใน no-cors mode เราจะไม่สามารถอ่าน response ได้โดยตรง
-        // ให้ใช้วิธีอื่นเช่น redirect หรือสร้าง iframe
-        
-        // สำหรับ GET requests ให้ใช้ redirect ไปยัง URL ที่มีข้อมูล
-        if (method === 'GET') {
-            // สร้าง iframe ชั่วคราวเพื่อโหลดข้อมูล
-            return new Promise((resolve, reject) => {
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = url;
-                
-                iframe.onload = function() {
-                    try {
-                        // พยายามอ่านข้อมูลจาก iframe
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        const bodyText = iframeDoc.body.textContent;
-                        const result = JSON.parse(bodyText);
-                        document.body.removeChild(iframe);
-                        resolve(result);
-                    } catch (e) {
-                        document.body.removeChild(iframe);
-                        reject(new Error('Failed to parse response'));
-                    }
-                };
-                
-                iframe.onerror = function() {
-                    document.body.removeChild(iframe);
-                    reject(new Error('Failed to load'));
-                };
-                
-                document.body.appendChild(iframe);
-            });
-        } else {
-            // สำหรับ POST ใช้วิธีเดิม
-            const result = await response.text();
-            // พยายาม parse JSON จาก text
             try {
-                return JSON.parse(result);
-            } catch (e) {
-                throw new Error('Invalid response format');
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const result = await response.json();
+                if (result.status === 'error') throw new Error(result.message);
+                return result;
+            } catch (error) {
+                console.error('API Call Error:', error);
+                
+                if (error.message.includes('Failed to fetch')) {
+                    showAlert('การเชื่อมต่อล้มเหลว', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+                } else {
+                    showAlert('เกิดข้อผิดพลาด', `Server error: ${error.message}`);
+                }
+                throw error;
             }
         }
-    } catch (error) {
-        console.error('API Call Error:', error);
         
-        if (error.message.includes('Failed to fetch')) {
-            showAlert('การเชื่อมต่อล้มเหลว', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
-        } else {
-            showAlert('เกิดข้อผิดพลาด', `Server error: ${error.message}`);
-        }
-        throw error;
-    }
-}
         // --- UTILITY FUNCTIONS ---
         
         function showAlert(title, message) {
@@ -1017,8 +990,6 @@ function translateStatus(status) {
 
         async function loadSpecialPositions() {
             return new Promise(resolve => {
-                // ใช้ข้อมูล static ที่มีอยู่แล้ว
-                // สามารถเพิ่มการโหลดจาก API ได้ในอนาคต
                 console.log('Special positions loaded:', Object.keys(specialPositionMap).length);
                 resolve();
             });
@@ -1026,33 +997,29 @@ function translateStatus(status) {
         
         // --- PAGE NAVIGATION ---
         
-       // 🔥 แก้ไขฟังก์ชัน switchPage ให้เรียก autoFillUserData เมื่อเปิดหน้า form
-async function switchPage(targetPageId) {
-    document.querySelectorAll('.page-view').forEach(page => page.classList.add('hidden'));
-    const targetPage = document.getElementById(targetPageId);
-    if (targetPage) {
-         targetPage.classList.remove('hidden');
-    }
+        async function switchPage(targetPageId) {
+            document.querySelectorAll('.page-view').forEach(page => page.classList.add('hidden'));
+            const targetPage = document.getElementById(targetPageId);
+            if (targetPage) {
+                 targetPage.classList.remove('hidden');
+            }
 
-    document.querySelectorAll('.nav-button').forEach(btn => {
-        btn.classList.remove('active');
-        if(btn.dataset.target === targetPageId) {
-            btn.classList.add('active');
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.dataset.target === targetPageId) {
+                    btn.classList.add('active');
+                }
+            });
+
+            if (targetPageId === 'form-page') await resetRequestForm();
+            if (targetPageId === 'dashboard-page') await fetchUserRequests();
+            if (targetPageId === 'profile-page') loadProfileData();
+            if (targetPageId === 'stats-page') await loadStatsData();
+            if (targetPageId === 'admin-users-page') await fetchAllUsers();
+            if (targetPageId === 'command-generation-page') {
+                document.getElementById('admin-view-requests-tab').click();
+            }
         }
-    });
-
-    if (targetPageId === 'form-page') {
-        await resetRequestForm();
-        // 🔥 autoFillUserData ถูกเรียกใน resetRequestForm แล้ว
-    }
-    if (targetPageId === 'dashboard-page') await fetchUserRequests();
-    if (targetPageId === 'profile-page') loadProfileData();
-    if (targetPageId === 'stats-page') await loadStatsData();
-    if (targetPageId === 'admin-users-page') await fetchAllUsers();
-    if (targetPageId === 'command-generation-page') {
-        document.getElementById('admin-view-requests-tab').click();
-    }
-}
 
         // --- AUTH FUNCTIONS ---
 
@@ -1140,6 +1107,7 @@ async function switchPage(targetPageId) {
         document.addEventListener('DOMContentLoaded', () => {
             console.log('App Initializing with Google Sheets Backend...');
             setupEventListeners();
+            enhanceEditFunctionSafety();
             const user = getCurrentUser();
             if (user) {
                 initializeUserSession(user);
@@ -1151,19 +1119,10 @@ async function switchPage(targetPageId) {
         // --- INITIALIZATION ---
         
         function initializeUserSession(user) {
-    // 🔥 อัพเดทข้อมูลผู้ใช้ให้ครบถ้วน
-    const updatedUser = {
-        ...user,
-        fullName: user.fullName || '',
-        position: user.position || '',
-        department: user.department || ''
-    };
-    
-    sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
-    updateUIForUser(updatedUser);
-    showMainApp();
-    switchPage('dashboard-page');
-}
+            updateUIForUser(user);
+            showMainApp();
+            switchPage('dashboard-page');
+        }
 
         function updateUIForUser(user) {
             document.getElementById('user-fullname').textContent = user.fullName || 'N/A';
@@ -1193,10 +1152,11 @@ async function switchPage(targetPageId) {
             document.getElementById('logout-button').addEventListener('click', showLoginScreen);
             document.getElementById('show-register-modal-button').addEventListener('click', () => document.getElementById('register-modal').style.display = 'flex');
             document.getElementById('register-form').addEventListener('submit', handleRegister);
+            
             // Stats page events
             document.getElementById('refresh-stats').addEventListener('click', async () => {
-            await loadStatsData();
-            showAlert('สำเร็จ', 'อัพเดทข้อมูลสถิติเรียบร้อยแล้ว');
+                await loadStatsData();
+                showAlert('สำเร็จ', 'อัพเดทข้อมูลสถิติเรียบร้อยแล้ว');
             });
 
             document.getElementById('export-stats').addEventListener('click', exportStatsReport);
@@ -1317,276 +1277,597 @@ async function switchPage(targetPageId) {
         // --- EDIT PAGE FUNCTIONS ---
         
         function setupEditPageEventListeners() {
-            document.getElementById('back-to-dashboard').addEventListener('click', () => switchPage('dashboard-page'));
-            document.getElementById('save-draft-button').addEventListener('click', saveDraft);
-            document.getElementById('generate-document-button').addEventListener('click', generateDocumentFromDraft);
-            document.getElementById('edit-add-attendee').addEventListener('click', () => addEditAttendeeField());
-            
-            // Expense options
-            document.querySelectorAll('input[name="edit-expense_option"]').forEach(radio => {
-                radio.addEventListener('change', toggleEditExpenseOptions);
-            });
-            
-            // Vehicle options
-            document.querySelectorAll('input[name="edit-vehicle_option"]').forEach(radio => {
-                radio.addEventListener('change', toggleEditVehicleOptions);
-            });
-            
-            // Department change
-            document.getElementById('edit-department').addEventListener('change', (e) => {
-                const selectedPosition = e.target.value;
-                const headNameInput = document.getElementById('edit-head-name');
-                headNameInput.value = specialPositionMap[selectedPosition] || '';
+    document.getElementById('back-to-dashboard').addEventListener('click', () => switchPage('dashboard-page'));
+    
+    // 🔧 แก้ไขจาก click เป็น addEventListener ที่ถูกต้อง
+    // ใน setupEditPageEventListeners()
+document.getElementById('generate-document-button').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("Generate document button clicked");
+    generateDocumentFromDraft();
+});
+    
+    document.getElementById('edit-add-attendee').addEventListener('click', () => addEditAttendeeField());
+    
+    // Expense options
+    document.querySelectorAll('input[name="edit-expense_option"]').forEach(radio => {
+        radio.addEventListener('change', toggleEditExpenseOptions);
+    });
+    
+    // Vehicle options
+    document.querySelectorAll('input[name="edit-vehicle_option"]').forEach(radio => {
+        radio.addEventListener('change', toggleEditVehicleOptions);
+    });
+    
+    // Department change
+    document.getElementById('edit-department').addEventListener('change', (e) => {
+        const selectedPosition = e.target.value;
+        const headNameInput = document.getElementById('edit-head-name');
+        headNameInput.value = specialPositionMap[selectedPosition] || '';
+    });
+}
+        // --- EDIT PAGE FUNCTIONS ---
+
+
+    try {
+        console.log("Populating edit form with data:", requestData);
+        
+        // เติมข้อมูลพื้นฐาน
+        document.getElementById('edit-draft-id').value = requestData.draftId || '';
+        document.getElementById('edit-request-id').value = requestData.id || '';
+        document.getElementById('edit-doc-date').value = requestData.docDate || '';
+        document.getElementById('edit-requester-name').value = requestData.requesterName || '';
+        document.getElementById('edit-requester-position').value = requestData.requesterPosition || '';
+        document.getElementById('edit-location').value = requestData.location || '';
+        document.getElementById('edit-purpose').value = requestData.purpose || '';
+        document.getElementById('edit-start-date').value = requestData.startDate || '';
+        document.getElementById('edit-end-date').value = requestData.endDate || '';
+        
+        // เติมข้อมูลผู้ร่วมเดินทาง
+        const attendeesList = document.getElementById('edit-attendees-list');
+        attendeesList.innerHTML = '';
+        
+        if (requestData.attendees && requestData.attendees.length > 0) {
+            requestData.attendees.forEach(attendee => {
+                if (attendee.name && attendee.position) {
+                    addEditAttendeeField(attendee.name, attendee.position);
+                }
             });
         }
+        
+        // เติมข้อมูลค่าใช้จ่าย
+        if (requestData.expenseOption === 'partial') {
+            document.getElementById('edit-expense_partial').checked = true;
+            toggleEditExpenseOptions();
+            
+            if (requestData.expenseItems && requestData.expenseItems.length > 0) {
+                requestData.expenseItems.forEach(item => {
+                    const checkboxes = document.querySelectorAll('input[name="edit-expense_item"]');
+                    checkboxes.forEach(chk => {
+                        if (chk.dataset.itemName === item.name) {
+                            chk.checked = true;
+                            if (item.name === 'ค่าใช้จ่ายอื่นๆ' && item.detail) {
+                                document.getElementById('edit-expense_other_text').value = item.detail;
+                            }
+                        }
+                    });
+                });
+            }
+            
+            if (requestData.totalExpense) {
+                document.getElementById('edit-total-expense').value = requestData.totalExpense;
+            }
+        } else {
+            document.getElementById('edit-expense_no').checked = true;
+            toggleEditExpenseOptions();
+        }
+        
+        // เติมข้อมูลการเดินทาง
+        if (requestData.vehicleOption) {
+            const vehicleRadio = document.getElementById(`edit-vehicle_${requestData.vehicleOption}`);
+            if (vehicleRadio) {
+                vehicleRadio.checked = true;
+                toggleEditVehicleOptions();
+                
+                if (requestData.vehicleOption === 'private' && requestData.licensePlate) {
+                    document.getElementById('edit-license-plate').value = requestData.licensePlate;
+                }
+            }
+        }
+        
+        // เติมข้อมูลผู้ลงนาม
+        if (requestData.department) {
+            document.getElementById('edit-department').value = requestData.department;
+            // เรียก event change เพื่ออัพเดทชื่อหัวหน้า
+            const event = new Event('change');
+            document.getElementById('edit-department').dispatchEvent(event);
+        }
+        
+        if (requestData.headName) {
+            document.getElementById('edit-head-name').value = requestData.headName;
+        }
+        
+        console.log("Edit form populated successfully");
+        
+    } catch (error) {
+        console.error("Error populating edit form:", error);
+        throw new Error("ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้: " + error.message);
+    }
+// ฟังก์ชันเติมข้อมูลในฟอร์มแก้ไข
+async function populateEditForm(requestData) {
+    try {
+        console.log("📋 Populating edit form with data:", requestData);
+        
+        // 🔥 Log ข้อมูลวันที่ที่ได้รับจาก server
+        console.log('📅 Dates received from server:');
+        console.log('- docDate:', requestData.docDate, 'Type:', typeof requestData.docDate);
+        console.log('- startDate:', requestData.startDate, 'Type:', typeof requestData.startDate);
+        console.log('- endDate:', requestData.endDate, 'Type:', typeof requestData.endDate);
+        
+        // เติมข้อมูลพื้นฐาน
+        document.getElementById('edit-draft-id').value = requestData.draftId || '';
+        document.getElementById('edit-request-id').value = requestData.id || '';
+        
+        // 🔥 เติมข้อมูลวันที่
+        document.getElementById('edit-doc-date').value = requestData.docDate || '';
+        document.getElementById('edit-requester-name').value = requestData.requesterName || '';
+        document.getElementById('edit-requester-position').value = requestData.requesterPosition || '';
+        document.getElementById('edit-location').value = requestData.location || '';
+        document.getElementById('edit-purpose').value = requestData.purpose || '';
+        document.getElementById('edit-start-date').value = requestData.startDate || '';
+        document.getElementById('edit-end-date').value = requestData.endDate || '';
+        
+        // 🔥 Log หลังจากเติมค่าในฟอร์ม
+        console.log('✅ Form fields after population:');
+        console.log('- docDate field:', document.getElementById('edit-doc-date').value);
+        console.log('- startDate field:', document.getElementById('edit-start-date').value);
+        console.log('- endDate field:', document.getElementById('edit-end-date').value);
+        
+        // เติมข้อมูลผู้ร่วมเดินทาง
+        const attendeesList = document.getElementById('edit-attendees-list');
+        attendeesList.innerHTML = '';
+        
+        if (requestData.attendees && requestData.attendees.length > 0) {
+            console.log('👥 Loading attendees:', requestData.attendees.length, 'people');
+            requestData.attendees.forEach((attendee, index) => {
+                if (attendee.name && attendee.position) {
+                    addEditAttendeeField(attendee.name, attendee.position);
+                }
+            });
+        } else {
+            console.log('👥 No attendees found');
+        }
+        
+        // เติมข้อมูลค่าใช้จ่าย
+        if (requestData.expenseOption === 'partial') {
+            document.getElementById('edit-expense_partial').checked = true;
+            toggleEditExpenseOptions();
+            
+            if (requestData.expenseItems && requestData.expenseItems.length > 0) {
+                console.log('💰 Loading expense items:', requestData.expenseItems.length, 'items');
+                requestData.expenseItems.forEach(item => {
+                    const checkboxes = document.querySelectorAll('input[name="edit-expense_item"]');
+                    checkboxes.forEach(chk => {
+                        if (chk.dataset.itemName === item.name) {
+                            chk.checked = true;
+                            if (item.name === 'ค่าใช้จ่ายอื่นๆ' && item.detail) {
+                                document.getElementById('edit-expense_other_text').value = item.detail;
+                            }
+                        }
+                    });
+                });
+            }
+            
+            if (requestData.totalExpense) {
+                document.getElementById('edit-total-expense').value = requestData.totalExpense;
+            }
+        } else {
+            document.getElementById('edit-expense_no').checked = true;
+            toggleEditExpenseOptions();
+        }
+        
+        // เติมข้อมูลการเดินทาง
+        if (requestData.vehicleOption) {
+            const vehicleRadio = document.getElementById(`edit-vehicle_${requestData.vehicleOption}`);
+            if (vehicleRadio) {
+                vehicleRadio.checked = true;
+                toggleEditVehicleOptions();
+                
+                if (requestData.vehicleOption === 'private' && requestData.licensePlate) {
+                    document.getElementById('edit-license-plate').value = requestData.licensePlate;
+                }
+            }
+        }
+        
+        // เติมข้อมูลผู้ลงนาม
+        if (requestData.department) {
+            document.getElementById('edit-department').value = requestData.department;
+            // เรียก event change เพื่ออัพเดทชื่อหัวหน้า
+            const event = new Event('change');
+            document.getElementById('edit-department').dispatchEvent(event);
+        }
+        
+        if (requestData.headName) {
+            document.getElementById('edit-head-name').value = requestData.headName;
+        }
+        
+        console.log("✅ Edit form populated successfully");
+        
+    } catch (error) {
+        console.error("❌ Error populating edit form:", error);
+        throw new Error("ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้: " + error.message);
+    }
+}
+// ฟังก์ชันเพิ่มผู้ร่วมเดินทางในหน้าแก้ไข
+function addEditAttendeeField(name = '', position = '') {
+    const list = document.getElementById('edit-attendees-list');
+    const attendeeDiv = document.createElement('div');
+    attendeeDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-2 items-center mb-2';
+    
+    // ตรวจสอบว่าตำแหน่งตรงกับ options ที่มีหรือไม่
+    const isStandardPosition = ['ผู้อำนวยการ', 'รองผู้อำนวยการ', 'ครู', 'ครูผู้ช่วย', 'พนักงานราชการ', 'ครูอัตราจ้าง', 'พนักงานขับรถ', 'นักเรียน'].includes(position);
+    const selectValue = isStandardPosition ? position : (position ? 'other' : '');
+    
+    attendeeDiv.innerHTML = `
+        <input type="text" class="form-input attendee-name md:col-span-1" placeholder="ชื่อ-นามสกุล" value="${name}" required>
+        <div class="attendee-position-wrapper md:col-span-1">
+            <select class="form-input attendee-position-select">
+                <option value="">-- เลือกตำแหน่ง --</option>
+                <option value="ผู้อำนวยการ">ผู้อำนวยการ</option>
+                <option value="รองผู้อำนวยการ">รองผู้อำนวยการ</option>
+                <option value="ครู">ครู</option>
+                <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
+                <option value="พนักงานราชการ">พนักงานราชการ</option>
+                <option value="ครูอัตราจ้าง">ครูอัตราจ้าง</option>
+                <option value="พนักงานขับรถ">พนักงานขับรถ</option>
+                <option value="นักเรียน">นักเรียน</option>
+                <option value="other">อื่นๆ (โปรดระบุ)</option>
+            </select>
+            <input type="text" class="form-input attendee-position-other hidden mt-1" placeholder="ระบุตำแหน่ง" value="${!isStandardPosition && position ? position : ''}">
+        </div>
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">ลบ</button>
+    `;
+    list.appendChild(attendeeDiv);
+    
+    const select = attendeeDiv.querySelector('.attendee-position-select');
+    const otherInput = attendeeDiv.querySelector('.attendee-position-other');
 
-       
-        // ฟังก์ชันเปิดหน้าแก้ไข
+    // ตั้งค่าค่าเริ่มต้น
+    if (selectValue) {
+        select.value = selectValue;
+        if (selectValue === 'other') {
+            otherInput.classList.remove('hidden');
+        }
+    }
+
+    select.addEventListener('change', () => {
+        otherInput.classList.toggle('hidden', select.value !== 'other');
+        if (select.value !== 'other') {
+            otherInput.value = '';
+        }
+    });
+}
+
+// ฟังก์ชัน toggle สำหรับหน้าแก้ไข
+function toggleEditExpenseOptions() {
+    const partialOptions = document.getElementById('edit-partial-expense-options');
+    const totalContainer = document.getElementById('edit-total-expense-container');
+    
+    if (document.getElementById('edit-expense_partial')?.checked) {
+        partialOptions.classList.remove('hidden');
+        totalContainer.classList.remove('hidden');
+    } else {
+        partialOptions.classList.add('hidden');
+        totalContainer.classList.add('hidden');
+        
+        // รีเซ็ตค่าที่เกี่ยวข้องเมื่อเปลี่ยนเป็นไม่เบิกค่าใช้จ่าย
+        document.querySelectorAll('input[name="edit-expense_item"]').forEach(chk => {
+            chk.checked = false;
+        });
+        document.getElementById('edit-expense_other_text').value = '';
+        document.getElementById('edit-total-expense').value = '';
+    }
+}
+
+function toggleEditVehicleOptions() {
+    const privateDetails = document.getElementById('edit-private-vehicle-details');
+    
+    if (document.getElementById('edit-vehicle_private')?.checked) {
+        privateDetails.classList.remove('hidden');
+    } else {
+        privateDetails.classList.add('hidden');
+        document.getElementById('edit-license-plate').value = '';
+    }
+}
+// ฟังก์ชันเปิดหน้าแก้ไข
 async function openEditPage(requestId) {
     try {
-        console.log('Opening edit page for request:', requestId);
+        console.log("🔓 Opening edit page for request:", requestId);
         
-        // ใช้ GET จริงๆ
-        const result = await apiCall('getDraftRequest', { requestId: requestId }, 'GET');
+        if (!requestId || requestId === 'undefined' || requestId === 'null') {
+            showAlert("ผิดพลาด", "ไม่พบรหัสคำขอ");
+            return;
+        }
+        
+        // แสดง loading state
+        document.getElementById('edit-result').classList.add('hidden');
+        document.getElementById('edit-attendees-list').innerHTML = '<div class="text-center p-4"><div class="loader mx-auto"></div><p class="mt-2">กำลังโหลดข้อมูล...</p></div>';
+        
+        const result = await apiCall('GET', 'getDraftRequest', { requestId: requestId });
         
         if (result.status === 'success' && result.data) {
+            console.log("✅ Data received successfully from server");
+            
+            // 🔥 ตรวจสอบข้อมูลสำคัญ
+            console.log("🔍 Key data check:");
+            console.log("- Requester Name:", result.data.requesterName);
+            console.log("- Location:", result.data.location);
+            console.log("- Purpose:", result.data.purpose);
+            console.log("- Attendees count:", result.data.attendees ? result.data.attendees.length : 0);
+            console.log("- Department:", result.data.department);
+            console.log("- Head Name:", result.data.headName);
+            console.log("- Dates - Doc:", result.data.docDate, "Start:", result.data.startDate, "End:", result.data.endDate);
+            
+            // 🔥 บันทึก requestId ใน sessionStorage ชั่วคราว
+            sessionStorage.setItem('currentEditRequestId', requestId);
+            
             await populateEditForm(result.data);
             switchPage('edit-page');
+            document.getElementById('nav-edit').classList.remove('hidden');
+            
+            console.log("✅ Edit page opened successfully with requestId:", requestId);
         } else {
-            showAlert("ผิดพลาด", "ไม่พบข้อมูลคำขอ");
+            console.log("❌ No data received from server");
+            showAlert("ผิดพลาด", "ไม่พบข้อมูลคำขอหรือไม่สามารถโหลดข้อมูลได้");
         }
         
     } catch (error) {
-        console.error("Error loading edit data:", error);
-        showAlert("ผิดพลาด", "ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้");
+        console.error("❌ Error loading edit data:", error);
+        showAlert("ผิดพลาด", "ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้: " + error.message);
     }
-}
-        // ฟังก์ชันเติมข้อมูลในฟอร์มแก้ไข (แก้ไขทั้งฟังก์ชัน)
-async function populateEditForm(requestData) {
-    // รอให้ special positions โหลดเสร็จ
-    await loadSpecialPositions();
+} 
+// ฟังก์ชันสร้างเอกสารจากข้อมูลที่แก้ไข
+// ฟังก์ชันสร้างเอกสารจากข้อมูลที่แก้ไข
+async function generateDocumentFromDraft() {
+    console.log("=== generateDocumentFromDraft START ===");
     
-    // ล้าง attendees ก่อน
-    document.getElementById('edit-attendees-list').innerHTML = '';
+    // 🔧 **ดึง requestId จากหลายแหล่ง**
+    let requestId = document.getElementById('edit-request-id').value;
+    const draftId = document.getElementById('edit-draft-id').value;
     
-    // เติมข้อมูลพื้นฐาน
-    document.getElementById('edit-draft-id').value = requestData.draftId || '';
-    document.getElementById('edit-request-id').value = requestData.requestId || '';
-    
-    if(requestData.docDate) {
-        document.getElementById('edit-doc-date').value = new Date(requestData.docDate).toISOString().split('T')[0];
-    }
-    
-    // 🔥 เติมข้อมูลผู้ขออัตโนมัติ - ใช้ข้อมูลจาก requestData โดยตรง
-    document.getElementById('edit-requester-name').value = requestData.requesterName || '';
-    document.getElementById('edit-requester-position').value = requestData.requesterPosition || '';
-    
-    document.getElementById('edit-location').value = requestData.location || '';
-    document.getElementById('edit-purpose').value = requestData.purpose || '';
-    
-    if(requestData.startDate) {
-        document.getElementById('edit-start-date').value = new Date(requestData.startDate).toISOString().split('T')[0];
-    }
-    if(requestData.endDate) {
-        document.getElementById('edit-end-date').value = new Date(requestData.endDate).toISOString().split('T')[0];
+    if (!requestId) {
+        requestId = sessionStorage.getItem('currentEditRequestId');
+        if (requestId) {
+            document.getElementById('edit-request-id').value = requestId;
+            console.log("Retrieved requestId from sessionStorage:", requestId);
+        }
     }
     
-    // เติมข้อมูล attendees
-    if (requestData.attendees && requestData.attendees.length > 0) {
-        requestData.attendees.forEach(att => {
-            addEditAttendeeField(att.name, att.position);
-        });
+    console.log("Final requestId:", requestId, "draftId:", draftId);
+    
+    // ตรวจสอบให้แน่ใจว่ามี requestId
+    if (!requestId) {
+        showAlert("ผิดพลาด", "ไม่พบรหัสคำขอ กรุณากลับไปที่แดชบอร์ดและเปิดหน้าแก้ไขใหม่");
+        return;
     }
-    
-    // เติมข้อมูลค่าใช้จ่าย
-    const expenseRadio = document.querySelector(`input[name="edit-expense_option"][value="${requestData.expenseOption}"]`);
-    if (expenseRadio) {
-        expenseRadio.checked = true;
-    }
-    toggleEditExpenseOptions();
-    
-    if(requestData.expenseOption === 'partial') {
-        const expenseItems = requestData.expenseItems || [];
-        expenseItems.forEach(item => {
-            const chk = document.querySelector(`input[name="edit-expense_item"][data-item-name="${item.name}"]`);
-            if(chk) {
-                chk.checked = true;
-                if(item.name === 'ค่าใช้จ่ายอื่นๆ') {
-                   document.getElementById('edit-expense_other_text').value = item.detail || '';
-                }
-            }
-        });
-        document.getElementById('edit-total-expense').value = requestData.totalExpense || 0;
-    }
-    
-    // เติมข้อมูลยานพาหนะ
-    const vehicleRadio = document.querySelector(`input[name="edit-vehicle_option"][value="${requestData.vehicleOption}"]`);
-    if (vehicleRadio) {
-        vehicleRadio.checked = true;
-    }
-    toggleEditVehicleOptions();
-    
-    if (requestData.vehicleOption === 'private') {
-        document.getElementById('edit-license-plate').value = requestData.licensePlate || '';
-    }
-    
-    // เติมข้อมูลแผนก - ใช้ข้อมูลจาก specialPositionMap
-    const departmentSelect = document.getElementById('edit-department');
-    departmentSelect.value = requestData.department || '';
-    
-    // ตั้งค่าชื่อหัวหน้าแผนก
-    const headNameInput = document.getElementById('edit-head-name');
-    headNameInput.value = specialPositionMap[requestData.department] || requestData.headName || '';
-}
-       
 
-// 🔥 แก้ไขฟังก์ชัน autoFillUserData ให้ไม่เรียก API
-async function autoFillUserData() {
-    const user = getCurrentUser();
-    if (!user) {
-        console.log('No user found, skipping auto-fill');
+    // ดึงข้อมูลจากฟอร์ม
+    const formData = getEditFormData();
+    if (!formData) {
+        return; // getEditFormData แสดง error แล้ว
+    }
+    
+    // ตรวจสอบความถูกต้องของฟอร์ม
+    if (!validateEditForm(formData)) {
         return;
     }
     
-    // ใช้ข้อมูลจาก session โดยตรง ไม่เรียก API
-    fallbackToSessionData(user);
-    console.log('Auto-filled user data from session successfully');
-}
-// 🔥 ฟังก์ชันสำรองเมื่อดึงข้อมูลจาก server ไม่ได้
-function fallbackToSessionData(user) {
-    if (document.getElementById('form-requester-name')) {
-        document.getElementById('form-requester-name').value = user.fullName || '';
-    }
-    if (document.getElementById('form-requester-position')) {
-        document.getElementById('form-requester-position').value = user.position || '';
+    // 🔧 **ตั้งค่า requestId ให้ชัดเจนอีกครั้ง**
+    formData.requestId = requestId;
+    formData.draftId = draftId;
+    formData.isEdit = true;
+    
+    console.log("Sending data to server:", formData);
+    
+    toggleLoader('generate-document-button', true);
+    
+    try {
+        // 🔧 **ลองใช้ API ทั้งสองแบบเพื่อความแน่นอน**
+        let result;
+        
+        // ลองใช้ updateRequest ก่อน
+        try {
+            result = await apiCall('POST', 'updateRequest', formData);
+            console.log("updateRequest result:", result);
+        } catch (updateError) {
+            console.log("updateRequest failed, trying createRequest with isEdit flag:", updateError);
+            // ถ้า updateRequest ล้มเหลว ให้ลองใช้ createRequest พร้อม flag isEdit
+            result = await apiCall('POST', 'createRequest', formData);
+            console.log("createRequest with isEdit result:", result);
+        }
+        
+        if (result.status === 'success') {
+            // แสดงผลสำเร็จ
+            document.getElementById('edit-result-title').textContent = 'อัพเดทเอกสารสำเร็จ!';
+            document.getElementById('edit-result-message').textContent = `บันทึกข้อความสำหรับ ID ${result.data.id || requestId} ถูกอัพเดทแล้ว`;
+            
+            if (result.data.pdfUrl) {
+                document.getElementById('edit-result-link').href = result.data.pdfUrl;
+                document.getElementById('edit-result-link').classList.remove('hidden');
+            } else {
+                document.getElementById('edit-result-link').classList.add('hidden');
+            }
+            
+            document.getElementById('edit-result').classList.remove('hidden');
+            
+            // อัพเดท cache และข้อมูล
+            clearRequestsCache();
+            await fetchUserRequests();
+            
+            // ลบข้อมูลชั่วคราว
+            sessionStorage.removeItem('currentEditRequestId');
+            
+            showAlert("สำเร็จ", "อัพเดทเอกสารเรียบร้อยแล้ว");
+            
+        } else {
+            showAlert("ผิดพลาด", result.message || "ไม่สามารถอัพเดทเอกสารได้");
+        }
+    } catch (error) {
+        console.error("Error updating document:", error);
+        showAlert("เกิดข้อผิดพลาด", "ไม่สามารถอัพเดทเอกสารได้: " + error.message);
+    } finally {
+        toggleLoader('generate-document-button', false);
     }
     
-    // ถ้ามีข้อมูลแผนกใน session ก็เติมให้ด้วย
-    if (user.department && document.getElementById('form-department')) {
-        document.getElementById('form-department').value = user.department;
-        
-        const headNameInput = document.getElementById('form-head-name');
-        if (headNameInput) {
-            headNameInput.value = specialPositionMap[user.department] || '';
-        }
-    }
+    console.log("=== generateDocumentFromDraft END ===");
 }
-// ฟังก์ชันบันทึกข้อมูลคำขอ (ไม่สร้างเอกสาร)
+// ฟังก์ชันบันทึกข้อมูลคำขอ - แก้ไขให้ปลอดภัย
         async function saveDraft() {
             const formData = getEditFormData();
+            const requestId = document.getElementById('edit-request-id').value;
             
             if (!validateEditForm(formData)) {
                 return;
             }
             
+            // ตั้งค่า flag ตามว่ามี requestId หรือไม่
+            formData.isEdit = !!requestId;
+            
             toggleLoader('save-draft-button', true);
             
             try {
+                // ใช้ API เดียวกัน แต่ backend จะจัดการตาม flag
                 const result = await apiCall('POST', 'saveDraftRequest', formData);
-                document.getElementById('edit-draft-id').value = result.data.draftId;
                 
-                showAlert("สำเร็จ", "บันทึกข้อมูลคำขอเรียบร้อยแล้ว");
+                if (result.status === 'success') {
+                    document.getElementById('edit-draft-id').value = result.data.draftId || '';
+                    if (result.data.requestId) {
+                        document.getElementById('edit-request-id').value = result.data.requestId;
+                    }
+                    showAlert("สำเร็จ", formData.isEdit ? "อัพเดทข้อมูลคำขอเรียบร้อยแล้ว" : "บันทึกข้อมูลคำขอเรียบร้อยแล้ว");
+                } else {
+                    showAlert("ผิดพลาด", result.message || "ไม่สามารถบันทึกข้อมูลได้");
+                }
             } catch (error) {
+                console.error("Error saving draft:", error);
                 showAlert("ผิดพลาด", "ไม่สามารถบันทึกข้อมูลได้: " + error.message);
             } finally {
                 toggleLoader('save-draft-button', false);
             }
         }
 
-        // ฟังก์ชันสร้างเอกสารจากข้อมูลที่บันทึก
-        async function generateDocumentFromDraft() {
-    const requestId = document.getElementById('edit-request-id').value;
-    
-    if (!requestId) {
-        showAlert("ผิดพลาด", "ไม่พบ ID ของคำขอ");
-        return;
-    }
-    
-    const formData = getEditFormData();
-    formData.requestId = requestId; // 🔥 ใช้ requestId เดิม
-    
-    toggleLoader('generate-document-button', true);
-    
+        // ฟังก์ชันดึงข้อมูลจากฟอร์มแก้ไข - แก้ไขให้ปลอดภัย
+        // ฟังก์ชันดึงข้อมูลจากฟอร์มแก้ไข
+// ฟังก์ชันดึงข้อมูลจากฟอร์มแก้ไข
+function getEditFormData() {
     try {
-        // 🔥 เรียก updateRequestAndGeneratePDF แทน generateDocumentFromDraft
-        const result = await apiCall('POST', 'updateRequestAndGeneratePDF', formData);
+        // 🔧 **ดึง requestId จากหลายแหล่งเพื่อความแน่นอน**
+        let requestId = document.getElementById('edit-request-id').value;
+        const draftId = document.getElementById('edit-draft-id').value;
         
-        if (result.status === 'success') {
-            document.getElementById('edit-result-title').textContent = 'อัพเดทเอกสารสำเร็จ!';
-            document.getElementById('edit-result-message').textContent = `บันทึกข้อความสำหรับ ID ${result.data.id} ถูกอัพเดทแล้ว`;
-            document.getElementById('edit-result-link').href = result.data.pdfUrl;
-            document.getElementById('edit-result').classList.remove('hidden');
-            
-            clearRequestsCache();
-            await fetchUserRequests();
-        } else {
-            showAlert("เกิดข้อผิดพลาด", result.message);
+        // ถ้าไม่พบจาก input field ให้ดึงจาก sessionStorage
+        if (!requestId) {
+            requestId = sessionStorage.getItem('currentEditRequestId');
+            if (requestId) {
+                document.getElementById('edit-request-id').value = requestId;
+            }
         }
+        
+        // ถ้ายังไม่พบ ให้ดึงจาก URL parameter (ถ้ามี)
+        if (!requestId) {
+            const urlParams = new URLSearchParams(window.location.search);
+            requestId = urlParams.get('requestId');
+        }
+        
+        console.log("Getting edit form data - Request ID:", requestId, "Draft ID:", draftId);
+        
+        if (!requestId && !draftId) {
+            console.error("No requestId or draftId found!");
+            showAlert("ระบบผิดพลาด", "ไม่พบรหัสคำขอ กรุณากลับไปที่แดชบอร์ดและลองใหม่");
+            return null;
+        }
+
+        const expenseItems = [];
+        const expenseOption = document.querySelector('input[name="edit-expense_option"]:checked');
+        
+        if (expenseOption && expenseOption.value === 'partial') {
+            document.querySelectorAll('input[name="edit-expense_item"]:checked').forEach(chk => {
+                const item = { name: chk.dataset.itemName };
+                if (item.name === 'ค่าใช้จ่ายอื่นๆ') {
+                    item.detail = document.getElementById('edit-expense_other_text').value.trim();
+                }
+                expenseItems.push(item);
+            });
+        }
+
+        const attendees = Array.from(document.querySelectorAll('#edit-attendees-list > div')).map(div => {
+            const nameInput = div.querySelector('.attendee-name');
+            const select = div.querySelector('.attendee-position-select');
+            let position = select ? select.value : '';
+            
+            if (position === 'other') {
+                const otherInput = div.querySelector('.attendee-position-other');
+                position = otherInput ? otherInput.value.trim() : '';
+            }
+            
+            return {
+                name: nameInput ? nameInput.value.trim() : '',
+                position: position
+            };
+        }).filter(att => att.name && att.position);
+
+        const user = getCurrentUser();
+        if (!user) {
+            showAlert("ผิดพลาด", "กรุณาเข้าสู่ระบบใหม่");
+            return null;
+        }
+
+        const formData = {
+            draftId: draftId || '',
+            requestId: requestId || '',
+            username: user.username,
+            docDate: document.getElementById('edit-doc-date').value,
+            requesterName: document.getElementById('edit-requester-name').value.trim(),
+            requesterPosition: document.getElementById('edit-requester-position').value.trim(),
+            location: document.getElementById('edit-location').value.trim(),
+            purpose: document.getElementById('edit-purpose').value.trim(),
+            startDate: document.getElementById('edit-start-date').value,
+            endDate: document.getElementById('edit-end-date').value,
+            attendees: attendees,
+            expenseOption: expenseOption ? expenseOption.value : 'no',
+            expenseItems: expenseItems,
+            totalExpense: document.getElementById('edit-total-expense').value || 0,
+            vehicleOption: document.querySelector('input[name="edit-vehicle_option"]:checked')?.value || 'gov',
+            licensePlate: document.getElementById('edit-license-plate').value.trim(),
+            department: document.getElementById('edit-department').value,
+            headName: document.getElementById('edit-head-name').value,
+            isEdit: true // 🔧 ตั้งค่าเป็น true เสมอสำหรับหน้าแก้ไข
+        };
+
+        console.log("Edit form data prepared:", formData);
+        return formData;
+        
     } catch (error) {
-        showAlert("เกิดข้อผิดพลาด", "ไม่สามารถอัพเดทเอกสารได้: " + error.message);
-    } finally {
-        toggleLoader('generate-document-button', false);
+        console.error("Error in getEditFormData:", error);
+        showAlert("ระบบผิดพลาด", "ไม่สามารถอ่านข้อมูลจากฟอร์มได้");
+        return null;
     }
 }
-
-        // ฟังก์ชันดึงข้อมูลจากฟอร์มแก้ไข
-        function getEditFormData() {
-            const expenseItems = [];
-            const expenseOption = document.querySelector('input[name="edit-expense_option"]:checked');
-            
-            if (expenseOption && expenseOption.value === 'partial') {
-                document.querySelectorAll('input[name="edit-expense_item"]:checked').forEach(chk => {
-                    const item = { name: chk.dataset.itemName };
-                    if (item.name === 'ค่าใช้จ่ายอื่นๆ') {
-                        item.detail = document.getElementById('edit-expense_other_text').value.trim();
-                    }
-                    expenseItems.push(item);
-                });
-            }
-
-            return {
-                draftId: document.getElementById('edit-draft-id').value,
-                requestId: document.getElementById('edit-request-id').value,
-                username: getCurrentUser().username,
-                docDate: document.getElementById('edit-doc-date').value,
-                requesterName: document.getElementById('edit-requester-name').value.trim(),
-                requesterPosition: document.getElementById('edit-requester-position').value.trim(),
-                location: document.getElementById('edit-location').value.trim(),
-                purpose: document.getElementById('edit-purpose').value.trim(),
-                startDate: document.getElementById('edit-start-date').value,
-                endDate: document.getElementById('edit-end-date').value,
-                attendees: Array.from(document.querySelectorAll('#edit-attendees-list > div')).map(div => {
-                    const select = div.querySelector('.attendee-position-select');
-                    let position = select ? select.value : '';
-                    if (position === 'other') {
-                        const otherInput = div.querySelector('.attendee-position-other');
-                        position = otherInput ? otherInput.value.trim() : '';
-                    }
-                    const nameInput = div.querySelector('.attendee-name');
-                    return {
-                        name: nameInput ? nameInput.value.trim() : '',
-                        position: position
-                    };
-                }).filter(att => att.name && att.position),
-                expenseOption: expenseOption ? expenseOption.value : 'no',
-                expenseItems: expenseItems,
-                totalExpense: document.getElementById('edit-total-expense').value || 0,
-                vehicleOption: document.querySelector('input[name="edit-vehicle_option"]:checked')?.value || 'gov',
-                licensePlate: document.getElementById('edit-license-plate').value.trim(),
-                department: document.getElementById('edit-department').value,
-                headName: document.getElementById('edit-head-name').value,
-            };
-        }
-
-        // ฟังก์ชันเพิ่มผู้ร่วมเดินทางในหน้าแก้ไข
+// ฟังก์ชันเพิ่มผู้ร่วมเดินทางในหน้าแก้ไข - ปรับปรุงให้มี default values
         function addEditAttendeeField(name = '', position = '') {
             const list = document.getElementById('edit-attendees-list');
             const attendeeDiv = document.createElement('div');
             attendeeDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-2 items-center mb-2';
+            
+            // ตรวจสอบว่าตำแหน่งตรงกับ options ที่มีหรือไม่
+            const isStandardPosition = ['ผู้อำนวยการ', 'รองผู้อำนวยการ', 'ครู', 'ครูผู้ช่วย', 'พนักงานราชการ', 'ครูอัตราจ้าง', 'พนักงานขับรถ', 'นักเรียน'].includes(position);
+            const selectValue = isStandardPosition ? position : (position ? 'other' : '');
+            
             attendeeDiv.innerHTML = `
                 <input type="text" class="form-input attendee-name md:col-span-1" placeholder="ชื่อ-นามสกุล" value="${name}" required>
                 <div class="attendee-position-wrapper md:col-span-1">
-                     <select class="form-input attendee-position-select">
+                    <select class="form-input attendee-position-select">
                         <option value="">-- เลือกตำแหน่ง --</option>
                         <option value="ผู้อำนวยการ">ผู้อำนวยการ</option>
                         <option value="รองผู้อำนวยการ">รองผู้อำนวยการ</option>
@@ -1598,7 +1879,7 @@ function fallbackToSessionData(user) {
                         <option value="นักเรียน">นักเรียน</option>
                         <option value="other">อื่นๆ (โปรดระบุ)</option>
                     </select>
-                    <input type="text" class="form-input attendee-position-other hidden mt-1" placeholder="ระบุตำแหน่ง" value="${position === 'other' ? '' : position}">
+                    <input type="text" class="form-input attendee-position-other hidden mt-1" placeholder="ระบุตำแหน่ง" value="${!isStandardPosition && position ? position : ''}">
                 </div>
                 <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">ลบ</button>
             `;
@@ -1607,59 +1888,154 @@ function fallbackToSessionData(user) {
             const select = attendeeDiv.querySelector('.attendee-position-select');
             const otherInput = attendeeDiv.querySelector('.attendee-position-other');
 
-            const optionExists = Array.from(select.options).some(opt => opt.value === position);
-            if (optionExists) {
-                select.value = position;
-            } else if (position) {
-                select.value = 'other';
-                otherInput.value = position;
-                otherInput.classList.remove('hidden');
+            // ตั้งค่าค่าเริ่มต้น
+            if (selectValue) {
+                select.value = selectValue;
+                if (selectValue === 'other') {
+                    otherInput.classList.remove('hidden');
+                }
             }
 
             select.addEventListener('change', () => {
                 otherInput.classList.toggle('hidden', select.value !== 'other');
+                if (select.value !== 'other') {
+                    otherInput.value = '';
+                }
             });
         }
 
-        // ฟังก์ชัน validation
-        function validateEditForm(formData) {
-            const startDate = new Date(formData.startDate);
-            const endDate = new Date(formData.endDate);
-            
-            if (startDate > endDate) {
-                showAlert("ข้อมูลไม่ถูกต้อง", "วันที่เริ่มต้นต้องมาก่อนวันที่สิ้นสุด");
-                return false;
-            }
-            
-            const hasEmptyAttendees = formData.attendees.some(att => !att.name || !att.position);
-            if (hasEmptyAttendees) {
-                showAlert("ข้อมูลไม่ครบ", "กรุณากรอกข้อมูลผู้ร่วมเดินทางให้ครบถ้วน");
-                return false;
-            }
-            
-            return true;
-        }
-
-        // ฟังก์ชัน toggle สำหรับหน้าแก้ไข
+        // ฟังก์ชัน validation - เพิ่มการตรวจสอบให้ละเอียดยิ่งขึ้น
+        // ฟังก์ชัน validation สำหรับหน้าแก้ไข
+function validateEditForm(formData) {
+    console.log("Validating edit form:", formData);
+    
+    // ตรวจสอบข้อมูลพื้นฐาน
+    if (!formData.docDate) {
+        showAlert("ข้อมูลไม่ครบถ้วน", "กรุณากรอกวันที่");
+        return false;
+    }
+    
+    if (!formData.requesterName || !formData.requesterPosition) {
+        showAlert("ข้อมูลไม่ครบถ้วน", "กรุณากรอกชื่อและตำแหน่งผู้ขอ");
+        return false;
+    }
+    
+    if (!formData.location) {
+        showAlert("ข้อมูลไม่ครบถ้วน", "กรุณากรอกสถานที่ไปราชการ");
+        return false;
+    }
+    
+    if (!formData.purpose) {
+        showAlert("ข้อมูลไม่ครบถ้วน", "กรุณากรอกวัตถุประสงค์");
+        return false;
+    }
+    
+    if (!formData.startDate || !formData.endDate) {
+        showAlert("ข้อมูลไม่ครบถ้วน", "กรุณากรอกวันที่เริ่มต้นและสิ้นสุด");
+        return false;
+    }
+    
+    // ตรวจสอบวันที่
+    const startDate = new Date(formData.startDate);
+    const endDate = new Date(formData.endDate);
+    
+    if (startDate > endDate) {
+        showAlert("ข้อมูลไม่ถูกต้อง", "วันที่เริ่มต้นต้องมาก่อนวันที่สิ้นสุด");
+        return false;
+    }
+    
+    // ถ้าเป็นการแก้ไข ตรวจสอบว่ามี requestId หรือ draftId
+    if (formData.isEdit && !formData.requestId && !formData.draftId) {
+        showAlert("ข้อมูลไม่ครบถ้วน", "ไม่พบรหัสคำขอสำหรับการแก้ไข");
+        return false;
+    }
+    
+    console.log("Edit form validation passed");
+    return true;
+}
+        // ฟังก์ชัน toggle สำหรับหน้าแก้ไข - เพิ่มการรีเซ็ตข้อมูลเมื่อเปลี่ยนค่า
         function toggleEditExpenseOptions() {
             const partialOptions = document.getElementById('edit-partial-expense-options');
             const totalContainer = document.getElementById('edit-total-expense-container');
+            
             if (document.getElementById('edit-expense_partial')?.checked) {
                 partialOptions.classList.remove('hidden');
                 totalContainer.classList.remove('hidden');
             } else {
                 partialOptions.classList.add('hidden');
                 totalContainer.classList.add('hidden');
+                
+                // รีเซ็ตค่าที่เกี่ยวข้องเมื่อเปลี่ยนเป็นไม่เบิกค่าใช้จ่าย
+                document.querySelectorAll('input[name="edit-expense_item"]').forEach(chk => {
+                    chk.checked = false;
+                });
+                document.getElementById('edit-expense_other_text').value = '';
+                document.getElementById('edit-total-expense').value = '';
             }
         }
 
         function toggleEditVehicleOptions() {
             const privateDetails = document.getElementById('edit-private-vehicle-details');
+            
             if (document.getElementById('edit-vehicle_private')?.checked) {
                 privateDetails.classList.remove('hidden');
             } else {
                 privateDetails.classList.add('hidden');
+                document.getElementById('edit-license-plate').value = '';
             }
+        }
+
+        // ฟังก์ชันตรวจสอบและจัดการการแก้ไขที่ปลอดภัย
+        async function handleEditSafe(requestId) {
+            try {
+                // ตรวจสอบว่ามี requestId จริงหรือไม่
+                if (!requestId) {
+                    console.warn("No requestId provided for edit");
+                    return false;
+                }
+                
+                // ตรวจสอบรูปแบบ requestId
+                if (typeof requestId !== 'string' || requestId.length < 5) {
+                    console.warn("Invalid requestId format:", requestId);
+                    return false;
+                }
+                
+                // ตรวจสอบว่า requestId อยู่ใน cache หรือไม่
+                const existingRequest = allRequestsCache.find(req => req.id === requestId);
+                if (!existingRequest) {
+                    console.warn("Request not found in cache:", requestId);
+                    // แต่ยังพยายามโหลดต่อไป เผื่อว่า cache ไม่ updated
+                }
+                
+                return true;
+                
+            } catch (error) {
+                console.error("Error in handleEditSafe:", error);
+                return false;
+            }
+        }
+
+        // ฟังก์ชันเพิ่มความปลอดภัยให้ฟังก์ชันแก้ไข
+        function enhanceEditFunctionSafety() {
+            // ตรวจสอบว่าฟังก์ชันที่จำเป็นมีอยู่
+            const requiredFunctions = [
+                'openEditPage', 
+                'generateDocumentFromDraft', 
+                'saveDraft',
+                'getEditFormData'
+            ];
+            
+            requiredFunctions.forEach(funcName => {
+                if (typeof window[funcName] !== 'function') {
+                    console.error(`Required function ${funcName} is missing`);
+                    // สร้างฟังก์ชัน fallback เพื่อป้องกัน error
+                    window[funcName] = function() {
+                        showAlert("ระบบผิดพลาด", "ฟังก์ชันไม่พร้อมใช้งาน กรุณารีเฟรชหน้า");
+                    };
+                }
+            });
+            
+            console.log('Edit function safety check completed');
         }
 
         // --- PROFILE FUNCTIONS ---
@@ -1755,268 +2131,258 @@ function fallbackToSessionData(user) {
         // --- REQUEST FUNCTIONS ---
 
         async function fetchUserRequests() {
-    try {
-        const user = getCurrentUser();
-        if (!user) return;
-
-        document.getElementById('requests-loader').classList.remove('hidden');
-        document.getElementById('requests-list').classList.add('hidden');
-        document.getElementById('no-requests-message').classList.add('hidden');
-
-        // โหลดทั้ง Requests และ Memos พร้อมกัน
-        const [requestsResult, memosResult] = await Promise.all([
-            apiCall('GET', 'getUserRequests', { username: user.username }),
-            apiCall('GET', 'getSentMemos', { username: user.username })
-        ]);
-        
-        if (requestsResult.status === 'success') {
-            allRequestsCache = requestsResult.data;
-            userMemosCache = memosResult.data || [];
-            renderRequestsList(allRequestsCache, userMemosCache);
-        }
-    } catch (error) {
-        console.error('Error fetching requests:', error);
-        showAlert('ผิดพลาด', 'ไม่สามารถโหลดข้อมูลคำขอได้');
-    } finally {
-        document.getElementById('requests-loader').classList.add('hidden');
-    }
-}
-
-     function renderRequestsList(requests, memos, searchTerm = '') {
-    const container = document.getElementById('requests-list');
-    const noRequestsMessage = document.getElementById('no-requests-message');
-    
-    if (!requests || requests.length === 0) {
-        container.classList.add('hidden');
-        noRequestsMessage.classList.remove('hidden');
-        return;
-    }
-
-    let filteredRequests = requests;
-    if (searchTerm) {
-        filteredRequests = requests.filter(req => 
-            (req.purpose && req.purpose.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (req.location && req.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (req.id && req.id.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-    }
-
-    if (filteredRequests.length === 0) {
-        container.classList.add('hidden');
-        noRequestsMessage.classList.remove('hidden');
-        noRequestsMessage.textContent = 'ไม่พบคำขอที่ตรงกับการค้นหา';
-        return;
-    }
-
-    container.innerHTML = filteredRequests.map(request => {
-        // หาบันทึกข้อความที่เกี่ยวข้อง
-        const relatedMemo = memos.find(memo => memo.refNumber === request.id);
-        
-        // 🔄 กำหนดสถานะที่จะแสดง - ถ้ามีบันทึกให้ใช้สถานะจากบันทึกเป็นหลัก
-        let displayRequestStatus = request.status;
-        let displayCommandStatus = request.commandStatus;
-        
-        if (relatedMemo) {
-            // ถ้ามีบันทึก ให้สถานะทั้งหมดตามสถานะบันทึก
-            displayRequestStatus = relatedMemo.status;
-            displayCommandStatus = relatedMemo.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน' ? 'เสร็จสิ้น' : relatedMemo.status;
-        }
-        
-        const hasCompletedFiles = relatedMemo && (
-            relatedMemo.completedMemoUrl || 
-            relatedMemo.completedCommandUrl || 
-            relatedMemo.dispatchBookUrl
-        );
-        
-        // ตรวจสอบสถานะทั้งหมด
-        const isFullyCompleted = relatedMemo && relatedMemo.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน';
-        
-        return `
-            <div class="border rounded-lg p-4 mb-4 bg-white shadow-sm ${isFullyCompleted ? 'border-green-300 bg-green-50' : ''}">
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 mb-2">
-                            <h3 class="font-bold text-lg">${request.id || 'ไม่มีรหัส'}</h3>
-                            ${isFullyCompleted ? `
-                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                                    ✅ เสร็จสิ้นทั้งหมด
-                                </span>
-                            ` : ''}
-                            ${relatedMemo && relatedMemo.status === 'นำกลับไปแก้ไข' ? `
-                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                                    ⚠️ ต้องแก้ไข
-                                </span>
-                            ` : ''}
-                        </div>
-                        <p class="text-gray-600">${request.purpose || 'ไม่มีวัตถุประสงค์'}</p>
-                        <p class="text-sm text-gray-500">สถานที่: ${request.location || 'ไม่ระบุ'} | วันที่: ${formatDisplayDate(request.startDate)} - ${formatDisplayDate(request.endDate)}</p>
-                        
-                        <div class="mt-2 space-y-1">
-                            <p class="text-sm">
-                                <span class="font-medium">สถานะคำขอ:</span> 
-                                <span class="${getStatusColor(displayRequestStatus)}">${translateStatus(displayRequestStatus)}</span>
-                                ${relatedMemo ? `<span class="text-xs text-gray-500 ml-1">` : ''}
-                            </p>
-                            <p class="text-sm">
-                                <span class="font-medium">สถานะคำสั่ง:</span> 
-                                <span class="${getStatusColor(displayCommandStatus)}">${translateStatus(displayCommandStatus || 'กำลังดำเนินการ')}</span>
-                                ${relatedMemo ? `<span class="text-xs text-gray-500 ml-1">` : ''}
-                            </p>
-                            
-                            ${relatedMemo ? `
-                                <p class="text-sm">
-                                    <span class="font-medium">สถานะบันทึก:</span> 
-                                    <span class="${getStatusColor(relatedMemo.status)}">${translateStatus(relatedMemo.status)}</span>
-                                    <span class="text-xs text-blue-500 ml-1">
-                                </p>
-                            ` : ''}
-                        </div>
-                        
-                        ${hasCompletedFiles ? `
-                            <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                                <p class="text-sm font-medium text-green-800 mb-2">📁 ไฟล์ที่พร้อมดาวน์โหลด:</p>
-                                <div class="flex flex-wrap gap-2">
-                                    ${relatedMemo.completedMemoUrl ? `
-                                        <a href="${relatedMemo.completedMemoUrl}" target="_blank" class="btn btn-success btn-sm text-xs">
-                                            📄 บันทึกข้อความสมบูรณ์
-                                        </a>
-                                    ` : ''}
-                                    ${relatedMemo.completedCommandUrl ? `
-                                        <a href="${relatedMemo.completedCommandUrl}" target="_blank" class="btn bg-blue-500 text-white btn-sm text-xs">
-                                            📋 คำสั่งไปราชการสมบูรณ์
-                                        </a>
-                                    ` : ''}
-                                    ${relatedMemo.dispatchBookUrl ? `
-                                        <a href="${relatedMemo.dispatchBookUrl}" target="_blank" class="btn bg-purple-500 text-white btn-sm text-xs">
-                                            📦 หนังสือส่งสมบูรณ์
-                                        </a>
-                                    ` : ''}
-                                </div>
-                                ${isFullyCompleted ? `
-                                    <p class="text-xs text-green-600 mt-2">
-                                        ✅ งานทั้งหมดเสร็จสมบูรณ์และพร้อมใช้งาน
-                                    </p>
-                                ` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-                    <div class="flex gap-2 flex-col ml-4">
-                        ${request.pdfUrl ? `
-                            <a href="${request.pdfUrl}" target="_blank" class="btn btn-success btn-sm">
-                                📄 ดูคำขอ
-                            </a>
-                        ` : ''}
-                        
-                        ${!isFullyCompleted ? `
-                            <button data-action="edit" data-id="${request.id}" class="btn bg-blue-500 text-white btn-sm">
-                                ✏️ แก้ไข
-                            </button>
-                        ` : ''}
-                        
-                        ${!isFullyCompleted ? `
-                            <button data-action="delete" data-id="${request.id}" class="btn btn-danger btn-sm">
-                                🗑️ ลบ
-                            </button>
-                        ` : ''}
-                        
-                        ${!relatedMemo && !isFullyCompleted ? `
-                            <button data-action="send-memo" data-id="${request.id}" class="btn bg-green-500 text-white btn-sm">
-                                📤 ส่งบันทึก
-                            </button>
-                        ` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    container.classList.remove('hidden');
-    noRequestsMessage.classList.add('hidden');
-
-    container.addEventListener('click', handleRequestAction);
-}
-
-/// ฟังก์ชันช่วยเหลือสำหรับสีสถานะ
-function getStatusColor(status) {
-    const statusColors = {
-        'เสร็จสิ้น/รับไฟล์ไปใช้งาน': 'text-green-600 font-semibold',
-        'เสร็จสิ้น': 'text-green-600 font-semibold',
-        'Approved': 'text-green-600 font-semibold',
-        'เสร็จสิ้นรอออกคำสั่งไปราชการ': 'text-blue-600',
-        'กำลังดำเนินการ': 'text-yellow-600',
-        'Pending': 'text-yellow-600',
-        'Submitted': 'text-blue-600',
-        'รอเอกสาร (เบิก)': 'text-orange-600',
-        'นำกลับไปแก้ไข': 'text-red-600',
-        'รอตรวจสอบและออกคำสั่งไปราชการ': 'text-purple-600'
-    };
-    return statusColors[status] || 'text-gray-600';
-}
-
-       // ในฟังก์ชัน handleRequestAction
-async function handleRequestAction(e) {
-    const button = e.target.closest('button[data-action]');
-    if (!button) return;
-
-    const requestId = button.dataset.id;
-    const action = button.dataset.action;
-
-    if (action === 'edit') {
-        await openEditPage(requestId);
-    } else if (action === 'delete') {
-        const confirmed = await showConfirm("ยืนยันการลบ", "คุณแน่ใจหรือไม่ว่าต้องการลบรายการคำขอนี้? การกระทำนี้ไม่สามารถย้อนกลับได้");
-        if (confirmed) {
             try {
-               await apiCall('POST', 'deleteRequest', { id: requestId });
-               clearRequestsCache();
-               showAlert("ลบสำเร็จ", "รายการคำขอถูกลบเรียบร้อยแล้ว");
-               await fetchUserRequests();
-            } catch(error) {
-                showAlert("เกิดข้อผิดพลาด", "ไม่สามารถลบรายการได้: " + error.message);
+                const user = getCurrentUser();
+                if (!user) return;
+
+                document.getElementById('requests-loader').classList.remove('hidden');
+                document.getElementById('requests-list').classList.add('hidden');
+                document.getElementById('no-requests-message').classList.add('hidden');
+
+                // โหลดทั้ง Requests และ Memos พร้อมกัน
+                const [requestsResult, memosResult] = await Promise.all([
+                    apiCall('GET', 'getUserRequests', { username: user.username }),
+                    apiCall('GET', 'getSentMemos', { username: user.username })
+                ]);
+                
+                if (requestsResult.status === 'success') {
+                    allRequestsCache = requestsResult.data;
+                    userMemosCache = memosResult.data || [];
+                    renderRequestsList(allRequestsCache, userMemosCache);
+                }
+            } catch (error) {
+                console.error('Error fetching requests:', error);
+                showAlert('ผิดพลาด', 'ไม่สามารถโหลดข้อมูลคำขอได้');
+            } finally {
+                document.getElementById('requests-loader').classList.add('hidden');
             }
         }
-    } else if (action === 'send-memo') {
-        document.getElementById('memo-modal-request-id').value = requestId;
-        document.getElementById('send-memo-modal').style.display = 'flex';
-    }
-}
+
+        function renderRequestsList(requests, memos, searchTerm = '') {
+            const container = document.getElementById('requests-list');
+            const noRequestsMessage = document.getElementById('no-requests-message');
+            
+            if (!requests || requests.length === 0) {
+                container.classList.add('hidden');
+                noRequestsMessage.classList.remove('hidden');
+                return;
+            }
+
+            let filteredRequests = requests;
+            if (searchTerm) {
+                filteredRequests = requests.filter(req => 
+                    (req.purpose && req.purpose.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (req.location && req.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (req.id && req.id.toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+            }
+
+            if (filteredRequests.length === 0) {
+                container.classList.add('hidden');
+                noRequestsMessage.classList.remove('hidden');
+                noRequestsMessage.textContent = 'ไม่พบคำขอที่ตรงกับการค้นหา';
+                return;
+            }
+
+            container.innerHTML = filteredRequests.map(request => {
+                // หาบันทึกข้อความที่เกี่ยวข้อง
+                const relatedMemo = memos.find(memo => memo.refNumber === request.id);
+                
+                // กำหนดสถานะที่จะแสดง - ถ้ามีบันทึกให้ใช้สถานะจากบันทึกเป็นหลัก
+                let displayRequestStatus = request.status;
+                let displayCommandStatus = request.commandStatus;
+                
+                if (relatedMemo) {
+                    // ถ้ามีบันทึก ให้สถานะทั้งหมดตามสถานะบันทึก
+                    displayRequestStatus = relatedMemo.status;
+                    displayCommandStatus = relatedMemo.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน' ? 'เสร็จสิ้น' : relatedMemo.status;
+                }
+                
+                const hasCompletedFiles = relatedMemo && (
+                    relatedMemo.completedMemoUrl || 
+                    relatedMemo.completedCommandUrl || 
+                    relatedMemo.dispatchBookUrl
+                );
+                
+                // ตรวจสอบสถานะทั้งหมด
+                const isFullyCompleted = relatedMemo && relatedMemo.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน';
+                
+                return `
+                    <div class="border rounded-lg p-4 mb-4 bg-white shadow-sm ${isFullyCompleted ? 'border-green-300 bg-green-50' : ''}">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h3 class="font-bold text-lg">${request.id || 'ไม่มีรหัส'}</h3>
+                                    ${isFullyCompleted ? `
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                            ✅ เสร็จสิ้นทั้งหมด
+                                        </span>
+                                    ` : ''}
+                                    ${relatedMemo && relatedMemo.status === 'นำกลับไปแก้ไข' ? `
+                                        <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                            ⚠️ ต้องแก้ไข
+                                        </span>
+                                    ` : ''}
+                                </div>
+                                <p class="text-gray-600">${request.purpose || 'ไม่มีวัตถุประสงค์'}</p>
+                                <p class="text-sm text-gray-500">สถานที่: ${request.location || 'ไม่ระบุ'} | วันที่: ${formatDisplayDate(request.startDate)} - ${formatDisplayDate(request.endDate)}</p>
+                                
+                                <div class="mt-2 space-y-1">
+                                    <p class="text-sm">
+                                        <span class="font-medium">สถานะคำขอ:</span> 
+                                        <span class="${getStatusColor(displayRequestStatus)}">${translateStatus(displayRequestStatus)}</span>
+                                        ${relatedMemo ? `<span class="text-xs text-gray-500 ml-1">` : ''}
+                                    </p>
+                                    <p class="text-sm">
+                                        <span class="font-medium">สถานะคำสั่ง:</span> 
+                                        <span class="${getStatusColor(displayCommandStatus)}">${translateStatus(displayCommandStatus || 'กำลังดำเนินการ')}</span>
+                                        ${relatedMemo ? `<span class="text-xs text-gray-500 ml-1">` : ''}
+                                    </p>
+                                    
+                                    ${relatedMemo ? `
+                                        <p class="text-sm">
+                                            <span class="font-medium">สถานะบันทึก:</span> 
+                                            <span class="${getStatusColor(relatedMemo.status)}">${translateStatus(relatedMemo.status)}</span>
+                                            <span class="text-xs text-blue-500 ml-1">
+                                        </p>
+                                    ` : ''}
+                                </div>
+                                
+                                ${hasCompletedFiles ? `
+                                    <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                                        <p class="text-sm font-medium text-green-800 mb-2">📁 ไฟล์ที่พร้อมดาวน์โหลด:</p>
+                                        <div class="flex flex-wrap gap-2">
+                                            ${relatedMemo.completedMemoUrl ? `
+                                                <a href="${relatedMemo.completedMemoUrl}" target="_blank" class="btn btn-success btn-sm text-xs">
+                                                    📄 บันทึกข้อความสมบูรณ์
+                                                </a>
+                                            ` : ''}
+                                            ${relatedMemo.completedCommandUrl ? `
+                                                <a href="${relatedMemo.completedCommandUrl}" target="_blank" class="btn bg-blue-500 text-white btn-sm text-xs">
+                                                    📋 คำสั่งไปราชการสมบูรณ์
+                                                </a>
+                                            ` : ''}
+                                            ${relatedMemo.dispatchBookUrl ? `
+                                                <a href="${relatedMemo.dispatchBookUrl}" target="_blank" class="btn bg-purple-500 text-white btn-sm text-xs">
+                                                    📦 หนังสือส่งสมบูรณ์
+                                                </a>
+                                            ` : ''}
+                                        </div>
+                                        ${isFullyCompleted ? `
+                                            <p class="text-xs text-green-600 mt-2">
+                                                ✅ งานทั้งหมดเสร็จสมบูรณ์และพร้อมใช้งาน
+                                            </p>
+                                        ` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="flex gap-2 flex-col ml-4">
+                                ${request.pdfUrl ? `
+                                    <a href="${request.pdfUrl}" target="_blank" class="btn btn-success btn-sm">
+                                        📄 ดูคำขอ
+                                    </a>
+                                ` : ''}
+                                
+                                ${!isFullyCompleted ? `
+                                    <button data-action="edit" data-id="${request.id}" class="btn bg-blue-500 text-white btn-sm">
+                                        ✏️ แก้ไข
+                                    </button>
+                                ` : ''}
+                                
+                                ${!isFullyCompleted ? `
+                                    <button data-action="delete" data-id="${request.id}" class="btn btn-danger btn-sm">
+                                        🗑️ ลบ
+                                    </button>
+                                ` : ''}
+                                
+                                ${!relatedMemo && !isFullyCompleted ? `
+                                    <button data-action="send-memo" data-id="${request.id}" class="btn bg-green-500 text-white btn-sm">
+                                        📤 ส่งบันทึก
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.classList.remove('hidden');
+            noRequestsMessage.classList.add('hidden');
+
+            container.addEventListener('click', handleRequestAction);
+        }
+
+        // ฟังก์ชันช่วยเหลือสำหรับสีสถานะ
+        function getStatusColor(status) {
+            const statusColors = {
+                'เสร็จสิ้น/รับไฟล์ไปใช้งาน': 'text-green-600 font-semibold',
+                'เสร็จสิ้น': 'text-green-600 font-semibold',
+                'Approved': 'text-green-600 font-semibold',
+                'เสร็จสิ้นรอออกคำสั่งไปราชการ': 'text-blue-600',
+                'กำลังดำเนินการ': 'text-yellow-600',
+                'Pending': 'text-yellow-600',
+                'Submitted': 'text-blue-600',
+                'รอเอกสาร (เบิก)': 'text-orange-600',
+                'นำกลับไปแก้ไข': 'text-red-600',
+                'รอตรวจสอบและออกคำสั่งไปราชการ': 'text-purple-600'
+            };
+            return statusColors[status] || 'text-gray-600';
+        }
+
+        // ในฟังก์ชัน handleRequestAction
+        async function handleRequestAction(e) {
+            const button = e.target.closest('button[data-action]');
+            if (!button) return;
+
+            const requestId = button.dataset.id;
+            const action = button.dataset.action;
+
+            if (action === 'edit') {
+                // ตรวจสอบความปลอดภัยก่อนเปิดหน้าแก้ไข
+                const isValid = await handleEditSafe(requestId);
+                if (isValid) {
+                    await openEditPage(requestId);
+                } else {
+                    showAlert("ผิดพลาด", "ไม่สามารถเปิดหน้าแก้ไขได้ กรุณาลองใหม่");
+                }
+            } else if (action === 'delete') {
+                const confirmed = await showConfirm("ยืนยันการลบ", "คุณแน่ใจหรือไม่ว่าต้องการลบรายการคำขอนี้? การกระทำนี้ไม่สามารถย้อนกลับได้");
+                if (confirmed) {
+                    try {
+                       await apiCall('POST', 'deleteRequest', { id: requestId });
+                       clearRequestsCache();
+                       showAlert("ลบสำเร็จ", "รายการคำขอถูกลบเรียบร้อยแล้ว");
+                       await fetchUserRequests();
+                    } catch(error) {
+                        showAlert("เกิดข้อผิดพลาด", "ไม่สามารถลบรายการได้: " + error.message);
+                    }
+                }
+            } else if (action === 'send-memo') {
+                document.getElementById('memo-modal-request-id').value = requestId;
+                document.getElementById('send-memo-modal').style.display = 'flex';
+            }
+        }
 
         // --- BASIC FORM FUNCTIONS ---
 
-       // 🔥 แก้ไขฟังก์ชัน resetRequestForm ให้เรียก autoFillUserData
-async function resetRequestForm() {
-    document.getElementById('request-form').reset();
-    document.getElementById('form-request-id').value = '';
-    document.getElementById('form-attendees-list').innerHTML = '';
-    document.getElementById('form-result').classList.add('hidden');
-    
-    // ตั้งค่าวันเริ่มต้นเป็นวันนี้
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('form-doc-date').value = today;
-    document.getElementById('form-start-date').value = today;
-    document.getElementById('form-end-date').value = today;
-    
-    // 🔥 เติมข้อมูลผู้ใช้อัตโนมัติ (เฉพาะฟอร์มสร้างใหม่)
-    if (!document.getElementById('form-request-id').value) {
-        await autoFillUserData();
-    }
-    
-    // ตั้งค่า department change handler
-    const departmentSelect = document.getElementById('form-department');
-    if (departmentSelect) {
-        // ลบ event listener เดิมก่อน (ถ้ามี)
-        departmentSelect.replaceWith(departmentSelect.cloneNode(true));
-        
-        // เพิ่ม event listener ใหม่
-        document.getElementById('form-department').addEventListener('change', (e) => {
-            const selectedDept = e.target.value;
-            const headNameInput = document.getElementById('form-head-name');
-            if (headNameInput) {
-                headNameInput.value = specialPositionMap[selectedDept] || '';
-            }
-        });
-    }
-}
+        async function resetRequestForm() {
+            document.getElementById('request-form').reset();
+            document.getElementById('form-request-id').value = '';
+            document.getElementById('form-attendees-list').innerHTML = '';
+            document.getElementById('form-result').classList.add('hidden');
+            
+            // ตั้งค่าวันเริ่มต้นเป็นวันนี้
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('form-doc-date').value = today;
+            document.getElementById('form-start-date').value = today;
+            document.getElementById('form-end-date').value = today;
+            
+            // ตั้งค่า department change handler
+            document.getElementById('form-department').addEventListener('change', (e) => {
+                const selectedDept = e.target.value;
+                document.getElementById('form-head-name').value = specialPositionMap[selectedDept] || '';
+            });
+        }
 
         function addAttendeeField() {
             const list = document.getElementById('form-attendees-list');
@@ -2107,7 +2473,8 @@ async function resetRequestForm() {
                 vehicleOption: document.querySelector('input[name="vehicle_option"]:checked').value,
                 licensePlate: document.getElementById('form-license-plate').value,
                 department: document.getElementById('form-department').value,
-                headName: document.getElementById('form-head-name').value
+                headName: document.getElementById('form-head-name').value,
+                isEdit: false // ระบุชัดเจนว่าเป็นการสร้างใหม่
             };
 
             if (formData.expenseOption === 'partial') {
@@ -2302,277 +2669,275 @@ async function resetRequestForm() {
 
         // --- STATS FUNCTIONS ---
 
-        // --- STATS FUNCTIONS ---
+        async function loadStatsData() {
+            try {
+                const user = getCurrentUser();
+                if (!user) return;
 
-async function loadStatsData() {
-    try {
-        const user = getCurrentUser();
-        if (!user) return;
-
-        document.getElementById('stats-overview').innerHTML = `
-            <div class="text-center p-8">
-                <div class="loader mx-auto"></div>
-                <p class="mt-4">กำลังโหลดสถิติ...</p>
-            </div>
-        `;
-
-        // โหลดข้อมูลทั้งหมด
-        const [requestsResult, memosResult, usersResult] = await Promise.all([
-            apiCall('GET', 'getAllRequests'),
-            apiCall('GET', 'getAllMemos'),
-            apiCall('GET', 'getAllUsers')
-        ]);
-
-        const requests = requestsResult.data || [];
-        const memos = memosResult.data || [];
-        const users = usersResult.data || [];
-
-        // กรองข้อมูลของผู้ใช้ปัจจุบัน (ถ้าไม่ใช่ admin)
-        const userRequests = user.role === 'admin' ? requests : requests.filter(req => req.username === user.username);
-        const userMemos = user.role === 'admin' ? memos : memos.filter(memo => memo.submittedBy === user.username);
-
-        renderStatsOverview(userRequests, userMemos, users, user);
-        
-    } catch (error) {
-        console.error('Error loading stats:', error);
-        document.getElementById('stats-overview').innerHTML = `
-            <div class="text-center p-4 text-red-500">
-                <p>เกิดข้อผิดพลาดในการโหลดสถิติ</p>
-            </div>
-        `;
-    }
-}
-
-function renderStatsOverview(requests, memos, users, currentUser) {
-    const container = document.getElementById('stats-overview');
-    
-    // คำนวณสถิติ
-    const stats = calculateStats(requests, memos, users, currentUser);
-    
-    container.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <!-- การ์ดสถิติ -->
-            <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-                <div class="flex items-center">
-                    <div class="bg-blue-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
+                document.getElementById('stats-overview').innerHTML = `
+                    <div class="text-center p-8">
+                        <div class="loader mx-auto"></div>
+                        <p class="mt-4">กำลังโหลดสถิติ...</p>
                     </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">คำขอทั้งหมด</p>
-                        <p class="text-2xl font-bold text-gray-900">${stats.totalRequests}</p>
-                    </div>
-                </div>
-            </div>
+                `;
 
-            <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-                <div class="flex items-center">
-                    <div class="bg-green-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">คำขอที่เสร็จสิ้น</p>
-                        <p class="text-2xl font-bold text-gray-900">${stats.completedRequests}</p>
-                    </div>
-                </div>
-            </div>
+                // โหลดข้อมูลทั้งหมด
+                const [requestsResult, memosResult, usersResult] = await Promise.all([
+                    apiCall('GET', 'getAllRequests'),
+                    apiCall('GET', 'getAllMemos'),
+                    apiCall('GET', 'getAllUsers')
+                ]);
 
-            <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
-                <div class="flex items-center">
-                    <div class="bg-purple-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">บันทึกข้อความ</p>
-                        <p class="text-2xl font-bold text-gray-900">${stats.totalMemos}</p>
-                    </div>
-                </div>
-            </div>
+                const requests = requestsResult.data || [];
+                const memos = memosResult.data || [];
+                const users = usersResult.data || [];
 
-            <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
-                <div class="flex items-center">
-                    <div class="bg-yellow-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">ผู้ใช้ทั้งหมด</p>
-                        <p class="text-2xl font-bold text-gray-900">${stats.totalUsers}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                // กรองข้อมูลของผู้ใช้ปัจจุบัน (ถ้าไม่ใช่ admin)
+                const userRequests = user.role === 'admin' ? requests : requests.filter(req => req.username === user.username);
+                const userMemos = user.role === 'admin' ? memos : memos.filter(memo => memo.submittedBy === user.username);
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- สถิติตามสถานะ -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">สถานะคำขอ</h3>
-                <div class="space-y-3">
-                    ${Object.entries(stats.requestStatus).map(([status, count]) => `
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600">${translateStatus(status)}</span>
-                            <span class="font-semibold">${count} คำขอ</span>
+                renderStatsOverview(userRequests, userMemos, users, user);
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                document.getElementById('stats-overview').innerHTML = `
+                    <div class="text-center p-4 text-red-500">
+                        <p>เกิดข้อผิดพลาดในการโหลดสถิติ</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderStatsOverview(requests, memos, users, currentUser) {
+            const container = document.getElementById('stats-overview');
+            
+            // คำนวณสถิติ
+            const stats = calculateStats(requests, memos, users, currentUser);
+            
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <!-- การ์ดสถิติ -->
+                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">คำขอทั้งหมด</p>
+                                <p class="text-2xl font-bold text-gray-900">${stats.totalRequests}</p>
+                            </div>
                         </div>
-                    `).join('')}
-                </div>
-            </div>
+                    </div>
 
-            <!-- สถิติตามแผนก -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">คำขอตามแผนก</h3>
-                <div class="space-y-3">
-                    ${Object.entries(stats.departmentStats).slice(0, 8).map(([dept, count]) => `
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600 truncate" title="${dept}">${dept}</span>
-                            <span class="font-semibold">${count} คำขอ</span>
+                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+                        <div class="flex items-center">
+                            <div class="bg-green-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">คำขอที่เสร็จสิ้น</p>
+                                <p class="text-2xl font-bold text-gray-900">${stats.completedRequests}</p>
+                            </div>
                         </div>
-                    `).join('')}
-                    ${Object.entries(stats.departmentStats).length > 8 ? `
-                        <div class="text-center text-sm text-gray-500 mt-2">
-                            + ${Object.entries(stats.departmentStats).length - 8} แผนกอื่นๆ
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+                        <div class="flex items-center">
+                            <div class="bg-purple-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">บันทึกข้อความ</p>
+                                <p class="text-2xl font-bold text-gray-900">${stats.totalMemos}</p>
+                            </div>
                         </div>
-                    ` : ''}
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+                        <div class="flex items-center">
+                            <div class="bg-yellow-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">ผู้ใช้ทั้งหมด</p>
+                                <p class="text-2xl font-bold text-gray-900">${stats.totalUsers}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        ${currentUser.role === 'admin' ? `
-        <div class="mt-6 bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-bold mb-4 text-gray-800">สถิติผู้ใช้</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="text-center p-4 bg-blue-50 rounded-lg">
-                    <p class="text-2xl font-bold text-blue-600">${stats.userStats.total}</p>
-                    <p class="text-sm text-gray-600">ผู้ใช้ทั้งหมด</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- สถิติตามสถานะ -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800">สถานะคำขอ</h3>
+                        <div class="space-y-3">
+                            ${Object.entries(stats.requestStatus).map(([status, count]) => `
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">${translateStatus(status)}</span>
+                                    <span class="font-semibold">${count} คำขอ</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- สถิติตามแผนก -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800">คำขอตามแผนก</h3>
+                        <div class="space-y-3">
+                            ${Object.entries(stats.departmentStats).slice(0, 8).map(([dept, count]) => `
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600 truncate" title="${dept}">${dept}</span>
+                                    <span class="font-semibold">${count} คำขอ</span>
+                                </div>
+                            `).join('')}
+                            ${Object.entries(stats.departmentStats).length > 8 ? `
+                                <div class="text-center text-sm text-gray-500 mt-2">
+                                    + ${Object.entries(stats.departmentStats).length - 8} แผนกอื่นๆ
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
                 </div>
-                <div class="text-center p-4 bg-green-50 rounded-lg">
-                    <p class="text-2xl font-bold text-green-600">${stats.userStats.admins}</p>
-                    <p class="text-sm text-gray-600">ผู้ดูแลระบบ</p>
+
+                ${currentUser.role === 'admin' ? `
+                <div class="mt-6 bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">สถิติผู้ใช้</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <p class="text-2xl font-bold text-blue-600">${stats.userStats.total}</p>
+                            <p class="text-sm text-gray-600">ผู้ใช้ทั้งหมด</p>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <p class="text-2xl font-bold text-green-600">${stats.userStats.admins}</p>
+                            <p class="text-sm text-gray-600">ผู้ดูแลระบบ</p>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <p class="text-2xl font-bold text-purple-600">${stats.userStats.regularUsers}</p>
+                            <p class="text-sm text-gray-600">ผู้ใช้ทั่วไป</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-center p-4 bg-purple-50 rounded-lg">
-                    <p class="text-2xl font-bold text-purple-600">${stats.userStats.regularUsers}</p>
-                    <p class="text-sm text-gray-600">ผู้ใช้ทั่วไป</p>
+                ` : ''}
+
+                <!-- สถิติรายเดือน -->
+                <div class="mt-6 bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">คำขอรายเดือน (6 เดือนล่าสุด)</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">เดือน</th>
+                                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">จำนวนคำขอ</th>
+                                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">สถานะเสร็จสิ้น</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${stats.monthlyStats.map(month => `
+                                    <tr class="border-b">
+                                        <td class="px-4 py-2 text-sm text-gray-600">${month.month}</td>
+                                        <td class="px-4 py-2 text-center text-sm font-semibold">${month.count}</td>
+                                        <td class="px-4 py-2 text-center">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${month.completed > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                                ${month.completed}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </div>
-        ` : ''}
+            `;
+        }
 
-        <!-- สถิติรายเดือน -->
-        <div class="mt-6 bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-bold mb-4 text-gray-800">คำขอรายเดือน (6 เดือนล่าสุด)</h3>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">เดือน</th>
-                            <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">จำนวนคำขอ</th>
-                            <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">สถานะเสร็จสิ้น</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${stats.monthlyStats.map(month => `
-                            <tr class="border-b">
-                                <td class="px-4 py-2 text-sm text-gray-600">${month.month}</td>
-                                <td class="px-4 py-2 text-center text-sm font-semibold">${month.count}</td>
-                                <td class="px-4 py-2 text-center">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${month.completed > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                        ${month.completed}
-                                    </span>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-}
+        function calculateStats(requests, memos, users, currentUser) {
+            // สถิติพื้นฐาน
+            const totalRequests = requests.length;
+            const totalMemos = memos.length;
+            const totalUsers = users.length;
 
-function calculateStats(requests, memos, users, currentUser) {
-    // สถิติพื้นฐาน
-    const totalRequests = requests.length;
-    const totalMemos = memos.length;
-    const totalUsers = users.length;
+            // สถิติสถานะคำขอ
+            const requestStatus = {};
+            requests.forEach(req => {
+                const status = req.status || 'กำลังดำเนินการ';
+                requestStatus[status] = (requestStatus[status] || 0) + 1;
+            });
 
-    // สถิติสถานะคำขอ
-    const requestStatus = {};
-    requests.forEach(req => {
-        const status = req.status || 'กำลังดำเนินการ';
-        requestStatus[status] = (requestStatus[status] || 0) + 1;
-    });
+            // คำขอที่เสร็จสิ้น
+            const completedRequests = requests.filter(req => 
+                req.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน' || 
+                req.status === 'Approved' ||
+                req.commandStatus === 'เสร็จสิ้นรอออกคำสั่งไปราชการ'
+            ).length;
 
-    // คำขอที่เสร็จสิ้น
-    const completedRequests = requests.filter(req => 
-        req.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน' || 
-        req.status === 'Approved' ||
-        req.commandStatus === 'เสร็จสิ้นรอออกคำสั่งไปราชการ'
-    ).length;
+            // สถิติตามแผนก
+            const departmentStats = {};
+            requests.forEach(req => {
+                const dept = req.department || 'ไม่ระบุแผนก';
+                departmentStats[dept] = (departmentStats[dept] || 0) + 1;
+            });
 
-    // สถิติตามแผนก
-    const departmentStats = {};
-    requests.forEach(req => {
-        const dept = req.department || 'ไม่ระบุแผนก';
-        departmentStats[dept] = (departmentStats[dept] || 0) + 1;
-    });
+            // สถิติผู้ใช้ (สำหรับ admin)
+            const userStats = {
+                total: users.length,
+                admins: users.filter(u => u.role === 'admin').length,
+                regularUsers: users.filter(u => u.role === 'user').length
+            };
 
-    // สถิติผู้ใช้ (สำหรับ admin)
-    const userStats = {
-        total: users.length,
-        admins: users.filter(u => u.role === 'admin').length,
-        regularUsers: users.filter(u => u.role === 'user').length
-    };
+            // สถิติรายเดือน (6 เดือนล่าสุด)
+            const monthlyStats = calculateMonthlyStats(requests);
 
-    // สถิติรายเดือน (6 เดือนล่าสุด)
-    const monthlyStats = calculateMonthlyStats(requests);
+            return {
+                totalRequests,
+                completedRequests,
+                totalMemos,
+                totalUsers,
+                requestStatus,
+                departmentStats,
+                userStats,
+                monthlyStats
+            };
+        }
 
-    return {
-        totalRequests,
-        completedRequests,
-        totalMemos,
-        totalUsers,
-        requestStatus,
-        departmentStats,
-        userStats,
-        monthlyStats
-    };
-}
-
-function calculateMonthlyStats(requests) {
-    const months = [];
-    const now = new Date();
-    
-    // สร้าง 6 เดือนย้อนหลัง
-    for (let i = 5; i >= 0; i--) {
-        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const monthKey = date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long' });
-        
-        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        
-        const monthRequests = requests.filter(req => {
-            const reqDate = new Date(req.timestamp || req.startDate || req.docDate);
-            return reqDate >= monthStart && reqDate <= monthEnd;
-        });
-        
-        const completedRequests = monthRequests.filter(req => 
-            req.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน' || 
-            req.status === 'Approved'
-        ).length;
-        
-        months.push({
-            month: monthKey,
-            count: monthRequests.length,
-            completed: completedRequests
-        });
-    }
-    
-    return months;
-}
+        function calculateMonthlyStats(requests) {
+            const months = [];
+            const now = new Date();
+            
+            // สร้าง 6 เดือนย้อนหลัง
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const monthKey = date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long' });
+                
+                const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+                const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                
+                const monthRequests = requests.filter(req => {
+                    const reqDate = new Date(req.timestamp || req.startDate || req.docDate);
+                    return reqDate >= monthStart && reqDate <= monthEnd;
+                });
+                
+                const completedRequests = monthRequests.filter(req => 
+                    req.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน' || 
+                    req.status === 'Approved'
+                ).length;
+                
+                months.push({
+                    month: monthKey,
+                    count: monthRequests.length,
+                    completed: completedRequests
+                });
+            }
+            
+            return months;
+        }
 
         // --- TEMPLATE FUNCTIONS ---
 
@@ -2940,78 +3305,78 @@ function calculateMonthlyStats(requests) {
                 toggleLoader('admin-memo-submit-button', false);
             }
         }
-        // ฟังก์ชันส่งออกรายงานสถิติ
-async function exportStatsReport() {
-    try {
-        const user = getCurrentUser();
-        if (!user) return;
-
-        toggleLoader('export-stats', true);
-
-        // โหลดข้อมูลล่าสุด
-        const [requestsResult, memosResult, usersResult] = await Promise.all([
-            apiCall('GET', 'getAllRequests'),
-            apiCall('GET', 'getAllMemos'),
-            apiCall('GET', 'getAllUsers')
-        ]);
-
-        const requests = requestsResult.data || [];
-        const memos = memosResult.data || [];
-        const users = usersResult.data || [];
-
-        // กรองข้อมูล
-        const userRequests = user.role === 'admin' ? requests : requests.filter(req => req.username === user.username);
-        const stats = calculateStats(userRequests, memos, users, user);
-
-        // สร้าง Excel report
-        const reportData = [
-            ['รายงานสถิติระบบไปราชการ', '', '', ''],
-            ['วันที่ออกรายงาน', new Date().toLocaleDateString('th-TH'), '', ''],
-            ['', '', '', ''],
-            ['สถิติภาพรวม', '', '', ''],
-            ['คำขอทั้งหมด', stats.totalRequests, '', ''],
-            ['คำขอที่เสร็จสิ้น', stats.completedRequests, '', ''],
-            ['บันทึกข้อความ', stats.totalMemos, '', ''],
-            ['ผู้ใช้ทั้งหมด', stats.totalUsers, '', ''],
-            ['', '', '', ''],
-            ['สถิติตามสถานะ', '', '', ''],
-            ...Object.entries(stats.requestStatus).map(([status, count]) => [translateStatus(status), count, '', '']),
-            ['', '', '', ''],
-            ['สถิติตามแผนก', '', '', ''],
-            ...Object.entries(stats.departmentStats).map(([dept, count]) => [dept, count, '', '']),
-            ['', '', '', ''],
-            ['สถิติรายเดือน', '', '', ''],
-            ['เดือน', 'จำนวนคำขอ', 'เสร็จสิ้น', ''],
-            ...stats.monthlyStats.map(month => [month.month, month.count, month.completed, ''])
-        ];
-
-        if (user.role === 'admin') {
-            reportData.splice(9, 0, 
-                ['', '', '', ''],
-                ['สถิติผู้ใช้', '', '', ''],
-                ['ผู้ใช้ทั้งหมด', stats.userStats.total, '', ''],
-                ['ผู้ดูแลระบบ', stats.userStats.admins, '', ''],
-                ['ผู้ใช้ทั่วไป', stats.userStats.regularUsers, '', '']
-            );
-        }
-
-        const ws = XLSX.utils.aoa_to_sheet(reportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'รายงานสถิติการขออนุญาตไปราชการ');
         
-        const fileName = `รายงานสถิติการขออนุญาตไปราชการ_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(wb, fileName);
+        // ฟังก์ชันส่งออกรายงานสถิติ
+        async function exportStatsReport() {
+            try {
+                const user = getCurrentUser();
+                if (!user) return;
 
-        showAlert('สำเร็จ', 'ส่งออกรายงานเรียบร้อยแล้ว');
+                toggleLoader('export-stats', true);
 
-    } catch (error) {
-        console.error('Error exporting stats:', error);
-        showAlert('ผิดพลาด', 'ไม่สามารถส่งออกรายงานได้');
-    } finally {
-        toggleLoader('export-stats', false);
-    }
-}
+                // โหลดข้อมูลล่าสุด
+                const [requestsResult, memosResult, usersResult] = await Promise.all([
+                    apiCall('GET', 'getAllRequests'),
+                    apiCall('GET', 'getAllMemos'),
+                    apiCall('GET', 'getAllUsers')
+                ]);
 
+                const requests = requestsResult.data || [];
+                const memos = memosResult.data || [];
+                const users = usersResult.data || [];
+
+                // กรองข้อมูล
+                const userRequests = user.role === 'admin' ? requests : requests.filter(req => req.username === user.username);
+                const stats = calculateStats(userRequests, memos, users, user);
+
+                // สร้าง Excel report
+                const reportData = [
+                    ['รายงานสถิติระบบไปราชการ', '', '', ''],
+                    ['วันที่ออกรายงาน', new Date().toLocaleDateString('th-TH'), '', ''],
+                    ['', '', '', ''],
+                    ['สถิติภาพรวม', '', '', ''],
+                    ['คำขอทั้งหมด', stats.totalRequests, '', ''],
+                    ['คำขอที่เสร็จสิ้น', stats.completedRequests, '', ''],
+                    ['บันทึกข้อความ', stats.totalMemos, '', ''],
+                    ['ผู้ใช้ทั้งหมด', stats.totalUsers, '', ''],
+                    ['', '', '', ''],
+                    ['สถิติตามสถานะ', '', '', ''],
+                    ...Object.entries(stats.requestStatus).map(([status, count]) => [translateStatus(status), count, '', '']),
+                    ['', '', '', ''],
+                    ['สถิติตามแผนก', '', '', ''],
+                    ...Object.entries(stats.departmentStats).map(([dept, count]) => [dept, count, '', '']),
+                    ['', '', '', ''],
+                    ['สถิติรายเดือน', '', '', ''],
+                    ['เดือน', 'จำนวนคำขอ', 'เสร็จสิ้น', ''],
+                    ...stats.monthlyStats.map(month => [month.month, month.count, month.completed, ''])
+                ];
+
+                if (user.role === 'admin') {
+                    reportData.splice(9, 0, 
+                        ['', '', '', ''],
+                        ['สถิติผู้ใช้', '', '', ''],
+                        ['ผู้ใช้ทั้งหมด', stats.userStats.total, '', ''],
+                        ['ผู้ดูแลระบบ', stats.userStats.admins, '', ''],
+                        ['ผู้ใช้ทั่วไป', stats.userStats.regularUsers, '', '']
+                    );
+                }
+
+                const ws = XLSX.utils.aoa_to_sheet(reportData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'รายงานสถิติการขออนุญาตไปราชการ');
+                
+                const fileName = `รายงานสถิติการขออนุญาตไปราชการ_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+
+                showAlert('สำเร็จ', 'ส่งออกรายงานเรียบร้อยแล้ว');
+
+            } catch (error) {
+                console.error('Error exporting stats:', error);
+                showAlert('ผิดพลาด', 'ไม่สามารถส่งออกรายงานได้');
+            } finally {
+                toggleLoader('export-stats', false);
+            }
+        }
     </script>
 
 </body>
