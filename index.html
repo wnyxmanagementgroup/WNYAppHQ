@@ -251,6 +251,7 @@
                                         <option value="รองผู้อำนวยการกลุ่มบริหารงบประมาณ">กลุ่มบริหารงบประมาณ</option>
                                         <option value="รองผู้อำนวยการกลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
                                         <option value="รองผู้อำนวยการกลุ่มบริหารทั่วไป">กลุ่มบริหารทั่วไป</option>
+                                        <option value=".....................................">.....................................</option>
                                     </select>
                                 </div>
                                 <div><label for="form-head-name" class="form-label">ชื่อหัวหน้ากลุ่มสาระ / หัวหน้างาน</label><input type="text" id="form-head-name" class="form-input bg-gray-200" readonly></div>
@@ -378,6 +379,7 @@
                                     <option value="รองผู้อำนวยการกลุ่มบริหารงบประมาณ">กลุ่มบริหารงบประมาณ</option>
                                     <option value="รองผู้อำนวยการกลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
                                     <option value="รองผู้อำนวยการกลุ่มบริหารทั่วไป">กลุ่มบริหารทั่วไป</option>
+                                    <option value=".....................................">.....................................</option>
                                 </select>
                             </div>
                             <div>
@@ -387,10 +389,7 @@
                         </fieldset>
                         
                         <div class="flex justify-center gap-4 mt-10 border-t pt-6 border-gray-200">
-                            <button type="button" id="save-draft-button" class="btn bg-yellow-500 text-white text-lg">
-                                <div id="save-draft-loader" class="loader hidden"></div>
-                                <span id="save-draft-button-text">บันทึกข้อมูลคำขอ</span>
-                            </button>
+
                             <button type="button" id="generate-document-button" class="btn btn-primary text-lg">
                                 <div id="generate-doc-loader" class="loader hidden"></div>
                                 <span id="generate-doc-button-text">บันทึกและสร้างเอกสาร</span>
@@ -821,7 +820,7 @@
 
     <script>
         // ใช้ URL ของ Google Apps Script
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzP-HCQGbA3Xi2Ms4DXTGy8k17Bv72pFohnJ0txAePjjXybe6pK42mSaYOfTQ5V9Q6mDA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlqhMuIJGawFP5Y-MIwn_XygIGHBJRM44I0RKsnA3aNd40J9tpge1AjpdVg8HhffLd_w/exec";
 
         // Global State
         let allRequestsCache = [];
@@ -843,6 +842,7 @@
             'หัวหน้ากลุ่มสาระการเรียนรู้ศิลปะ': 'นางสาวปิยลักษณ์ ขันทา',
             'หัวหน้ากลุ่มสาระการเรียนรู้การงานอาชีพ': 'นายสุชาติ สินทร',
             'หัวหน้างานแนะแนว':'นายเริงศักดิ์ จันทร์นวล',
+            '.....................................':'.....................................'
         };
 
         const statusTranslations = {
@@ -997,30 +997,38 @@
         
         // --- PAGE NAVIGATION ---
         
-        async function switchPage(targetPageId) {
-            document.querySelectorAll('.page-view').forEach(page => page.classList.add('hidden'));
-            const targetPage = document.getElementById(targetPageId);
-            if (targetPage) {
-                 targetPage.classList.remove('hidden');
-            }
+      // ✅ ฟังก์ชันสลับหน้า (Switch Page)
+async function switchPage(targetPageId) {
+    document.querySelectorAll('.page-view').forEach(page => page.classList.add('hidden'));
+    const targetPage = document.getElementById(targetPageId);
+    if (targetPage) {
+         targetPage.classList.remove('hidden');
+    }
 
-            document.querySelectorAll('.nav-button').forEach(btn => {
-                btn.classList.remove('active');
-                if(btn.dataset.target === targetPageId) {
-                    btn.classList.add('active');
-                }
-            });
-
-            if (targetPageId === 'form-page') await resetRequestForm();
-            if (targetPageId === 'dashboard-page') await fetchUserRequests();
-            if (targetPageId === 'profile-page') loadProfileData();
-            if (targetPageId === 'stats-page') await loadStatsData();
-            if (targetPageId === 'admin-users-page') await fetchAllUsers();
-            if (targetPageId === 'command-generation-page') {
-                document.getElementById('admin-view-requests-tab').click();
-            }
+    document.querySelectorAll('.nav-button').forEach(btn => {
+        btn.classList.remove('active');
+        if(btn.dataset.target === targetPageId) {
+            btn.classList.add('active');
         }
+    });
 
+    // ✅ เพิ่มส่วนนี้ - ถ้าเป็นหน้า form-page ให้เรียกฟังก์ชันเติมข้อมูล
+    if (targetPageId === 'form-page') {
+        await resetRequestForm();
+        // รอให้ DOM พร้อมแล้วเติมข้อมูลอัตโนมัติ
+        setTimeout(() => {
+            tryAutoFillRequester();
+        }, 100);
+    }
+    
+    if (targetPageId === 'dashboard-page') await fetchUserRequests();
+    if (targetPageId === 'profile-page') loadProfileData();
+    if (targetPageId === 'stats-page') await loadStatsData();
+    if (targetPageId === 'admin-users-page') await fetchAllUsers();
+    if (targetPageId === 'command-generation-page') {
+        document.getElementById('admin-view-requests-tab').click();
+    }
+}
         // --- AUTH FUNCTIONS ---
 
         async function handleLogin(e) {
@@ -1048,6 +1056,7 @@
                 
                 if (result.status === 'success') {
                     sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+                    window.currentUser = result.user; // ✅ เพิ่มบรรทัดนี้
                     initializeUserSession(result.user);
                     showMainApp();
                     switchPage('dashboard-page');
@@ -1395,110 +1404,125 @@ document.getElementById('generate-document-button').addEventListener('click', fu
         throw new Error("ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้: " + error.message);
     }
 // ฟังก์ชันเติมข้อมูลในฟอร์มแก้ไข
+// ฟังก์ชันเติมข้อมูลในฟอร์มแก้ไข
 async function populateEditForm(requestData) {
-    try {
-        console.log("📋 Populating edit form with data:", requestData);
-        
-        // 🔥 Log ข้อมูลวันที่ที่ได้รับจาก server
-        console.log('📅 Dates received from server:');
-        console.log('- docDate:', requestData.docDate, 'Type:', typeof requestData.docDate);
-        console.log('- startDate:', requestData.startDate, 'Type:', typeof requestData.startDate);
-        console.log('- endDate:', requestData.endDate, 'Type:', typeof requestData.endDate);
-        
-        // เติมข้อมูลพื้นฐาน
-        document.getElementById('edit-draft-id').value = requestData.draftId || '';
-        document.getElementById('edit-request-id').value = requestData.id || '';
-        
-        // 🔥 เติมข้อมูลวันที่
-        document.getElementById('edit-doc-date').value = requestData.docDate || '';
-        document.getElementById('edit-requester-name').value = requestData.requesterName || '';
-        document.getElementById('edit-requester-position').value = requestData.requesterPosition || '';
-        document.getElementById('edit-location').value = requestData.location || '';
-        document.getElementById('edit-purpose').value = requestData.purpose || '';
-        document.getElementById('edit-start-date').value = requestData.startDate || '';
-        document.getElementById('edit-end-date').value = requestData.endDate || '';
-        
-        // 🔥 Log หลังจากเติมค่าในฟอร์ม
-        console.log('✅ Form fields after population:');
-        console.log('- docDate field:', document.getElementById('edit-doc-date').value);
-        console.log('- startDate field:', document.getElementById('edit-start-date').value);
-        console.log('- endDate field:', document.getElementById('edit-end-date').value);
-        
-        // เติมข้อมูลผู้ร่วมเดินทาง
-        const attendeesList = document.getElementById('edit-attendees-list');
-        attendeesList.innerHTML = '';
-        
-        if (requestData.attendees && requestData.attendees.length > 0) {
-            console.log('👥 Loading attendees:', requestData.attendees.length, 'people');
-            requestData.attendees.forEach((attendee, index) => {
-                if (attendee.name && attendee.position) {
-                    addEditAttendeeField(attendee.name, attendee.position);
-                }
-            });
-        } else {
-            console.log('👥 No attendees found');
-        }
-        
-        // เติมข้อมูลค่าใช้จ่าย
-        if (requestData.expenseOption === 'partial') {
-            document.getElementById('edit-expense_partial').checked = true;
-            toggleEditExpenseOptions();
-            
-            if (requestData.expenseItems && requestData.expenseItems.length > 0) {
-                console.log('💰 Loading expense items:', requestData.expenseItems.length, 'items');
-                requestData.expenseItems.forEach(item => {
-                    const checkboxes = document.querySelectorAll('input[name="edit-expense_item"]');
-                    checkboxes.forEach(chk => {
-                        if (chk.dataset.itemName === item.name) {
-                            chk.checked = true;
-                            if (item.name === 'ค่าใช้จ่ายอื่นๆ' && item.detail) {
-                                document.getElementById('edit-expense_other_text').value = item.detail;
-                            }
-                        }
-                    });
-                });
-            }
-            
-            if (requestData.totalExpense) {
-                document.getElementById('edit-total-expense').value = requestData.totalExpense;
-            }
-        } else {
-            document.getElementById('edit-expense_no').checked = true;
-            toggleEditExpenseOptions();
-        }
-        
-        // เติมข้อมูลการเดินทาง
-        if (requestData.vehicleOption) {
-            const vehicleRadio = document.getElementById(`edit-vehicle_${requestData.vehicleOption}`);
-            if (vehicleRadio) {
-                vehicleRadio.checked = true;
-                toggleEditVehicleOptions();
-                
-                if (requestData.vehicleOption === 'private' && requestData.licensePlate) {
-                    document.getElementById('edit-license-plate').value = requestData.licensePlate;
-                }
-            }
-        }
-        
-        // เติมข้อมูลผู้ลงนาม
-        if (requestData.department) {
-            document.getElementById('edit-department').value = requestData.department;
-            // เรียก event change เพื่ออัพเดทชื่อหัวหน้า
-            const event = new Event('change');
-            document.getElementById('edit-department').dispatchEvent(event);
-        }
-        
-        if (requestData.headName) {
-            document.getElementById('edit-head-name').value = requestData.headName;
-        }
-        
-        console.log("✅ Edit form populated successfully");
-        
-    } catch (error) {
-        console.error("❌ Error populating edit form:", error);
-        throw new Error("ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้: " + error.message);
+  try {
+    console.log("📋 Populating edit form with data:", requestData);
+    
+    // ✅ ตรวจสอบว่า requestData มีข้อมูลจริงหรือไม่
+    if (!requestData || Object.keys(requestData).length === 0) {
+      console.warn("⚠️ Empty requestData received");
+      showAlert("ข้อมูลว่างเปล่า", "ไม่พบข้อมูลสำหรับโหลดลงฟอร์ม");
+      return;
     }
+    
+    // 🔥 Log ข้อมูลวันที่ที่ได้รับจาก server
+    console.log('📅 Dates received from server:');
+    console.log('- docDate:', requestData.docDate, 'Type:', typeof requestData.docDate);
+    console.log('- startDate:', requestData.startDate, 'Type:', typeof requestData.startDate);
+    console.log('- endDate:', requestData.endDate, 'Type:', typeof requestData.endDate);
+    
+    // เติมข้อมูลพื้นฐาน - ใช้ค่า default ถ้าไม่มีข้อมูล
+    document.getElementById('edit-draft-id').value = requestData.draftId || '';
+    document.getElementById('edit-request-id').value = requestData.requestId || requestData.id || '';
+    
+    // 🔥 เติมข้อมูลวันที่ - ใช้ฟังก์ชันช่วยถ้าวันที่ว่างเปล่า
+    document.getElementById('edit-doc-date').value = requestData.docDate || getTodayDate();
+    document.getElementById('edit-requester-name').value = requestData.requesterName || '';
+    document.getElementById('edit-requester-position').value = requestData.requesterPosition || '';
+    document.getElementById('edit-location').value = requestData.location || '';
+    document.getElementById('edit-purpose').value = requestData.purpose || '';
+    document.getElementById('edit-start-date').value = requestData.startDate || getTodayDate();
+    document.getElementById('edit-end-date').value = requestData.endDate || getTodayDate();
+    
+    // 🔥 Log หลังจากเติมค่าในฟอร์ม
+    console.log('✅ Form fields after population:');
+    console.log('- docDate field:', document.getElementById('edit-doc-date').value);
+    console.log('- startDate field:', document.getElementById('edit-start-date').value);
+    console.log('- endDate field:', document.getElementById('edit-end-date').value);
+    
+    // เติมข้อมูลผู้ร่วมเดินทาง
+    const attendeesList = document.getElementById('edit-attendees-list');
+    attendeesList.innerHTML = '';
+    
+    if (requestData.attendees && requestData.attendees.length > 0) {
+      console.log('👥 Loading attendees:', requestData.attendees.length, 'people');
+      requestData.attendees.forEach((attendee, index) => {
+        if (attendee.name && attendee.position) {
+          addEditAttendeeField(attendee.name, attendee.position);
+        }
+      });
+    } else {
+      console.log('👥 No attendees found');
+    }
+    
+    // เติมข้อมูลค่าใช้จ่าย
+    if (requestData.expenseOption === 'partial') {
+      document.getElementById('edit-expense_partial').checked = true;
+      toggleEditExpenseOptions();
+      
+      if (requestData.expenseItems && requestData.expenseItems.length > 0) {
+        console.log('💰 Loading expense items:', requestData.expenseItems.length, 'items');
+        requestData.expenseItems.forEach(item => {
+          const checkboxes = document.querySelectorAll('input[name="edit-expense_item"]');
+          checkboxes.forEach(chk => {
+            if (chk.dataset.itemName === item.name) {
+              chk.checked = true;
+              if (item.name === 'ค่าใช้จ่ายอื่นๆ' && item.detail) {
+                document.getElementById('edit-expense_other_text').value = item.detail;
+              }
+            }
+          });
+        });
+      }
+      
+      if (requestData.totalExpense) {
+        document.getElementById('edit-total-expense').value = requestData.totalExpense;
+      }
+    } else {
+      document.getElementById('edit-expense_no').checked = true;
+      toggleEditExpenseOptions();
+    }
+    
+    // เติมข้อมูลการเดินทาง
+    if (requestData.vehicleOption) {
+      const vehicleRadio = document.getElementById(`edit-vehicle_${requestData.vehicleOption}`);
+      if (vehicleRadio) {
+        vehicleRadio.checked = true;
+        toggleEditVehicleOptions();
+        
+        if (requestData.vehicleOption === 'private' && requestData.licensePlate) {
+          document.getElementById('edit-license-plate').value = requestData.licensePlate;
+        }
+      }
+    }
+    
+    // เติมข้อมูลผู้ลงนาม
+    if (requestData.department) {
+      document.getElementById('edit-department').value = requestData.department;
+      // เรียก event change เพื่ออัพเดทชื่อหัวหน้า
+      const event = new Event('change');
+      document.getElementById('edit-department').dispatchEvent(event);
+    }
+    
+    if (requestData.headName) {
+      document.getElementById('edit-head-name').value = requestData.headName;
+    }
+    
+    console.log("✅ Edit form populated successfully");
+    
+  } catch (error) {
+    console.error("❌ Error populating edit form:", error);
+    showAlert("ข้อผิดพลาด", "ไม่สามารถโหลดข้อมูลลงฟอร์มได้: " + error.message);
+  }
 }
+
+// ✅ เพิ่มฟังก์ชันช่วยเหลือสำหรับวันที่
+function getTodayDate() {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+}
+
 // ฟังก์ชันเพิ่มผู้ร่วมเดินทางในหน้าแก้ไข
 function addEditAttendeeField(name = '', position = '') {
     const list = document.getElementById('edit-attendees-list');
@@ -1582,51 +1606,98 @@ function toggleEditVehicleOptions() {
 }
 // ฟังก์ชันเปิดหน้าแก้ไข
 async function openEditPage(requestId) {
-    try {
-        console.log("🔓 Opening edit page for request:", requestId);
-        
-        if (!requestId || requestId === 'undefined' || requestId === 'null') {
-            showAlert("ผิดพลาด", "ไม่พบรหัสคำขอ");
-            return;
-        }
-        
-        // แสดง loading state
-        document.getElementById('edit-result').classList.add('hidden');
-        document.getElementById('edit-attendees-list').innerHTML = '<div class="text-center p-4"><div class="loader mx-auto"></div><p class="mt-2">กำลังโหลดข้อมูล...</p></div>';
-        
-        const result = await apiCall('GET', 'getDraftRequest', { requestId: requestId });
-        
-        if (result.status === 'success' && result.data) {
-            console.log("✅ Data received successfully from server");
-            
-            // 🔥 ตรวจสอบข้อมูลสำคัญ
-            console.log("🔍 Key data check:");
-            console.log("- Requester Name:", result.data.requesterName);
-            console.log("- Location:", result.data.location);
-            console.log("- Purpose:", result.data.purpose);
-            console.log("- Attendees count:", result.data.attendees ? result.data.attendees.length : 0);
-            console.log("- Department:", result.data.department);
-            console.log("- Head Name:", result.data.headName);
-            console.log("- Dates - Doc:", result.data.docDate, "Start:", result.data.startDate, "End:", result.data.endDate);
-            
-            // 🔥 บันทึก requestId ใน sessionStorage ชั่วคราว
-            sessionStorage.setItem('currentEditRequestId', requestId);
-            
-            await populateEditForm(result.data);
-            switchPage('edit-page');
-            document.getElementById('nav-edit').classList.remove('hidden');
-            
-            console.log("✅ Edit page opened successfully with requestId:", requestId);
-        } else {
-            console.log("❌ No data received from server");
-            showAlert("ผิดพลาด", "ไม่พบข้อมูลคำขอหรือไม่สามารถโหลดข้อมูลได้");
-        }
-        
-    } catch (error) {
-        console.error("❌ Error loading edit data:", error);
-        showAlert("ผิดพลาด", "ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้: " + error.message);
+  try {
+    console.log("🔓 Opening edit page for request:", requestId);
+
+    if (!requestId || requestId === 'undefined' || requestId === 'null') {
+      showAlert("ผิดพลาด", "ไม่พบรหัสคำขอ");
+      return;
     }
-} 
+
+    // แสดง loading state
+    document.getElementById('edit-result').classList.add('hidden');
+    document.getElementById('edit-attendees-list').innerHTML = `
+      <div class="text-center p-4">
+        <div class="loader mx-auto"></div>
+        <p class="mt-2">กำลังโหลดข้อมูล...</p>
+      </div>`;
+
+    // ✅ ส่ง username ไปด้วย
+    const user = getCurrentUser();
+    const username = user ? user.username : '';
+    
+    console.log("📡 Calling API with:", { requestId, username });
+    const result = await apiCall('GET', 'getDraftRequest', { 
+      requestId: requestId, 
+      username: username 
+    });
+
+    console.log("🔥 Raw API Response:", result);
+
+    // ✅ FIX: ดึงข้อมูลจาก result.data.data แทน result.data
+    let data = result.data;
+    if (result.status === 'success') {
+      // ถ้ามี nesting ให้ดึงข้อมูลจาก data.data
+      if (result.data && result.data.data) {
+        data = result.data.data;
+        console.log("🔄 Found nested data structure, using result.data.data");
+      }
+      
+      console.log("✅ Data received successfully from server");
+      console.log("🔍 Processed data:", data);
+
+      // 🔍 ตรวจสอบข้อมูลที่ได้จาก server
+      console.log("🔍 Key data check:");
+      console.log("- Requester Name:", data.requesterName);
+      console.log("- Requester Position:", data.requesterPosition);
+      console.log("- Location:", data.location);
+      console.log("- Purpose:", data.purpose);
+      console.log("- Attendees count:", data.attendees ? data.attendees.length : 0);
+      console.log("- Department:", data.department);
+      console.log("- Head Name:", data.headName);
+      console.log("- Dates - Doc:", data.docDate, "Start:", data.startDate, "End:", data.endDate);
+
+      // ✅ ป้องกัน attendees undefined
+      data.attendees = Array.isArray(data.attendees) ? data.attendees : [];
+
+      // ✅ กรณี backend ยังไม่มี requesterName/Position — เติมจาก currentUser
+      if ((!data.requesterName || data.requesterName.trim() === '') && user?.fullName) {
+        data.requesterName = user.fullName;
+        console.log("👤 Filled requesterName from user profile:", data.requesterName);
+      }
+      if ((!data.requesterPosition || data.requesterPosition.trim() === '') && user?.position) {
+        data.requesterPosition = user.position;
+        console.log("👤 Filled requesterPosition from user profile:", data.requesterPosition);
+      }
+
+      // 🔥 เก็บ requestId ชั่วคราว
+      sessionStorage.setItem('currentEditRequestId', requestId);
+
+      // ✅ เติมข้อมูลลงฟอร์ม
+      await populateEditForm(data);
+
+      // ✅ อัปเดตค่าในช่อง requesterName / requesterPosition อีกชั้น
+      const inputRequesterName = document.getElementById('edit-requester-name');
+      const inputRequesterPosition = document.getElementById('edit-requester-position');
+      if (inputRequesterName && data.requesterName) inputRequesterName.value = data.requesterName;
+      if (inputRequesterPosition && data.requesterPosition) inputRequesterPosition.value = data.requesterPosition;
+
+      // ✅ แสดงหน้าแก้ไข
+      switchPage('edit-page');
+      const navEdit = document.getElementById('nav-edit');
+      if (navEdit) navEdit.classList.remove('hidden');
+
+      console.log("✅ Edit page opened successfully with requestId:", requestId);
+    } else {
+      console.warn("❌ No data received from server or invalid response");
+      showAlert("ผิดพลาด", result.message || "ไม่พบข้อมูลคำขอหรือไม่สามารถโหลดข้อมูลได้");
+    }
+
+  } catch (error) {
+    console.error("❌ Error loading edit data:", error);
+    showAlert("ผิดพลาด", "ไม่สามารถโหลดข้อมูลสำหรับแก้ไขได้: " + error.message);
+  }
+}
 // ฟังก์ชันสร้างเอกสารจากข้อมูลที่แก้ไข
 // ฟังก์ชันสร้างเอกสารจากข้อมูลที่แก้ไข
 async function generateDocumentFromDraft() {
@@ -3040,53 +3111,71 @@ function validateEditForm(formData) {
             }
         }
 
-        function renderAdminRequestsList(requests) {
-            const container = document.getElementById('admin-requests-list');
-            
-            if (!requests || requests.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500">ไม่พบคำขอไปราชการ</p>';
-                return;
-            }
+       function renderAdminRequestsList(requests) {
+    const container = document.getElementById('admin-requests-list');
+    
+    if (!requests || requests.length === 0) {
+        container.innerHTML = '<p class="text-center text-gray-500">ไม่พบคำขอไปราชการ</p>';
+        return;
+    }
 
-            container.innerHTML = requests.map(request => {
-                const hasCommandSolo = request.commandPdfUrlSolo && request.commandPdfUrlSolo.trim() !== '';
-                const hasCommandSmall = request.commandPdfUrlGroupSmall && request.commandPdfUrlGroupSmall.trim() !== '';
-                const hasCommandLarge = request.commandPdfUrlGroupLarge && request.commandPdfUrlGroupLarge.trim() !== '';
-                const hasAnyCommand = hasCommandSolo || hasCommandSmall || hasCommandLarge;
-                
-                return `
-                    <div class="border rounded-lg p-4 bg-white">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <h4 class="font-bold">${request.id}</h4>
-                                <p class="text-sm text-gray-600">โดย: ${request.requesterName} | ${request.purpose}</p>
-                                <p class="text-sm text-gray-500">${request.location} | ${formatDisplayDate(request.startDate)} - ${formatDisplayDate(request.endDate)}</p>
-                                <p class="text-sm">สถานะคำขอ: <span class="font-medium">${translateStatus(request.status)}</span></p>
-                                <p class="text-sm">สถานะคำสั่ง: <span class="font-medium">${request.commandStatus || 'รอดำเนินการ'}</span></p>
+    container.innerHTML = requests.map(request => {
+        const hasCommandSolo = request.commandPdfUrlSolo && request.commandPdfUrlSolo.trim() !== '';
+        const hasCommandSmall = request.commandPdfUrlGroupSmall && request.commandPdfUrlGroupSmall.trim() !== '';
+        const hasCommandLarge = request.commandPdfUrlGroupLarge && request.commandPdfUrlGroupLarge.trim() !== '';
+        const hasAnyCommand = hasCommandSolo || hasCommandSmall || hasCommandLarge;
+
+        // ✅ เพิ่มส่วนคำนวณจำนวนคนรวม (รวมผู้ขอ + ผู้ร่วมเดินทาง)
+        const attendeeCount = request.attendeeCount || 0;
+        const totalPeople = attendeeCount + 1; // +1 คือผู้ขอเอง
+        let peopleCategory = "";
+        if (totalPeople === 1) {
+            peopleCategory = "คำสั่งเดี่ยว (1 คน)";
+        } else if (totalPeople >= 2 && totalPeople <= 5) {
+            peopleCategory = "คำสั่งกลุ่มเล็ก (2-5 คน)";
+        } else if (totalPeople >= 6) {
+            peopleCategory = "คำสั่งกลุ่มใหญ่ (6 คนขึ้นไป)";
+        }
+
+        return `
+            <div class="border rounded-lg p-4 bg-white">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-indigo-700">${request.id}</h4>
+                        <p class="text-sm text-gray-600">โดย: ${request.requesterName} | ${request.purpose}</p>
+                        <p class="text-sm text-gray-500">${request.location} | ${formatDisplayDate(request.startDate)} - ${formatDisplayDate(request.endDate)}</p>
+                        
+                        <!-- ✅ เพิ่มข้อมูลจำนวนคน -->
+                        <p class="text-sm text-gray-700">ผู้ร่วมเดินทาง: ${attendeeCount} คน</p>
+                        <p class="text-sm font-medium text-blue-700">👥 รวมทั้งหมด: ${totalPeople} คน (${peopleCategory})</p>
+
+                        <p class="text-sm">สถานะคำขอ: <span class="font-medium">${translateStatus(request.status)}</span></p>
+                        <p class="text-sm">สถานะคำสั่ง: <span class="font-medium">${request.commandStatus || 'รอดำเนินการ'}</span></p>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        ${request.pdfUrl ? `<a href="${request.pdfUrl}" target="_blank" class="btn btn-success btn-sm">ดูคำขอ</a>` : ''}
+
+                        ${hasAnyCommand ? `
+                            <div class="flex gap-1">
+                                ${hasCommandSolo ? `<a href="${request.commandPdfUrlSolo}" target="_blank" class="btn bg-blue-500 text-white btn-sm">คำสั่งเดี่ยว</a>` : ''}
+                                ${hasCommandSmall ? `<a href="${request.commandPdfUrlGroupSmall}" target="_blank" class="btn bg-blue-500 text-white btn-sm">คำสั่งกลุ่มเล็ก</a>` : ''}
+                                ${hasCommandLarge ? `<a href="${request.commandPdfUrlGroupLarge}" target="_blank" class="btn bg-blue-500 text-white btn-sm">คำสั่งกลุ่มใหญ่</a>` : ''}
                             </div>
-                            <div class="flex flex-col gap-2">
-                                ${request.pdfUrl ? `<a href="${request.pdfUrl}" target="_blank" class="btn btn-success btn-sm">ดูคำขอ</a>` : ''}
-                                
-                                ${hasAnyCommand ? `
-                                    <div class="flex gap-1">
-                                        ${hasCommandSolo ? `<a href="${request.commandPdfUrlSolo}" target="_blank" class="btn bg-blue-500 text-white btn-sm">คำสั่งเดี่ยว</a>` : ''}
-                                        ${hasCommandSmall ? `<a href="${request.commandPdfUrlGroupSmall}" target="_blank" class="btn bg-blue-500 text-white btn-sm">คำสั่งกลุ่มเล็ก</a>` : ''}
-                                        ${hasCommandLarge ? `<a href="${request.commandPdfUrlGroupLarge}" target="_blank" class="btn bg-blue-500 text-white btn-sm">คำสั่งกลุ่มใหญ่</a>` : ''}
-                                    </div>
-                                ` : ''}
-                                
-                                ${request.dispatchBookPdfUrl ? `<a href="${request.dispatchBookPdfUrl}" target="_blank" class="btn bg-purple-500 text-white btn-sm">ดูหนังสือส่ง</a>` : ''}
-                                
-                                <div class="flex gap-1">
-                                    ${!hasAnyCommand ? `<button onclick="openCommandApproval('${request.id}')" class="btn bg-green-500 text-white btn-sm">ออกคำสั่ง</button>` : ''}
-                                    ${!request.dispatchBookPdfUrl ? `<button onclick="openDispatchModal('${request.id}')" class="btn bg-orange-500 text-white btn-sm">ออกหนังสือส่ง</button>` : ''}
-                                </div>
-                            </div>
+                        ` : ''}
+
+                        ${request.dispatchBookPdfUrl ? `<a href="${request.dispatchBookPdfUrl}" target="_blank" class="btn bg-purple-500 text-white btn-sm">ดูหนังสือส่ง</a>` : ''}
+
+                        <div class="flex gap-1">
+                            ${!hasAnyCommand ? `<button onclick="openCommandApproval('${request.id}')" class="btn bg-green-500 text-white btn-sm">ออกคำสั่ง</button>` : ''}
+                            ${!request.dispatchBookPdfUrl ? `<button onclick="openDispatchModal('${request.id}')" class="btn bg-orange-500 text-white btn-sm">ออกหนังสือส่ง</button>` : ''}
                         </div>
                     </div>
-                `;
-            }).join('');
-        }
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 
         async function fetchAllMemos() {
             try {
@@ -3377,7 +3466,132 @@ function validateEditForm(formData) {
                 toggleLoader('export-stats', false);
             }
         }
-    </script>
+    
+// --- PATCH helper: format date and load edit data ---
+function formatDateForInput(dateValue) {
+    if (!dateValue) return '';
+    const d = new Date(dateValue);
+    if (isNaN(d)) return '';
+    return d.toISOString().split('T')[0];
+}
+function loadEditFormData(data) {
+    if (!data) return;
+    const info = document.getElementById('edit-request-info');
+    if (info) info.classList.remove('hidden');
+    const idSpan = document.getElementById('edit-request-id-display');
+    if (idSpan) idSpan.textContent = data.requestId || data.id || data.requestid || '';
+    const d1 = document.getElementById('edit-doc-date');
+    const d2 = document.getElementById('edit-start-date');
+    const d3 = document.getElementById('edit-end-date');
+    if (d1) d1.value = formatDateForInput(data.docDate || data.docdate);
+    if (d2) d2.value = formatDateForInput(data.startDate || data.startdate);
+    if (d3) d3.value = formatDateForInput(data.endDate || data.enddate);
+    const loc = document.getElementById('edit-location');
+    if (loc) loc.value = data.location || data.Location || '';
+}
+// ฟังก์ชันสำหรับทดสอบการโหลดข้อมูล
+async function testLoadEditData(requestId) {
+  try {
+    const user = getCurrentUser();
+    const username = user ? user.username : '';
+    
+    console.log('🧪 Testing load edit data for:', { requestId, username });
+    
+    const result = await apiCall('GET', 'getDraftRequest', { 
+      requestId: requestId, 
+      username: username 
+    });
+    
+    console.log('🧪 Test result:', result);
+    return result;
+  } catch (error) {
+    console.error('🧪 Test error:', error);
+    return null;
+  }
+}
+
+// เรียกใช้ฟังก์ชันทดสอบจาก console browser
+window.testLoadEditData = testLoadEditData;
+
+// ✅ ฟังก์ชันเปิดหน้า "สร้างคำขอใหม่"
+async function openNewRequestForm() {
+  try {
+    console.log("🆕 เปิดหน้าสร้างคำขอใหม่...");
+
+    // ซ่อนผลลัพธ์เก่า
+    document.getElementById('form-result').classList.add('hidden');
+    document.getElementById('request-form').reset();
+    document.getElementById('form-attendees-list').innerHTML = '';
+
+    // ✅ ตั้งวันที่ปัจจุบัน
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    document.getElementById('form-doc-date').value = `${yyyy}-${mm}-${dd}`;
+
+    // ✅ เปิดหน้า "form-page" ก่อน เพื่อให้ DOM พร้อม
+    switchPage('form-page');
+
+    // ✅ รอ 300ms แล้วเติมข้อมูลอัตโนมัติ (ชื่อ–ตำแหน่ง)
+    setTimeout(() => tryAutoFillRequester(), 300);
+
+    console.log("✅ หน้า 'ร่างคำขอใหม่' เปิดเรียบร้อย");
+  } catch (err) {
+    console.error("❌ เปิดหน้าร่างคำขอใหม่ล้มเหลว:", err);
+    showAlert("ผิดพลาด", "ไม่สามารถเปิดหน้าร่างคำขอใหม่ได้");
+  }
+}
+
+// 🧠 ฟังก์ชันเติมข้อมูลผู้ขอ (จะตรวจทั้ง window.currentUser และ sessionStorage)
+function tryAutoFillRequester(retry = 0) {
+  const nameInput = document.getElementById('form-requester-name');
+  const posInput = document.getElementById('form-requester-position');
+  const dateInput = document.getElementById('form-doc-date');
+
+  if (!nameInput || !posInput) {
+    console.warn("⚠️ ยังไม่พบ element ช่องชื่อ/ตำแหน่งใน DOM");
+    if (retry < 5) setTimeout(() => tryAutoFillRequester(retry + 1), 500);
+    return;
+  }
+
+  // ✅ ตั้งวันที่อัตโนมัติหากยังว่าง
+  if (dateInput && !dateInput.value) {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    dateInput.value = `${yyyy}-${mm}-${dd}`;
+  }
+
+  // ✅ ดึง currentUser จาก window หรือ sessionStorage
+  let user = window.currentUser;
+  if (!user) {
+    const storedUser = sessionStorage.getItem('currentUser');
+    if (storedUser) {
+      try {
+        user = JSON.parse(storedUser);
+        window.currentUser = user;
+        console.log("♻️ โหลด currentUser จาก sessionStorage:", user);
+      } catch (err) {
+        console.warn("⚠️ ไม่สามารถแปลงข้อมูล currentUser:", err);
+      }
+    }
+  }
+
+  // ✅ กรอกข้อมูล
+  if (user) {
+    nameInput.value = user.fullName || user.username || '';
+    posInput.value = user.position || '';
+    console.log("✅ กรอกชื่อ–ตำแหน่งอัตโนมัติสำเร็จ:", user.fullName, user.position);
+  } else {
+    console.warn("⏳ currentUser ยังไม่พร้อม (รออีกครั้งใน 1 วิ) – ครั้งที่", retry + 1);
+    if (retry < 5) setTimeout(() => tryAutoFillRequester(retry + 1), 1000);
+  }
+}
+
+
+</script>
 
 </body>
 </html>
