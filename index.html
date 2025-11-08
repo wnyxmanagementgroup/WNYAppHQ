@@ -10,41 +10,255 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; }
-        .main-container { background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .form-input { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; transition: all 0.15s ease-in-out; }
-        .form-input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 2px #c7d2fe; }
+    
+<style>
+        /* --- [ ADD-ON ] Glassmorphism Header --- */
+div#main-app > header {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            /* Change: ย้ายสีพื้นหลังไปที่ class ของ body ใน HTML แล้ว */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Change: ปรับปรุงสไตล์ Glassmorphism หลัก */
+        .main-container { 
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); /* Change: เพิ่มเงาที่ดูนุ่มนวลขึ้น */
+        }
+
+        /* Change: ทำให้ InputField โปร่งแสงเล็กน้อย */
+        .form-input { 
+            width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; 
+            transition: all 0.15s ease-in-out; 
+            background-color: rgba(255, 255, 255, 0.6); /* Glassy input */
+        }
+        .form-input:focus { 
+            outline: none; border-color: #4f46e5; 
+            box-shadow: 0 0 0 2px #c7d2fe; 
+            background-color: rgba(255, 255, 255, 0.8); /* สว่างขึ้นเมื่อ focus */
+        }
+        .form-input::placeholder { color: #6b7280; } /* Tailwind gray-500 */
+
         .form-label { font-weight: bold; color: #374151; }
         .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #3b82f6; width: 24px; height: 24px; animation: spin 2s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         fieldset { border-color: #e5e7eb; }
-        legend { background-color: #f3f4f6; padding: 0.25rem 1rem; border-radius: 9999px; font-weight: 700; color: #4f46e5; font-size: 1.125rem; }
+        
+        /* Change: ทำให้ Legend ดูทันสมัยขึ้น (ไม่มีพื้นหลังทึบ) */
+        legend { 
+            background-color: transparent; 
+            padding: 0 0.5rem; 
+            border-radius: 9999px; 
+            font-weight: 700; 
+            color: #4f46e5; 
+            font-size: 1.25rem; /* ทำให้เด่นขึ้น */
+            margin-left: 0.5rem;
+        }
+
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: bold; padding: 0.6rem 1.25rem; border-radius: 0.5rem; transition: all 0.2s ease-in-out; cursor: pointer; border: none; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); }
         .btn:disabled { background-color: #9ca3af; cursor: not-allowed; }
         .btn-primary { background-color: #4f46e5; color: white; }
+        .btn-primary:hover { background-color: #4338ca; } /* Add: เพิ่ม hover state */
         .btn-danger { background-color: #ef4444; color: white; }
+        .btn-danger:hover { background-color: #dc2626; } /* Add: เพิ่ม hover state */
         .btn-success { background-color: #10b981; color: white; }
+        .btn-success:hover { background-color: #059669; } /* Add: เพิ่ม hover state */
         .btn-warning { background-color: #f59e0b; color: white; }
         .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; }
+
         .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-        .modal-content { background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 800px; border-radius: 0.75rem; }
-        .nav-button.active { background-color: #e0e7ff; border: 2px solid #4f46e5; }
-        .stat-card { background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; }
+        /* Change: ทำให้ Modal เป็น Glassmorphism ด้วย */
+        .modal-content { 
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            margin: auto; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.5); 
+            width: 90%; max-width: 800px; border-radius: 0.75rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        /* Change: ใช้ Glassmorphism กับปุ่มเมนู */
+        .nav-button {
+            padding: 1rem;
+            text-align: center;
+            border-radius: 0.75rem; /* rounded-xl */
+            transition: all 0.2s ease-in-out;
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+        }
+        .nav-button:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-3px); /* Add: เพิ่มมิติการลอย */
+            box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.1);
+        }
+        .nav-button.active { 
+            background-color: rgba(224, 231, 255, 0.9); /* User's 'bg-e0e7ff' but glassy */
+            border: 2px solid #4f46e5;
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.15); /* Add: 'Glow' effect */
+        }
+        /* Add: ต้องกำหนดสี text ใหม่ เพราะ .active ไม่มีสีขาว */
+        .nav-button.active h3 { color: #4f46e5; }
+        .nav-button:not(.active) h3 { color: #374151; }
+
+        /* Change: ใช้ Glassmorphism กับการ์ดสถิติ */
+        .stat-card { 
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem; 
+            padding: 1.5rem; 
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+        }
         .stat-card h3 { font-size: 1.25rem; font-weight: 700; color: #111827; }
-        .stat-item { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background-color 0.2s; }
-        .stat-item:hover { background-color: #eff6ff; }
+        .stat-item { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(243, 244, 246, 0.6); cursor: pointer; transition: background-color 0.2s; }
+        .stat-item:hover { background-color: rgba(239, 246, 255, 0.7); }
         .stat-item:last-child { border-bottom: none; }
+        
         .tab-button { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; }
         .tab-button.active { background-color: #4f46e5; color: white; }
-        .tab-button:not(.active) { background-color: #e0e7ff; color: #4f46e5; }
-        .info-section { margin-top: 1.5rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; background-color: #f9fafb; }
+        .tab-button:not(.active) { background-color: rgba(224, 231, 255, 0.7); color: #4f46e5; }
+        /* --- [ ADD-ON ] Glassmorphism Charts --- */
+        .chart-container {
+            background-color: rgba(255, 255, 255, 0.8) !important; 
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05) !important;
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem; /* p-6 */
+        }
+        /* Change: ใช้ Glassmorphism กับกล่องข้อมูลหน้าแรก */
+        .info-section { 
+            margin-top: 1.5rem; 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 0.75rem; 
+            padding: 1.5rem; 
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+        }
         .info-section h3 { font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 1rem; }
         .info-section ul { list-style-type: disc; margin-left: 1.5rem; }
         .info-section li { margin-bottom: 0.5rem; }
         .info-note { background-color: #fef3cd; border-left: 4px solid #f59e0b; padding: 0.75rem; margin-top: 1rem; border-radius: 0.375rem; }
+        
         .page-view { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- [ ADD-ON ] Glassmorphism Cards & Tables --- */
+
+        /* 1. Dashboard: รายการคำขอ (Request List Items) */
+        /* ใช้ !important เพื่อ override 'bg-white' ที่มาจาก JavaScript */
+        div#requests-list > div {
+            background-color: rgba(255, 255, 255, 0.8) !important; 
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* เพิ่มเอฟเฟกต์ตอน hover */
+        div#requests-list > div:hover {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.07);
+        }
+/* เพิ่มการกำหนดขนาดให้กับ canvas */
+.chart-container canvas {
+    width: 100% !important;
+    height: 300px !important;
+}
+
+/* ปรับปรุงการแสดงผลกราฟบนมือถือ */
+@media (max-width: 768px) {
+    .chart-container canvas {
+        height: 250px !important;
+    }
+}
+
+/* ทำให้กราฟ responsive */
+.chart-container {
+    position: relative;
+    min-height: 300px;
+}
+        /* 2. Stats Page: การ์ดสรุปผล (Summary Cards) */
+        /* ใช้ !important เพื่อ override 'bg-white' และ 'shadow' ที่มาจาก JavaScript */
+        div#stats-overview div[class*="bg-white"] {
+            background-color: rgba(255, 255, 255, 0.8) !important; 
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+
+        /* 3. Stats Page: ตารางสถิติรายเดือน (Monthly Stats Table) */
+        div#stats-page table {
+            width: 100%;
+            border-collapse: collapse; /* ทำให้เส้นขอบรวมกัน */
+            border-radius: 0.75rem; /* ทำให้ขอบตารางมน */
+            overflow: hidden; /* ซ่อนส่วนที่เกินขอบมน */
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* หัวตาราง (Table Header) */
+        div#stats-page table thead tr {
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        div#stats-page table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #374151; /* gray-700 */
+        }
+        
+        /* แถวในตาราง (Table Body Rows) */
+        div#stats-page table tbody tr {
+            background-color: rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background-color 0.2s;
+        }
+        div#stats-page table tbody tr:last-child {
+            border-bottom: none; /* แถวสุดท้ายไม่ต้องมีเส้นขอบ */
+        }
+        div#stats-page table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        div#stats-page table td {
+            padding: 0.75rem 1rem;
+            color: #4b5563; /* gray-600 */
+        }
+
+        /* 4. [Bonus] Admin Page: รายการคำขอและบันทึก */
+        div#admin-requests-list > div,
+        div#admin-memos-list > div {
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+        }
+        
     </style>
 </head>
 <body class="p-4 sm:p-8">
@@ -123,16 +337,19 @@
                 </div>
             </div>
         </div>
-        
-        <!-- ส่วนแอปพลิเคชันหลัก -->
         <div id="main-app" class="hidden">
-            <header class="p-4 bg-white rounded-xl shadow-lg mb-6 flex flex-wrap justify-between items-center gap-4">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-800">ยินดีต้อนรับ, <span id="user-fullname"></span></h2>
-                    <p class="text-sm text-gray-500">ตำแหน่ง: <span id="user-position"></span></p>
-                </div>
-                <button id="logout-button" class="btn btn-danger">ออกจากระบบ</button>
-            </header>
+        <!-- ส่วนแอปพลิเคชันหลัก -->
+        <header class="p-4 rounded-xl mb-6 flex flex-wrap justify-between items-center gap-4">
+    <div class="flex items-center gap-4">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/Wny-logo.png" alt="Logo" class="h-12 w-12 object-contain">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800">ยินดีต้อนรับ, <span id="user-fullname"></span></h2>
+            <p class="text-sm text-gray-500">ตำแหน่ง: <span id="user-position"></span></p>
+        </div>
+    </div>
+    
+    <button id="logout-button" class="btn btn-danger">ออกจากระบบ</button>
+</header>
 
             <!-- เมนูนำทาง -->
             <div id="navigation" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
@@ -167,7 +384,7 @@
             </div>
 
             <!-- เนื้อหาหลัก -->
-            <main id="page-content" class="p-6 sm:p-8 bg-white rounded-2xl shadow-lg">
+            <main id="page-content" class="p-6 sm:p-8 rounded-2xl">
                 <!-- หน้าแดชบอร์ด -->
                 <div id="dashboard-page" class="page-view">
                     <h2 class="text-2xl font-bold mb-4">รายการคำขอไปราชการของฉัน</h2>
@@ -371,7 +588,7 @@
                                     <option value="หัวหน้ากลุ่มสาระการเรียนรู้คณิตศาสตร์">กลุ่มสาระการเรียนรู้คณิตศาสตร์</option>
                                     <option value="หัวหน้ากลุ่มสาระการเรียนรู้ภาษาไทย">กลุ่มสาระการเรียนรู้ภาษาไทย</option>
                                     <option value="หัวหน้ากลุ่มสาระการเรียนรู้ภาษาต่างประเทศ">กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</option>
-                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษาศาสนา และวัฒนธรรม">กลุ่มสาระการเรียนรู้สังคมศึกษาศาสนา และวัฒนธรรม</option>
+                                    <option value="หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม">กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม</option>
                                     <option value="หัวหน้ากลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา">กลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา</option>
                                     <option value="หัวหน้ากลุ่มสาระการเรียนรู้ศิลปะ">กลุ่มสาระการเรียนรู้ศิลปะ</option>
                                     <option value="หัวหน้ากลุ่มสาระการเรียนรู้การงานอาชีพ">กลุ่มสาระการเรียนรู้การงานอาชีพ</option>
@@ -552,12 +769,14 @@
                     <!-- กราฟสถิติ -->
                     <div id="stats-charts" class="mt-8 hidden">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="bg-white rounded-lg shadow p-6">
-                                <h3 class="text-lg font-bold mb-4 text-gray-800">กราฟสถิติคำขอ</h3>
+                            
+                            <div class="chart-container">
+                                <h3 class="text-lg font-bold mb-4 text-gray-800">คำขอรายเดือน (6 เดือนล่าสุด)</h3>
                                 <canvas id="requests-chart" width="400" height="200"></canvas>
                             </div>
-                            <div class="bg-white rounded-lg shadow p-6">
-                                <h3 class="text-lg font-bold mb-4 text-gray-800">กราฟสถานะคำขอ</h3>
+                            
+                            <div class="chart-container">
+                                <h3 class="text-lg font-bold mb-4 text-gray-800">สรุปสถานะคำขอ</h3>
                                 <canvas id="status-chart" width="400" height="200"></canvas>
                             </div>
                         </div>
@@ -570,7 +789,7 @@
                 <p>จัดทำโดยกลุ่มบริหารงานบุคคล โรงเรียนวังน้ำเย็นวิทยาคม </p>
                 <p>พัฒนาระบบโดย ครูกีรติ ประสพพรรังสี </p>
             </footer>
-        </div>
+        </div></div>
 
         <!-- Modal ต่างๆ -->
         <!-- Modal ลงทะเบียน -->
@@ -827,6 +1046,8 @@
         let allMemosCache = [];
         let userMemosCache = [];
         let allUsersCache = [];
+        let requestsChartInstance = null; // ⭐️ เพิ่มบรรทัดนี้
+        let statusChartInstance = null;   // ⭐️ เพิ่มบรรทัดนี้
         let specialPositionMap = {
             'รองผู้อำนวยการกลุ่มบริหารทั่วไป':'นางวชิรินทรา พัฒนกุลเดช',
             'รองผู้อำนวยการกลุ่มบริหารงานบุคคล':'นางปณิชา ภัสสิรากุล',
@@ -837,7 +1058,7 @@
             'หัวหน้ากลุ่มสาระการเรียนรู้คณิตศาสตร์': 'นายสมฤทธิ์ ชาญสมร',
             'หัวหน้ากลุ่มสาระการเรียนรู้ภาษาไทย': 'นายอานนท์ วรวงค์',
             'หัวหน้ากลุ่มสาระการเรียนรู้ภาษาต่างประเทศ': 'นางธรรมรักษ์ วัฒนพลาชัยกูร',
-            'หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษาศาสนา และวัฒนธรรม': 'นางเกศริน ทองโพธิกุล',
+            'หัวหน้ากลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม': 'นางเกศริน ทองโพธิกุล',
             'หัวหน้ากลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา': 'นางสาวเกษร เขจรลาภ',
             'หัวหน้ากลุ่มสาระการเรียนรู้ศิลปะ': 'นางสาวปิยลักษณ์ ขันทา',
             'หัวหน้ากลุ่มสาระการเรียนรู้การงานอาชีพ': 'นายสุชาติ สินทร',
@@ -1175,9 +1396,28 @@ document.getElementById('logout-button').addEventListener('click', handleLogout)
 
         // ✅ ในส่วน DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('App Initializing with Google Sheets Backend...');
-    setupEventListeners();
-    enhanceEditFunctionSafety();
+            console.log('App Initializing with Google Sheets Backend...');
+            setupEventListeners();
+            enhanceEditFunctionSafety();
+
+            // ⭐️ START: เพิ่มโค้ดส่วนนี้ ⭐️
+            // ตั้งค่าเริ่มต้นให้ Chart.js ใช้ฟอนต์ Sarabun และสไตล์ Tooltip
+            Chart.defaults.font.family = "'Sarabun', sans-serif";
+            Chart.defaults.font.size = 14;
+            Chart.defaults.color = '#374151'; // gray-700
+            Chart.defaults.borderColor = 'rgba(229, 231, 235, 0.5)'; // gray-200
+            Chart.defaults.plugins.tooltip.enabled = true;
+            Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(17, 24, 39, 0.9)'; // gray-900
+            Chart.defaults.plugins.tooltip.titleFont = { size: 16, weight: 'bold' };
+            Chart.defaults.plugins.tooltip.bodyFont = { size: 14 };
+            Chart.defaults.plugins.tooltip.padding = 10;
+            Chart.defaults.plugins.tooltip.cornerRadius = 6;
+            Chart.defaults.plugins.tooltip.displayColors = true;
+            Chart.defaults.plugins.tooltip.boxPadding = 4;
+            // ⭐️ END: สิ้นสุดโค้ดที่เพิ่ม ⭐️
+
+            // ✅ ตรวจสอบว่าแท็บแก้ไขถูกซ่อนอยู่เสมอเมื่อเริ่มต้น
+            // ... (โค้ดเดิม)
     
     // ✅ ตรวจสอบว่าแท็บแก้ไขถูกซ่อนอยู่เสมอเมื่อเริ่มต้น
     const navEdit = document.getElementById('nav-edit');
@@ -1194,6 +1434,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         showLoginScreen();
     }
+    
 });
 
         // --- INITIALIZATION ---
@@ -1324,7 +1565,7 @@ function handleLogout() {
             document.getElementById('admin-memo-action-modal-close-button').addEventListener('click', () => document.getElementById('admin-memo-action-modal').style.display = 'none');
             document.getElementById('admin-memo-cancel-button').addEventListener('click', () => document.getElementById('admin-memo-action-modal').style.display = 'none');
             
-            // Event listener สำหรับแสดง/ซ่อนส่วนอัพโหลดไฟล์
+            // Event listenerสำหรับแสดง/ซ่อนส่วนอัพโหลดไฟล์
             document.getElementById('admin-memo-status').addEventListener('change', function(e) {
                 const fileUploads = document.getElementById('admin-file-uploads');
                 if (e.target.value === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน') {
@@ -2512,7 +2753,7 @@ function validateEditForm(formData) {
                                     </p>
                                     <p class="text-sm">
                                         <span class="font-medium">สถานะคำสั่ง:</span> 
-                                        <span class="${getStatusColor(displayCommandStatus)}">${translateStatus(displayCommandStatus || 'กำลังดำเนินการ')}</span>
+                                        <span class="${getStatusColor(displayCommandStatus || 'กำลังดำเนินการ')}">${translateStatus(displayCommandStatus || 'กำลังดำเนินการ')}</span>
                                         ${relatedMemo ? `<span class="text-xs text-gray-500 ml-1">` : ''}
                                     </p>
                                     
@@ -2975,156 +3216,392 @@ async function handleRequestAction(e) {
             }
         }
 
-        function renderStatsOverview(requests, memos, users, currentUser) {
-            const container = document.getElementById('stats-overview');
-            
-            // คำนวณสถิติ
-            const stats = calculateStats(requests, memos, users, currentUser);
-            
-            container.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <!-- การ์ดสถิติ -->
-                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-                        <div class="flex items-center">
-                            <div class="bg-blue-100 p-3 rounded-lg">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">คำขอทั้งหมด</p>
-                                <p class="text-2xl font-bold text-gray-900">${stats.totalRequests}</p>
-                            </div>
-                        </div>
+        
+    const container = document.getElementById('stats-overview');
+    
+    // 1. คำนวณสถิติ (เหมือนเดิม)
+    const stats = calculateStats(requests, memos, users, currentUser);
+    
+    // 2. Render การ์ดสรุป 4 ใบ (เหมือนเดิม)
+    container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="stat-card-placeholder bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+                <div class="flex items-center">
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                     </div>
-
-                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-                        <div class="flex items-center">
-                            <div class="bg-green-100 p-3 rounded-lg">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">คำขอที่เสร็จสิ้น</p>
-                                <p class="text-2xl font-bold text-gray-900">${stats.completedRequests}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
-                        <div class="flex items-center">
-                            <div class="bg-purple-100 p-3 rounded-lg">
-                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">บันทึกข้อความ</p>
-                                <p class="text-2xl font-bold text-gray-900">${stats.totalMemos}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
-                        <div class="flex items-center">
-                            <div class="bg-yellow-100 p-3 rounded-lg">
-                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">ผู้ใช้ทั้งหมด</p>
-                                <p class="text-2xl font-bold text-gray-900">${stats.totalUsers}</p>
-                            </div>
-                        </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">คำขอทั้งหมด</p>
+                        <p class="text-2xl font-bold text-gray-900">${stats.totalRequests}</p>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- สถิติตามสถานะ -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-bold mb-4 text-gray-800">สถานะคำขอ</h3>
-                        <div class="space-y-3">
-                            ${Object.entries(stats.requestStatus).map(([status, count]) => `
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600">${translateStatus(status)}</span>
-                                    <span class="font-semibold">${count} คำขอ</span>
-                                </div>
-                            `).join('')}
-                        </div>
+            </div>
+            <div class="stat-card-placeholder bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex items-center">
+                    <div class="bg-green-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-
-                    <!-- สถิติตามแผนก -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-bold mb-4 text-gray-800">คำขอตามแผนก</h3>
-                        <div class="space-y-3">
-                            ${Object.entries(stats.departmentStats).slice(0, 8).map(([dept, count]) => `
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm text-gray-600 truncate" title="${dept}">${dept}</span>
-                                    <span class="font-semibold">${count} คำขอ</span>
-                                </div>
-                            `).join('')}
-                            ${Object.entries(stats.departmentStats).length > 8 ? `
-                                <div class="text-center text-sm text-gray-500 mt-2">
-                                    + ${Object.entries(stats.departmentStats).length - 8} แผนกอื่นๆ
-                                </div>
-                            ` : ''}
-                        </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">คำขอที่เสร็จสิ้น</p>
+                        <p class="text-2xl font-bold text-gray-900">${stats.completedRequests}</p>
                     </div>
                 </div>
-
-                ${currentUser.role === 'admin' ? `
-                <div class="mt-6 bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-bold mb-4 text-gray-800">สถิติผู้ใช้</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="text-center p-4 bg-blue-50 rounded-lg">
-                            <p class="text-2xl font-bold text-blue-600">${stats.userStats.total}</p>
-                            <p class="text-sm text-gray-600">ผู้ใช้ทั้งหมด</p>
-                        </div>
-                        <div class="text-center p-4 bg-green-50 rounded-lg">
-                            <p class="text-2xl font-bold text-green-600">${stats.userStats.admins}</p>
-                            <p class="text-sm text-gray-600">ผู้ดูแลระบบ</p>
-                        </div>
-                        <div class="text-center p-4 bg-purple-50 rounded-lg">
-                            <p class="text-2xl font-bold text-purple-600">${stats.userStats.regularUsers}</p>
-                            <p class="text-sm text-gray-600">ผู้ใช้ทั่วไป</p>
-                        </div>
+            </div>
+            <div class="stat-card-placeholder bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+                <div class="flex items-center">
+                    <div class="bg-purple-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">บันทึกข้อความ</p>
+                        <p class="text-2xl font-bold text-gray-900">${stats.totalMemos}</p>
                     </div>
                 </div>
-                ` : ''}
-
-                <!-- สถิติรายเดือน -->
-                <div class="mt-6 bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-bold mb-4 text-gray-800">คำขอรายเดือน (6 เดือนล่าสุด)</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">เดือน</th>
-                                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">จำนวนคำขอ</th>
-                                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">สถานะเสร็จสิ้น</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${stats.monthlyStats.map(month => `
-                                    <tr class="border-b">
-                                        <td class="px-4 py-2 text-sm text-gray-600">${month.month}</td>
-                                        <td class="px-4 py-2 text-center text-sm font-semibold">${month.count}</td>
-                                        <td class="px-4 py-2 text-center">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${month.completed > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                                ${month.completed}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+            </div>
+            <div class="stat-card-placeholder bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+                <div class="flex items-center">
+                    <div class="bg-yellow-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path></svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">ผู้ใช้ทั้งหมด</p>
+                        <p class="text-2xl font-bold text-gray-900">${stats.totalUsers}</p>
                     </div>
                 </div>
-            `;
+            </div>
+        </div>
+
+        <div id="stats-charts" class="hidden">
+            <!-- กราฟจะถูกสร้างที่นี่ -->
+        </div>
+    `;
+
+    // 3. แสดงส่วนกราฟ
+    document.getElementById('stats-charts').classList.remove('hidden');
+
+    // 4. ทำลายกราฟเก่า (ถ้ามี) เพื่อรีเฟรช
+    if (requestsChartInstance) {
+        requestsChartInstance.destroy();
+    }
+    if (statusChartInstance) {
+        statusChartInstance.destroy();
+    }
+
+    // 5. สร้างกราฟแท่ง (สถิติรายเดือน)
+    const monthlyCtx = document.getElementById('requests-chart').getContext('2d');
+    const monthlyLabels = stats.monthlyStats.map(m => m.month);
+    const monthlyData = stats.monthlyStats.map(m => m.count);
+
+    requestsChartInstance = new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: monthlyLabels,
+            datasets: [{
+                label: 'จำนวนคำขอ',
+                data: monthlyData,
+                backgroundColor: 'rgba(79, 70, 229, 0.6)', // indigo-600
+                borderColor: 'rgba(79, 70, 229, 1)',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: (tooltipItems) => `เดือน ${tooltipItems[0].label}`,
+                        label: (tooltipItem) =>  `${tooltipItem.raw} คำขอ`
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(229, 231, 235, 0.5)' } },
+                x: { grid: { display: false } }
+            }
         }
+    });
 
+    // 6. สร้างกราฟวงแหวน (สถานะ)
+    const statusCtx = document.getElementById('status-chart').getContext('2d');
+    const statusLabels = Object.keys(stats.requestStatus).map(s => translateStatus(s));
+    const statusData = Object.values(stats.requestStatus);
+    const statusColors = [
+        'rgba(22, 163, 74, 0.7)',  // green-600
+        'rgba(59, 130, 246, 0.7)', // blue-500
+        'rgba(245, 158, 11, 0.7)', // yellow-500
+        'rgba(239, 68, 68, 0.7)',  // red-500
+        'rgba(168, 85, 247, 0.7)', // purple-500
+        'rgba(249, 115, 22, 0.7)'  // orange-500
+    ];
+
+    statusChartInstance = new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                label: 'สถานะ',
+                data: statusData,
+                backgroundColor: statusColors,
+                borderColor: 'rgba(255, 255, 255, 0.5)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 15 } },
+                tooltip: {
+                    callbacks: {
+                        label: (tooltipItem) =>  `${tooltipItem.label}: ${tooltipItem.raw} คำขอ`
+                    }
+                }
+            }
+        }
+    });
+    
+    // 7. Render ตารางสถิติผู้ใช้ (ถ้าเป็น Admin)
+    if (currentUser.role === 'admin') {
+        container.innerHTML += `
+            <div class="mt-6 chart-container">
+                <h3 class="text-lg font-bold mb-4 text-gray-800">สถิติผู้ใช้</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <p class="text-2xl font-bold text-blue-600">${stats.userStats.total}</p>
+                        <p class="text-sm text-gray-600">ผู้ใช้ทั้งหมด</p>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <p class="text-2xl font-bold text-green-600">${stats.userStats.admins}</p>
+                        <p class="text-sm text-gray-600">ผู้ดูแลระบบ</p>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <p class="text-2xl font-bold text-purple-600">${stats.userStats.regularUsers}</p>
+                        <p class="text-sm text-gray-600">ผู้ใช้ทั่วไป</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+// --- เพิ่มฟังก์ชัน renderStatsOverview นี้ลงไป ---
+function renderStatsOverview(requests, memos, users, currentUser) {
+    const container = document.getElementById('stats-overview');
+    
+    if (!requests || requests.length === 0) {
+        container.innerHTML = `
+            <div class="text-center p-8 text-gray-500">
+                <p>ไม่พบข้อมูลสถิติ</p>
+            </div>
+        `;
+        return;
+    }
+
+    // 1. คำนวณสถิติ
+    const stats = calculateStats(requests, memos, users, currentUser);
+    
+    // 2. Render การ์ดสรุป 4 ใบ
+    container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="stat-card bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+                <div class="flex items-center">
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">คำขอทั้งหมด</p>
+                        <p class="text-2xl font-bold text-gray-900">${stats.totalRequests}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+                <div class="flex items-center">
+                    <div class="bg-green-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">คำขอที่เสร็จสิ้น</p>
+                        <p class="text-2xl font-bold text-gray-900">${stats.completedRequests}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+                <div class="flex items-center">
+                    <div class="bg-purple-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">บันทึกข้อความ</p>
+                        <p class="text-2xl font-bold text-gray-900">${stats.totalMemos}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+                <div class="flex items-center">
+                    <div class="bg-yellow-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">ผู้ใช้ทั้งหมด</p>
+                        <p class="text-2xl font-bold text-gray-900">${stats.totalUsers}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="stats-charts" class="mt-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="chart-container">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">คำขอรายเดือน (6 เดือนล่าสุด)</h3>
+                    <canvas id="requests-chart" width="400" height="200"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">สรุปสถานะคำขอ</h3>
+                    <canvas id="status-chart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 3. ทำลายกราฟเก่า (ถ้ามี)
+    if (requestsChartInstance) {
+        requestsChartInstance.destroy();
+        requestsChartInstance = null;
+    }
+    if (statusChartInstance) {
+        statusChartInstance.destroy();
+        statusChartInstance = null;
+    }
+
+    // 4. สร้างกราฟแท่ง (สถิติรายเดือน)
+    const monthlyCtx = document.getElementById('requests-chart');
+    if (monthlyCtx) {
+        const monthlyLabels = stats.monthlyStats.map(m => m.month);
+        const monthlyData = stats.monthlyStats.map(m => m.count);
+
+        requestsChartInstance = new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: 'จำนวนคำขอ',
+                    data: monthlyData,
+                    backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: (tooltipItems) => `เดือน ${tooltipItems[0].label}`,
+                            label: (tooltipItem) =>  `${tooltipItem.raw} คำขอ`
+                        }
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: 'rgba(229, 231, 235, 0.5)' },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    x: { 
+                        grid: { display: false } 
+                    }
+                }
+            }
+        });
+    }
+
+    // 5. สร้างกราฟวงแหวน (สถานะ)
+    const statusCtx = document.getElementById('status-chart');
+    if (statusCtx) {
+        const statusLabels = Object.keys(stats.requestStatus).map(s => translateStatus(s));
+        const statusData = Object.values(stats.requestStatus);
+        const statusColors = [
+            'rgba(22, 163, 74, 0.7)',  // green-600
+            'rgba(59, 130, 246, 0.7)', // blue-500
+            'rgba(245, 158, 11, 0.7)', // yellow-500
+            'rgba(239, 68, 68, 0.7)',  // red-500
+            'rgba(168, 85, 247, 0.7)', // purple-500
+            'rgba(249, 115, 22, 0.7)'  // orange-500
+        ];
+
+        statusChartInstance = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    label: 'สถานะ',
+                    data: statusData,
+                    backgroundColor: statusColors,
+                    borderColor: 'rgba(255, 255, 255, 0.8)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { 
+                            padding: 15,
+                            usePointStyle: true,
+                            font: {
+                                size: 12
+                            }
+                        } 
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (tooltipItem) =>  `${tooltipItem.label}: ${tooltipItem.raw} คำขอ (${((tooltipItem.raw/stats.totalRequests)*100).toFixed(1)}%)`
+                        }
+                    }
+                },
+                cutout: '50%'
+            }
+        });
+    }
+    
+    // 6. Render ตารางสถิติผู้ใช้ (ถ้าเป็น Admin)
+    if (currentUser.role === 'admin') {
+        container.innerHTML += `
+            <div class="mt-6 chart-container">
+                <h3 class="text-lg font-bold mb-4 text-gray-800">สถิติผู้ใช้</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <p class="text-2xl font-bold text-blue-600">${stats.userStats.total}</p>
+                        <p class="text-sm text-gray-600">ผู้ใช้ทั้งหมด</p>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <p class="text-2xl font-bold text-green-600">${stats.userStats.admins}</p>
+                        <p class="text-sm text-gray-600">ผู้ดูแลระบบ</p>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <p class="text-2xl font-bold text-purple-600">${stats.userStats.regularUsers}</p>
+                        <p class="text-sm text-gray-600">ผู้ใช้ทั่วไป</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
         function calculateStats(requests, memos, users, currentUser) {
             // สถิติพื้นฐาน
             const totalRequests = requests.length;
@@ -3175,37 +3652,69 @@ async function handleRequestAction(e) {
         }
 
         function calculateMonthlyStats(requests) {
-            const months = [];
-            const now = new Date();
+    const months = [];
+    const now = new Date();
+    
+    // สร้าง 6 เดือนย้อนหลัง
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthKey = date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long' });
+        
+        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        
+        const monthRequests = requests.filter(req => {
+            const dateString = req.timestamp || req.startDate || req.docDate || req.createdAt;
+            if (!dateString) return false;
             
-            // สร้าง 6 เดือนย้อนหลัง
-            for (let i = 5; i >= 0; i--) {
-                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const monthKey = date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long' });
+            try {
+                const reqDate = new Date(dateString);
+                if (isNaN(reqDate.getTime())) return false;
                 
-                const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-                const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-                
-                const monthRequests = requests.filter(req => {
-                    const reqDate = new Date(req.timestamp || req.startDate || req.docDate);
-                    return reqDate >= monthStart && reqDate <= monthEnd;
-                });
-                
-                const completedRequests = monthRequests.filter(req => 
-                    req.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน' || 
-                    req.status === 'Approved'
-                ).length;
-                
-                months.push({
-                    month: monthKey,
-                    count: monthRequests.length,
-                    completed: completedRequests
-                });
+                return reqDate >= monthStart && reqDate <= monthEnd;
+            } catch (e) {
+                return false;
             }
-            
-            return months;
-        }
+        });
+        
+        const completedRequests = monthRequests.filter(req => 
+            req.status === 'เสร็จสิ้น/รับไฟล์ไปใช้งาน' || 
+            req.status === 'Approved' ||
+            req.status === 'เสร็จสิ้น'
+        ).length;
+        
+        months.push({
+            month: monthKey,
+            count: monthRequests.length,
+            completed: completedRequests
+        });
+    }
+    
+    return months;
+}
+// ฟังก์ชันตรวจสอบกราฟ
+function debugCharts() {
+    console.log('=== CHART DEBUG INFO ===');
+    console.log('requestsChartInstance:', requestsChartInstance);
+    console.log('statusChartInstance:', statusChartInstance);
+    
+    const requestsChart = document.getElementById('requests-chart');
+    const statusChart = document.getElementById('status-chart');
+    console.log('requests-chart element:', requestsChart);
+    console.log('status-chart element:', statusChart);
+    
+    if (requestsChart) {
+        console.log('requests-chart dimensions:', {
+            width: requestsChart.offsetWidth,
+            height: requestsChart.offsetHeight,
+            clientWidth: requestsChart.clientWidth,
+            clientHeight: requestsChart.clientHeight
+        });
+    }
+}
 
+// เรียกใช้จาก console: debugCharts()
+window.debugCharts = debugCharts;
         // --- TEMPLATE FUNCTIONS ---
 
         function downloadAttendeeTemplate() {
@@ -3248,9 +3757,7 @@ async function handleRequestAction(e) {
         }
 
         function addAttendeeFieldWithData(name, position) {
-            const list = document.getElementById('form-attendees-list');
-            const attendeeDiv = document.createElement('div');
-            attendeeDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-2 items-center mb-2';
+            // ...
             attendeeDiv.innerHTML = `
                 <input type="text" class="form-input attendee-name md:col-span-1" placeholder="ชื่อ-นามสกุล" value="${name}" required>
                 <div class="attendee-position-wrapper md:col-span-1">
@@ -3271,6 +3778,7 @@ async function handleRequestAction(e) {
                 <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">ลบ</button>
             `;
             list.appendChild(attendeeDiv);
+            
             
             const select = attendeeDiv.querySelector('.attendee-position-select');
             const otherInput = attendeeDiv.querySelector('.attendee-position-other');
@@ -3614,6 +4122,7 @@ async function handleRequestAction(e) {
                 const userRequests = user.role === 'admin' ? requests : requests.filter(req => req.username === user.username);
                 const stats = calculateStats(userRequests, memos, users, user);
 
+                // สร้าง Excel report
                 // สร้าง Excel report
                 const reportData = [
                     ['รายงานสถิติระบบไปราชการ', '', '', ''],
