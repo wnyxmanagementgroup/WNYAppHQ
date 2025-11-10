@@ -3556,45 +3556,46 @@ async function handleDeleteRequest(requestId) {
         }
 
         function addAttendeeFieldWithData(name, position) {
-            // ...
-            attendeeDiv.innerHTML = `
-                <input type="text" class="form-input attendee-name md:col-span-1" placeholder="ชื่อ-นามสกุล" value="${name}" required>
-                <div class="attendee-position-wrapper md:col-span-1">
-                     <select class="form-input attendee-position-select">
-                        <option value="">-- เลือกตำแหน่ง --</option>
-                        <option value="ผู้อำนวยการ">ผู้อำนวยการ</option>
-                        <option value="รองผู้อำนวยการ">รองผู้อำนวยการ</option>
-                        <option value="ครู">ครู</option>
-                        <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
-                        <option value="พนักงานราชการ">พนักงานราชการ</option>
-                        <option value="ครูอัตราจ้าง">ครูอัตราจ้าง</option>
-                        <option value="พนักงานขับรถ">พนักงานขับรถ</option>
-                        <option value="นักเรียน">นักเรียน</option>
-                        <option value="other">อื่นๆ (โปรดระบุ)</option>
-                    </select>
-                    <input type="text" class="form-input attendee-position-other hidden mt-1" placeholder="ระบุตำแหน่ง" value="${position}">
-                </div>
-                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">ลบ</button>
-            `;
-            list.appendChild(attendeeDiv);
-            
-            
-            const select = attendeeDiv.querySelector('.attendee-position-select');
-            const otherInput = attendeeDiv.querySelector('.attendee-position-other');
+    const list = document.getElementById('form-attendees-list');
+    const attendeeDiv = document.createElement('div');
+    attendeeDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-2 items-center mb-2';
+    
+    attendeeDiv.innerHTML = `
+        <input type="text" class="form-input attendee-name md:col-span-1" placeholder="ชื่อ-นามสกุล" value="${name}" required>
+        <div class="attendee-position-wrapper md:col-span-1">
+            <select class="form-input attendee-position-select">
+                <option value="">-- เลือกตำแหน่ง --</option>
+                <option value="ผู้อำนวยการ">ผู้อำนวยการ</option>
+                <option value="รองผู้อำนวยการ">รองผู้อำนวยการ</option>
+                <option value="ครู">ครู</option>
+                <option value="ครูผู้ช่วย">ครูผู้ช่วย</option>
+                <option value="พนักงานราชการ">พนักงานราชการ</option>
+                <option value="ครูอัตราจ้าง">ครูอัตราจ้าง</option>
+                <option value="พนักงานขับรถ">พนักงานขับรถ</option>
+                <option value="นักเรียน">นักเรียน</option>
+                <option value="other">อื่นๆ (โปรดระบุ)</option>
+            </select>
+            <input type="text" class="form-input attendee-position-other hidden mt-1" placeholder="ระบุตำแหน่ง" value="${position}">
+        </div>
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">ลบ</button>
+    `;
+    list.appendChild(attendeeDiv);
+    
+    const select = attendeeDiv.querySelector('.attendee-position-select');
+    const otherInput = attendeeDiv.querySelector('.attendee-position-other');
 
-            const optionExists = Array.from(select.options).some(opt => opt.value === position);
-            if (optionExists) {
-                select.value = position;
-            } else {
-                select.value = 'other';
-                otherInput.classList.remove('hidden');
-            }
+    const optionExists = Array.from(select.options).some(opt => opt.value === position);
+    if (optionExists) {
+        select.value = position;
+    } else {
+        select.value = 'other';
+        otherInput.classList.remove('hidden');
+    }
 
-            select.addEventListener('change', () => {
-                otherInput.classList.toggle('hidden', select.value !== 'other');
-            });
-        }
-
+    select.addEventListener('change', () => {
+        otherInput.classList.toggle('hidden', select.value !== 'other');
+    });
+}
         // --- ADMIN COMMAND FUNCTIONS ---
 
         async function fetchAllRequestsForCommand() {
@@ -4108,4 +4109,3 @@ window.checkEditPageStatus = checkEditPageStatus;
 
 </body>
 </html>
-
