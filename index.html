@@ -337,7 +337,96 @@ div#main-app > header {
                     </div>
                 </div>
             </div>
+        <!-- ✅ กล่องรายการผู้ไปราชการ -->
+<div class="info-section md:col-span-2">
+  <h3 class="text-lg font-bold text-indigo-700 mb-4">📋 รายการผู้ไปราชการวันนี้</h3>
+  <div id="travel-list" class="max-h-[400px] overflow-y-auto space-y-3 text-gray-800">
+    <p class="text-center text-gray-500">กำลังโหลดข้อมูล...</p>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const listContainer = document.getElementById('travel-list');
+  try {
+    const response = await fetch(
+      'https://script.google.com/macros/s/AKfycbzP-HCQGbA3Xi2Ms4DXTGy8k17Bv72pFohnJ0txAePjjXybe6pK42mSaYOfTQ5V9Q6mDA/exec?action=getCalendarEvents'
+    );
+    const result = await response.json();
+    const events = result.data || [];
+
+    if (events.length === 0) {
+      listContainer.innerHTML = '<p class="text-center text-gray-500">ไม่มีรายการไปราชการในวันนี้</p>';
+      return;
+    }
+
+    // 📅 วันที่ปัจจุบัน
+    const today = new Date();
+
+    // กรองรายการที่อยู่ในช่วงวันที่ปัจจุบัน
+    const todayEvents = events.filter(ev => {
+      const start = new Date(ev.start);
+      const end = new Date(ev.end || ev.start);
+      return start <= today && end >= today;
+    });
+
+    if (todayEvents.length === 0) {
+      listContainer.innerHTML = '<p class="text-center text-gray-500">ไม่มีรายการไปราชการในวันนี้</p>';
+      return;
+    }
+
+    // 🗓️ ฟังก์ชันแปลงวันที่เป็นภาษาไทย (แบบช่วง)
+    function formatThaiDateRange(startDate, endDate) {
+      const monthNames = [
+        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
+        "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
+        "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+      ];
+      const start = new Date(startDate);
+      const end = new Date(endDate || startDate);
+      const startDay = start.getDate();
+      const endDay = end.getDate();
+      const month = monthNames[end.getMonth()];
+      const year = end.getFullYear() + 543; // แปลงเป็น พ.ศ.
+      
+      if (start.toDateString() === end.toDateString()) {
+        // วันที่เดียวกัน
+        return `${startDay} ${month} พ.ศ. ${year}`;
+      } else if (start.getMonth() === end.getMonth()) {
+        // เดือนเดียวกัน
+        return `${startDay}–${endDay} ${month} พ.ศ. ${year}`;
+      } else {
+        // คนละเดือน
+        const startMonth = monthNames[start.getMonth()];
+        return `${startDay} ${startMonth} – ${endDay} ${month} พ.ศ. ${year}`;
+      }
+    }
+
+    // 🧾 แสดงรายการ
+    listContainer.innerHTML = todayEvents.map(ev => {
+      const start = new Date(ev.start);
+      const end = new Date(ev.end || ev.start);
+      const dateText = formatThaiDateRange(start, end);
+
+      return `
+        <div class="p-4 rounded-lg bg-white/60 shadow-sm border border-white/40 backdrop-blur-md hover:bg-white/80 transition">
+          <div class="flex flex-col gap-1">
+            <p class="font-semibold text-indigo-700">👤 ${ev.title}</p>
+            <p class="text-sm text-gray-700">📍 ${ev.description || 'ไม่มีรายละเอียด'}</p>
+            <p class="text-sm text-gray-500">🗓️ ${dateText}</p>
+          </div>
         </div>
+      `;
+    }).join('');
+
+  } catch (error) {
+    console.error('Error loading events:', error);
+    listContainer.innerHTML = '<p class="text-center text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+  }
+});
+</script>
+
+        
         <div id="main-app" class="hidden">
         <!-- ส่วนแอปพลิเคชันหลัก -->
         <header class="p-4 rounded-xl mb-6 flex flex-wrap justify-between items-center gap-4">
