@@ -4219,11 +4219,11 @@ async function saveDraft() {
                                     </button>
                                 ` : ''}
                                 
-                                ${!relatedMemo && !isFullyCompleted ? `
-                                    <button data-action="send-memo" data-id="${request.id}" class="btn bg-green-500 text-white btn-sm">
-                                        📤 ส่งบันทึก
-                                    </button>
-                                ` : ''}
+                                ${(!relatedMemo || relatedMemo.status === 'นำกลับไปแก้ไข') && !isFullyCompleted ? `
+    <button data-action="send-memo" data-id="${request.id}" class="btn bg-green-500 text-white btn-sm">
+        📤 ส่งบันทึก
+    </button>
+` : ''}
                             </div>
                         </div>
                     </div>
