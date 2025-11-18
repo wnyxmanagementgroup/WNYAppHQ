@@ -666,7 +666,7 @@ div#main-app > header {
                                 </div>
                                 <button type="submit" id="profile-submit-button" class="btn btn-primary w-full">
                                     <div id="profile-loader" class="loader hidden"></div>
-                                    <span>อัพเดทข้อมูล</span>
+                                    <span>อัปเดตข้อมูล</span>
                                 </button>
                                 </form>
                                 </div>
@@ -1159,7 +1159,7 @@ div#main-app > header {
                         <button type="button" id="admin-memo-cancel-button" class="btn bg-gray-500 text-white">ยกเลิก</button>
                         <button type="submit" id="admin-memo-submit-button" class="btn btn-primary">
                             <div id="admin-memo-loader" class="loader hidden"></div>
-                            <span>อัพเดทสถานะ</span>
+                            <span>อัปเดตสถานะ</span>
                         </button>
                     </div>
                 </form>
@@ -1383,7 +1383,7 @@ div#main-app > header {
                 targetPage.classList.remove('hidden');
             }
 
-            // อัพเดทปุ่มนำทาง
+            // อัปเดตปุ่มนำทาง
             document.querySelectorAll('.nav-button').forEach(btn => {
                 btn.classList.remove('active');
                 if(btn.dataset.target === targetPageId) {
@@ -1659,7 +1659,7 @@ div#main-app > header {
             // Stats page events
             document.getElementById('refresh-stats').addEventListener('click', async () => {
                 await loadStatsData();
-                showAlert('สำเร็จ', 'อัพเดทข้อมูลสถิติเรียบร้อยแล้ว');
+                showAlert('สำเร็จ', 'อัปเดตข้อมูลสถิติเรียบร้อยแล้ว');
             });
 
             document.getElementById('export-stats').addEventListener('click', exportStatsReport);
@@ -1889,7 +1889,7 @@ div#main-app > header {
                 if (result.status === 'success') {
                     showAlert('สำเร็จ', 'ลบคำขอเรียบร้อยแล้ว');
                     
-                    // ✅ อัพเดท cache และแสดงผลใหม่
+                    // ✅ อัปเดต cache และแสดงผลใหม่
                     clearRequestsCache();
                     await fetchUserRequests();
                     
@@ -2188,7 +2188,7 @@ div#main-app > header {
                 // เติมข้อมูลผู้ลงนาม
                 if (requestData.department) {
                     document.getElementById('edit-department').value = requestData.department;
-                    // อัพเดทชื่อหัวหน้าตาม department
+                    // อัปเดตชื่อหัวหน้าตาม department
                     const headNameInput = document.getElementById('edit-head-name');
                     headNameInput.value = specialPositionMap[requestData.department] || '';
                 }
@@ -2455,8 +2455,8 @@ div#main-app > header {
                 
                 if (result.status === 'success') {
                     // แสดงผลสำเร็จ
-                    document.getElementById('edit-result-title').textContent = 'อัพเดทเอกสารสำเร็จ!';
-                    document.getElementById('edit-result-message').textContent = `บันทึกข้อความ ที่ ${result.data.id || requestId} ถูกอัพเดทแล้ว`;
+                    document.getElementById('edit-result-title').textContent = 'อัปเดตเอกสารสำเร็จ!';
+                    document.getElementById('edit-result-message').textContent = `บันทึกข้อความ ที่ ${result.data.id || requestId} ถูกอัปเดตแล้ว`;
                     
                     if (result.data.pdfUrl) {
         document.getElementById('edit-result-link').href = result.data.pdfUrl;
@@ -2468,21 +2468,21 @@ div#main-app > header {
     
     document.getElementById('edit-result').classList.remove('hidden');
     
-                    // อัพเดท cache และข้อมูล
+                    // อัปเดต cache และข้อมูล
                     clearRequestsCache();
     await fetchUserRequests();
                     
                     // ลบข้อมูลชั่วคราว
                     sessionStorage.removeItem('currentEditRequestId');
     
-    showAlert("สำเร็จ", "อัพเดทเอกสารเรียบร้อยแล้ว");
+    showAlert("สำเร็จ", "อัปเดตเอกสารเรียบร้อยแล้ว");
     
 } else {
-    showAlert("ผิดพลาด", result.message || "ไม่สามารถอัพเดทเอกสารได้");
+    showAlert("ผิดพลาด", result.message || "ไม่สามารถอัปเดตเอกสารได้");
 }
             } catch (error) {
                 console.error("Error updating document:", error);
-                showAlert("เกิดข้อผิดพลาด", "ไม่สามารถอัพเดทเอกสารได้: " + error.message);
+                showAlert("เกิดข้อผิดพลาด", "ไม่สามารถอัปเดตเอกสารได้: " + error.message);
             } finally {
                 toggleLoader('generate-document-button', false);
             }
@@ -2674,12 +2674,12 @@ div#main-app > header {
                     sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
                     updateUIForUser(updatedUser);
                     
-                    showAlert('สำเร็จ', 'อัพเดทข้อมูลส่วนตัวสำเร็จ');
+                    showAlert('สำเร็จ', 'อัปเดตข้อมูลส่วนตัวสำเร็จ');
                 } else {
                     showAlert('ผิดพลาด', result.message);
                 }
             } catch (error) {
-                showAlert('ผิดพลาด', 'เกิดข้อผิดพลาดในการอัพเดทข้อมูล: ' + error.message);
+                showAlert('ผิดพลาด', 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล: ' + error.message);
             } finally {
                 toggleLoader('profile-submit-button', false);
             }
@@ -3186,7 +3186,7 @@ div#main-app > header {
                 window.statusChartInstance = null;
             }
 
-            // 4. รอให้ DOM อัพเดทก่อนสร้างกราฟ
+            // 4. รอให้ DOM อัปเดตก่อนสร้างกราฟ
             setTimeout(() => {
                 createCharts(stats);
             }, 100);
@@ -3754,7 +3754,7 @@ div#main-app > header {
                         }
                     }
                     
-                    showAlert('สำเร็จ', 'อัพเดทสถานะและไฟล์เรียบร้อยแล้ว');
+                    showAlert('สำเร็จ', 'อัปเดตสถานะและไฟล์เรียบร้อยแล้ว');
                     document.getElementById('admin-memo-action-modal').style.display = 'none';
                     document.getElementById('admin-memo-action-form').reset();
                     await fetchAllMemos();
@@ -3762,7 +3762,7 @@ div#main-app > header {
                     showAlert('ผิดพลาด', result.message);
                 }
             } catch (error) {
-                showAlert('ผิดพลาด', 'เกิดข้อผิดพลาดในการอัพเดท: ' + error.message);
+                showAlert('ผิดพลาด', 'เกิดข้อผิดพลาดในการอัปเดต: ' + error.message);
             } finally {
                 toggleLoader('admin-memo-submit-button', false);
             }
